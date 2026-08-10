@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Downloads & Document Vault | GCPCUL</title>
+  
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-green: #0A5C36; --heading-green: #0A5C36; --accent-green: #148F5B; --coop-gold: #EBAA14;
+      --gold-light: #FEF7E6; --bg-page: #F8FAFC; --bg-card: #FFFFFF; --bg-section-alt: #F1F5F9;
+      --text-main: #0F172A; --text-muted: #475569; --border-color: #CBD5E1; --navbar-bg: rgba(255, 255, 255, 0.96);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05); --shadow-md: 0 10px 25px -5px rgba(10, 92, 54, 0.08); --shadow-lg: 0 20px 35px -10px rgba(10, 92, 54, 0.15);
+      --radius-sm: 0.625rem; --radius-md: 1rem; --radius-lg: 1.5rem;
+    }
+
+    [data-theme="dark"] {
+      --heading-green: #34D399; --primary-green: #0A5C36; --accent-green: #10B981;
+      --bg-page: #0B1120; --bg-card: #111827; --bg-section-alt: #0F172A;
+      --text-main: #F8FAFC; --text-muted: #94A3B8; --border-color: #1E293B; --navbar-bg: rgba(17, 24, 39, 0.96);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.75; transition: background-color 0.3s ease, color 0.3s ease; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+    
+    /* THE UPGRADE: DELAYED BRIGHT PULSE FOR DEEP LINKS */
+    [id] { scroll-margin-top: 7rem; }
+    @keyframes delayedTargetGlow { 
+      0%, 20% { box-shadow: 0 0 0 0 rgba(52,211,153,0); border-color: var(--border-color); background-color: transparent; transform: scale(1); } 
+      35%, 80% { box-shadow: 0 0 45px 15px rgba(52,211,153,0.35); border-color: #34D399; background-color: rgba(52,211,153,0.08); transform: scale(1.02); } 
+      100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); border-color: var(--border-color); background-color: transparent; transform: scale(1); } 
+    }
+    :target { animation: delayedTargetGlow 6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; border-radius: var(--radius-lg); }
+
+    .container { width: 100%; max-width: 88rem; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3.5rem); }
+    .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-svg svg { width: 1.35em; height: 1.35em; fill: currentColor; }
+    .wa-logo-png { width: 24px !important; height: 24px !important; object-fit: contain; vertical-align: middle; display: inline-block; flex-shrink: 0; }
+
+    header { background: var(--navbar-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); transition: background 0.3s ease, border-color 0.3s ease; }
+    .nav-container { display: flex; justify-content: space-between; align-items: center; height: 4.85rem; gap: 1.5rem; }
+    .logo { display: flex; align-items: center; gap: 1rem; flex-shrink: 1; min-width: 0; }
+    .official-logo-img { height: 3.25rem; width: 3.25rem; object-fit: contain; border-radius: 0.65rem; border: 1px solid var(--border-color); background: #FFFFFF; padding: 0.15rem; }
+    .logo-text h1 { font-size: clamp(0.98rem, 1.25vw, 1.12rem); font-weight: 800; color: var(--heading-green); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    nav ul { display: flex; list-style: none; gap: clamp(1.25rem, 2vw, 2.35rem); align-items: center; margin: 0 auto; }
+    nav ul li a { font-size: 0.98rem; font-weight: 700; color: var(--text-main); transition: color 0.2s ease; }
+    nav ul li a:hover, nav ul li a.active { color: var(--heading-green); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.6rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-sm); transition: all 0.2s ease; cursor: pointer; border: none; white-space: nowrap; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--primary-green); color: var(--heading-green); }
+    .btn-outline:hover { background: var(--primary-green); color: #FFFFFF; }
+    .btn-primary { background: var(--primary-green); color: #FFFFFF; box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
+    .btn-primary:hover { background: var(--accent-green); transform: translateY(-2px); }
+    .btn-sm { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+
+    .menu-toggle { display: none; background: transparent; border: none; color: var(--text-main); cursor: pointer; padding: 0.5rem; width: 3rem; height: 3rem; align-items: center; justify-content: center; }
+    .mobile-drawer { display: none; flex-direction: column; background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 1.5rem; gap: 1.1rem; }
+    .mobile-drawer.open { display: flex; }
+    .mobile-drawer a { font-weight: 700; font-size: 1.05rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); }
+
+    .page-header { padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; position: relative; overflow: hidden; }
+    .page-header::after { content: ''; position: absolute; right: -6rem; top: -6rem; width: 22rem; height: 22rem; border-radius: 50%; background: radial-gradient(circle, rgba(235,170,20,0.18) 0%, transparent 70%); }
+    
+    .page-header-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; position: relative; z-index: 3; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #A7F3D0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+    .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; max-width: 40rem; line-height: 1.2; margin-bottom: 1.25rem; }
+    .page-header p { font-size: 1.15rem; color: #E2E8F0; max-width: 42rem; line-height: 1.75; }
+
+    /* THE UPGRADE: MASSIVE STORE BUTTONS */
+    .store-btn { display: inline-flex; align-items: center; gap: 1.25rem; background: #0F172A; color: #FFFFFF; padding: 0.85rem 1.85rem; border-radius: var(--radius-md); border: 1.5px solid rgba(255,255,255,0.25); transition: all 0.2s ease; margin-top: 1rem; }
+    .store-btn:hover { background: #1E293B; transform: translateY(-3px); border-color: var(--coop-gold); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .store-btn img { width: 2.5rem; height: 2.5rem; object-fit: contain; }
+    .store-btn-text { text-align: left; }
+    .store-btn-text span { display: block; font-size: 0.75rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.1rem; }
+    .store-btn-text strong { display: block; font-size: 1.35rem; font-weight: 800; color: #FFFFFF; line-height: 1.1; }
+
+    .hero-mockup-wrapper { perspective: 1000px; display: flex; justify-content: flex-end; align-items: center; }
+    .mockup-img { max-width: 85%; height: auto; border-radius: 1.25rem; box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6); transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 6px solid #0F172A; }
+    .hero-mockup-wrapper:hover .mockup-img { transform: rotateY(-5deg) rotateX(4deg) rotateZ(-1deg) scale(1.03); }
+
+    .filter-bar-wrapper { position: sticky; top: 4.85rem; z-index: 900; background: var(--bg-card); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 1rem 0; }
+    .filter-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .filter-tabs { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .filter-tab-btn { background: transparent; border: 1.5px solid var(--border-color); color: var(--text-muted); padding: 0.6rem 1.35rem; border-radius: 50px; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
+    .filter-tab-btn:hover, .filter-tab-btn.active { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
+
+    .section { padding: clamp(4.5rem, 6vw, 6rem) 0; }
+    .section-header { text-align: center; max-width: 48rem; margin: 0 auto 3.5rem auto; }
+    .section-header span { color: var(--accent-green); font-size: 0.875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
+
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 1.75rem; }
+    .doc-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.75rem; box-shadow: var(--shadow-sm); display: flex; gap: 1.25rem; align-items: flex-start; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .doc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .doc-icon { width: 3rem; height: 3rem; border-radius: var(--radius-sm); background: #ECFDF5; color: var(--primary-green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    [data-theme="dark"] .doc-icon { background: rgba(16, 185, 129, 0.15); }
+    .doc-info h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--text-main); }
+    .doc-info p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .doc-meta { font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.75rem; display: block; }
+    .doc-size { font-weight: 800; color: var(--primary-green); }
+
+    .gate-note { background: var(--gold-light); border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 1.25rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 2.5rem; }
+    [data-theme="dark"] .gate-note { background: rgba(245, 158, 11, 0.15); border-color: #D97706; }
+    .gate-note .icon-svg { color: #B45309; flex-shrink: 0; }
+    [data-theme="dark"] .gate-note .icon-svg { color: #FCD34D; }
+    .gate-note p { font-size: 0.92rem; color: #78350F; margin: 0; }
+    [data-theme="dark"] .gate-note p { color: #FDE68A; }
+
+    .empty-state-box { text-align: center; padding: 4rem 1rem; color: var(--text-muted); display: none; width: 100%; }
+    .empty-state-box.active { display: block; }
+    .empty-state-box .icon-svg { font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; }
+    .empty-state-box h3 { font-size: 1.25rem; color: var(--text-main); font-weight: 800; margin-bottom: 0.5rem; }
+
+    .float-wa { position: fixed; bottom: 2rem; right: 2rem; background: #25D366; color: #FFFFFF; padding: 0.85rem 1.35rem; border-radius: 3rem; display: flex; align-items: center; gap: 0.65rem; font-weight: 800; font-size: 1rem; box-shadow: 0 12px 24px rgba(37, 211, 102, 0.35); z-index: 9990; transition: transform 0.3s ease, border-radius 0.3s ease, padding 0.3s ease; cursor: pointer; }
+    .float-wa:hover { transform: scale(1.05); }
+    .float-wa.minimized { padding: 0; width: 3.5rem; height: 3.5rem; justify-content: center; border-radius: 50%; }
+    .float-wa.minimized .wa-label, .float-wa.minimized .wa-dismiss-btn { display: none; }
+    .wa-dismiss-btn { background: rgba(0, 0, 0, 0.18); border: none; color: #FFFFFF; width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; margin-left: 0.25rem; transition: background 0.2s ease; }
+    .wa-dismiss-btn:hover { background: rgba(0, 0, 0, 0.35); }
+
+    .float-theme-btn { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9990; transition: all 0.2s ease; }
+    .float-theme-btn:hover { background: var(--primary-green); color: #FFFFFF; transform: scale(1.08); border-color: var(--primary-green); }
+
+    footer { background: #090D16; color: #94A3B8; padding: 6.5rem 0 4.5rem 0; font-size: 0.95rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.5rem; }
+    .social-links { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .social-icon-btn { width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary-green); border-color: var(--primary-green); transform: translateY(-2px); }
+    .contact-row-item { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; transition: color 0.2s ease; line-height: 1.5; }
+    .contact-icon-glyph { width: 1.5rem; height: 1.5rem; min-width: 1.5rem; min-height: 1.5rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: #94A3B8; transition: color 0.2s ease; }
+    .contact-icon-glyph svg { width: 1.25rem; height: 1.25rem; display: block; }
+    .contact-row-item:hover { color: #FFFFFF; }
+    .contact-row-item:hover .contact-icon-glyph { color: var(--coop-gold); }
+    .footer-col h4 { color: #FFFFFF; font-size: 0.95rem; font-weight: 700; margin-bottom: 1.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+    .footer-links li a { color: #94A3B8; transition: color 0.2s ease; font-weight: 500; }
+    .footer-links li a:hover { color: #FFFFFF; }
+    .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; }
+    .spear-link { color: var(--coop-gold); font-weight: 800; transition: opacity 0.2s ease; text-decoration: none; }
+    .spear-link:hover { opacity: 0.8; }
+
+    @media (max-width: 64rem) { nav ul { display: none; } .menu-toggle { display: inline-flex; } .nav-actions { display: none; } .footer-grid { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 3rem; } }
+    @media (max-width: 48rem) {
+      .container { padding: 0 1.25rem; }
+      .page-header-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-mockup-wrapper { justify-content: center; }
+      .mockup-img { max-width: 65%; transform: none; }
+      .hero-mockup-wrapper:hover .mockup-img { transform: translateY(-5px); }
+      .store-btn { width: 100%; justify-content: center; text-align: center; }
+      .store-btn-text { text-align: center; }
+      footer { padding-bottom: 8rem; }
+      .float-wa { bottom: 1.25rem; right: 1.25rem; padding: 0.75rem 1.15rem; font-size: 0.9rem; }
+      .float-theme-btn { bottom: 1.25rem; left: 1.25rem; width: 3rem; height: 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/images/logo.jpg" alt="Ghana Co-operative Pharmacists' Credit Union Official Logo" class="official-logo-img">
+        <div class="logo-text">
+          <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products & Services</a></li>
+          <li><a href="calculator.html">Calculator</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="news.html">News & Blog</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-primary">Portal Login</a>
+      </div>
+      <button class="menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></span>
+      </button>
+    </div>
+    <div class="mobile-drawer" id="mobileDrawer">
+      <a href="index.html">Home</a>
+      <a href="about.html">Who We Are</a>
+      <a href="products.html">Products & Services</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="downloads.html" class="active">Downloads</a>
+      <a href="news.html">News & Blog</a>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container page-header-grid">
+      <div class="hero-content-wrapper">
+        <div class="breadcrumb">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></span>
+          Downloads
+        </div>
+        <h2 class="hero-title">The app, and every form you need — in one place.</h2>
+        <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
+        
+        <div style="display:flex; gap:1.25rem; flex-wrap:wrap; margin-top:1.5rem;">
+          <a href="#" class="store-btn">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/019/136/337/small/apple-logo-apple-icon-free-free-vector.jpg" alt="Apple Logo" onerror="this.style.display='none';">
+            <div class="store-btn-text"><span>Download on the</span><strong>App Store</strong></div>
+          </a>
+          <a href="#" class="store-btn">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/022/484/501/small/google-play-store-icon-logo-symbol-free-png.png" alt="Google Play Logo" onerror="this.style.display='none';">
+            <div class="store-btn-text"><span>Get it on</span><strong>Google Play</strong></div>
+          </a>
+        </div>
+      </div>
+      <div class="hero-mockup-wrapper">
+        <img src="assets/images/app-boarderless.jpg" alt="GCPCUL Borderless App" class="mockup-img" onerror="this.src='https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=600&q=80';">
+      </div>
+    </div>
+  </section>
+
+  <div class="filter-bar-wrapper">
+    <div class="container filter-container">
+      <div class="filter-tabs" id="docFilterBar">
+        <button class="filter-tab-btn active" data-filter="all">All Documents</button>
+        <button class="filter-tab-btn" data-filter="form">Application Forms</button>
+        <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
+        <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span>Document Vault</span>
+        <h2>Official Forms & Member Documents</h2>
+      </div>
+
+      <div class="gate-note">
+        <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></span>
+        <p>Forms are released to verified members to keep application data accurate and prevent fraudulent submissions. Log in to download and auto-fill any form below with your member details.</p>
+      </div>
+
+      <div class="empty-state-box" id="docEmptyState">
+        <div class="icon-svg"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+        <h3>No Documents Found</h3>
+        <p>There are currently no documents available in this category.</p>
+      </div>
+
+      <div class="doc-grid" id="docGrid">
+        <div class="doc-card" data-category="form" id="loan-application">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2 pages · <span class="doc-size">450 KB</span></span>
+            <h4>Loan Application Form</h4>
+            <p>Required for all Personal, Business, Housing, Education & Medical loan requests.</p>
+            <a href="login.html" class="btn btn-outline btn-sm">Log in to download</a>
+          </div>
+        </div>
+        
+        <div class="doc-card" data-category="form" id="membership-form">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 1 page · <span class="doc-size">210 KB</span></span>
+            <h4>Membership Enrollment Form</h4>
+            <p>New-member registration, including next-of-kin and share capital contribution details.</p>
+            <a href="login.html" class="btn btn-outline btn-sm">Log in to download</a>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="form">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 1 page · <span class="doc-size">185 KB</span></span>
+            <h4>Guarantor Consent Form</h4>
+            <p>Signed by a guarantor backing a committee-reviewed loan above the Fast-Track threshold.</p>
+            <a href="login.html" class="btn btn-outline btn-sm">Log in to download</a>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="report">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · Annual · <span class="doc-size">Dynamically Generated</span></span>
+            <h4>Dividend & Share Statement</h4>
+            <p>Your personalized annual statement of share capital, dividends, and savings growth.</p>
+            <a href="login.html" class="btn btn-outline btn-sm">Log in to download</a>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="form">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm4.5 9l-5.5 5.5-2.5-2.5 1.41-1.41L11 13.67l4.09-4.09L16.5 11z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2 pages · <span class="doc-size">310 KB</span></span>
+            <h4>LPP Declaration Form</h4>
+            <p>Health declaration required to activate group loan insurance coverage.</p>
+            <a href="login.html" class="btn btn-outline btn-sm">Log in to download</a>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="legal">
+          <div class="doc-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · Public · <span class="doc-size">1.2 MB</span></span>
+            <h4>By-Laws & Constitution</h4>
+            <p>The Union's governing rules as approved by the Registrar of Co-operatives.</p>
+            <a href="about.html#legal" class="btn btn-outline btn-sm">View details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="float-wa" id="floatWaWidget">
+    <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20I%20need%20help%20downloading%20or%20filling%20out%20an%20official%20form." target="_blank" style="display: flex; align-items: center; gap: 0.65rem; color: inherit;">
+      <img src="assets/images/whatsapp-logo.png" alt="WhatsApp" class="wa-logo-png" onerror="this.onerror=null; this.src='https://www.svgrepo.com/show/110197/whatsapp.svg';">
+      <span class="wa-label">WhatsApp Support</span>
+    </a>
+    <button class="wa-dismiss-btn" id="waDismissBtn" aria-label="Minimize Support Widget" title="Minimize">×</button>
+  </div>
+
+  <button class="float-theme-btn" id="floatThemeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Theme">
+    <span class="icon-svg" id="floatThemeIcon">
+      <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+    </span>
+  </button>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand-header">
+            <img src="assets/images/logo.jpg" alt="GCPCUL Official Logo" class="official-logo-img" style="height: 3.5rem; width: 3.5rem;">
+          </div>
+          <p style="margin-bottom: 1.5rem; max-width: 22rem; line-height: 1.7;">A registered member-owned financial institution serving pharmacists and healthcare professionals across Ghana.</p>
+          
+          <div class="social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg></span></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path><circle cx="4" cy="4" r="2"></circle></svg></span></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></span></a>
+          </div>
+
+          <div style="color: #CBD5E1; font-weight: 600; display: flex; flex-direction: column; gap: 0.85rem;">
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></span>
+              <span>030-7010334 / 0532015364</span>
+            </div>
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              <span>info@gcpculgh.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Loans & Products</h4>
+          <ul class="footer-links">
+            <li><a href="products.html#personal-loan">Personal & Emergency Loans</a></li>
+            <li><a href="products.html#isl-loan">Import Support & Pharmacy Loans</a></li>
+            <li><a href="products.html#asset-loan">Vehicle & Housing Loans</a></li>
+            <li><a href="products.html#shares-savings">Share Capital & Regular Savings</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Member Portal</h4>
+          <ul class="footer-links">
+            <li><a href="login.html">Portal Login</a></li>
+            <li><a href="calculator.html">Online Loan Application</a></li>
+            <li><a href="calculator.html">Loan Repayment Calculator</a></li>
+            <li><a href="downloads.html">Document Vault</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About & Legal</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">Who We Are</a></li>
+            <li><a href="about.html#leadership">Governance & Leadership</a></li>
+            <li><a href="about.html#privacy-policy">Privacy Policy</a></li>
+            <li><a href="about.html#terms-of-service">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL). All rights reserved.</p>
+        <p>Powered by <a href="https://wa.me/233548685362?text=Hello%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services." target="_blank" class="spear-link">Spear Solutions</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
+    const docCards = document.querySelectorAll('.doc-card');
+    const docEmptyState = document.getElementById('docEmptyState');
+
+    if (filterBtns) {
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const category = btn.getAttribute('data-filter');
+          let visibleCount = 0;
+
+          docCards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            if (category === 'all' || cardCat === category) {
+              card.style.display = 'flex';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          if (visibleCount === 0) {
+            docEmptyState.classList.add('active');
+          } else {
+            docEmptyState.classList.remove('active');
+          }
+        });
+      });
+    }
+
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const drawer = document.getElementById('mobileDrawer');
+    if (menuBtn && drawer) {
+      menuBtn.addEventListener('click', () => { drawer.classList.toggle('open'); });
+    }
+
+    const floatThemeBtn = document.getElementById('floatThemeToggleBtn');
+    const floatThemeIcon = document.getElementById('floatThemeIcon');
+    const root = document.documentElement;
+    const moonSVG = '<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>';
+    const sunSVG = '<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41a.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06z"/></svg>';
+
+    const savedTheme = localStorage.getItem('gcpcul-theme') || 'light';
+    if (savedTheme === 'dark') { root.setAttribute('data-theme', 'dark'); if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG; }
+
+    if (floatThemeBtn) {
+      floatThemeBtn.addEventListener('click', () => {
+        if (root.getAttribute('data-theme') === 'dark') {
+          root.removeAttribute('data-theme');
+          localStorage.setItem('gcpcul-theme', 'light');
+          if (floatThemeIcon) floatThemeIcon.innerHTML = moonSVG;
+        } else {
+          root.setAttribute('data-theme', 'dark');
+          localStorage.setItem('gcpcul-theme', 'dark');
+          if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG;
+        }
+      });
+    }
+
+    const waWidget = document.getElementById('floatWaWidget');
+    const waDismissBtn = document.getElementById('waDismissBtn');
+    if (waDismissBtn && waWidget) {
+      waDismissBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        waWidget.classList.toggle('minimized');
+      });
+    }
+    
+    // Automatically trigger deep-link pulse for accordion targets
+    document.addEventListener("DOMContentLoaded", function() {
+      if(window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if(targetElement && targetElement.tagName.toLowerCase() === 'details') {
+          targetElement.setAttribute('open', '');
+        }
+      }
+    });
+
+    window.addEventListener('hashchange', function() {
+      if(window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if(targetElement && targetElement.tagName.toLowerCase() === 'details') {
+          targetElement.setAttribute('open', '');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Who We Are | Ghana Co-operative Pharmacists' Credit Union (GCPCUL)</title>
+  
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-green: #0A5C36; --heading-green: #0A5C36; --accent-green: #148F5B; --coop-gold: #EBAA14;
+      --bg-page: #F8FAFC; --bg-card: #FFFFFF; --bg-section-alt: #F1F5F9;
+      --text-main: #0F172A; --text-muted: #475569; --border-color: #CBD5E1;
+      --navbar-bg: rgba(255, 255, 255, 0.96);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05); --shadow-md: 0 10px 25px -5px rgba(10, 92, 54, 0.08); --shadow-lg: 0 20px 35px -10px rgba(10, 92, 54, 0.15);
+      --radius-sm: 0.625rem; --radius-md: 1rem; --radius-lg: 1.5rem;
+    }
+
+    [data-theme="dark"] {
+      --heading-green: #34D399; --primary-green: #0A5C36; --accent-green: #10B981;
+      --bg-page: #0B1120; --bg-card: #111827; --bg-section-alt: #0F172A;
+      --text-main: #F8FAFC; --text-muted: #94A3B8; --border-color: #1E293B; --navbar-bg: rgba(17, 24, 39, 0.96);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.75; transition: background-color 0.3s ease, color 0.3s ease; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* DELAYED BRIGHT PULSE FOR DEEP LINKS */
+    [id] { scroll-margin-top: 6rem; }
+    @keyframes delayedTargetGlow { 
+      0%, 15% { box-shadow: 0 0 0 0 rgba(235, 170, 20, 0); border-color: var(--border-color); background-color: transparent; transform: scale(1); } 
+      40%, 65% { box-shadow: 0 0 35px 12px rgba(235, 170, 20, 0.4); border-color: var(--coop-gold); background-color: rgba(235, 170, 20, 0.05); transform: scale(1.02); } 
+      100% { box-shadow: 0 0 0 0 rgba(235, 170, 20, 0); border-color: var(--border-color); background-color: transparent; transform: scale(1); } 
+    }
+    :target { animation: delayedTargetGlow 4s ease-in-out forwards; border-radius: var(--radius-lg); }
+
+    .container { width: 100%; max-width: 88rem; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3.5rem); }
+    .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-svg svg { width: 1.35em; height: 1.35em; fill: currentColor; }
+    .wa-logo-png { width: 24px !important; height: 24px !important; object-fit: contain; vertical-align: middle; display: inline-block; }
+
+    header { background: var(--navbar-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); transition: background 0.3s ease, border-color 0.3s ease; }
+    .nav-container { display: flex; justify-content: space-between; align-items: center; height: 4.85rem; gap: 1.5rem; }
+    .logo { display: flex; align-items: center; gap: 1rem; flex-shrink: 1; min-width: 0; }
+    .official-logo-img { height: 3.25rem; width: 3.25rem; object-fit: contain; border-radius: 0.65rem; border: 1px solid var(--border-color); background: #FFFFFF; padding: 0.15rem; }
+    .logo-text h1 { font-size: clamp(0.98rem, 1.25vw, 1.12rem); font-weight: 800; color: var(--heading-green); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    nav ul { display: flex; list-style: none; gap: clamp(1.25rem, 2vw, 2.35rem); align-items: center; margin: 0 auto; }
+    nav ul li a { font-size: 0.98rem; font-weight: 700; color: var(--text-main); transition: color 0.2s ease; }
+    nav ul li a:hover, nav ul li a.active { color: var(--heading-green); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.6rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-sm); transition: all 0.2s ease; cursor: pointer; border: none; white-space: nowrap; }
+    .btn-primary { background: var(--primary-green); color: #FFFFFF; box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
+    .btn-primary:hover { background: var(--accent-green); transform: translateY(-2px); }
+    .menu-toggle { display: none; background: transparent; border: none; color: var(--text-main); cursor: pointer; padding: 0.5rem; width: 3rem; height: 3rem; align-items: center; justify-content: center; }
+    .mobile-drawer { display: none; flex-direction: column; background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 1.5rem; gap: 1.1rem; }
+    .mobile-drawer.open { display: flex; }
+    .mobile-drawer a { font-weight: 700; font-size: 1.05rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); }
+
+    /* UNIFIED HERO STYLES WITH KEN BURNS */
+    .hero { position: relative; padding: clamp(5rem, 8vw, 7.5rem) 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; overflow: hidden; display: flex; align-items: center; }
+    .hero-bg-anim { position: absolute; inset: -5%; width: 110%; height: 110%; object-fit: cover; z-index: 1; animation: kenBurns 20s infinite alternate ease-in-out; filter: brightness(0.4) contrast(1.1); }
+    @keyframes kenBurns { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+    .hero-bg-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(6, 40, 22, 0.88) 0%, rgba(15, 23, 42, 0.92) 100%); z-index: 2; }
+    .hero-content-wrapper { position: relative; z-index: 3; width: 100%; max-width: 52rem; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #A7F3D0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; }
+    .hero-title { font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.12; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+    .hero-title span { color: var(--coop-gold); }
+    .hero-desc { font-size: clamp(1.08rem, 1.55vw, 1.28rem); color: #F1F5F9; max-width: 40rem; line-height: 1.75; }
+
+    .section { padding: clamp(4.5rem, 7vw, 6.5rem) 0; }
+    .section-header { text-align: center; max-width: 48rem; margin: 0 auto 3.5rem auto; }
+    .section-header span { color: var(--accent-green); font-size: 0.875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
+
+    .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.5rem; }
+    .mission-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2.5rem; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .mission-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .mission-card .icon-svg { width: 4rem; height: 4rem; background: #ECFDF5; color: var(--primary-green); border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 1.5rem; }
+    [data-theme="dark"] .mission-card .icon-svg { background: rgba(16, 185, 129, 0.15); }
+    .mission-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem; }
+    .mission-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.75; }
+
+    /* --- THE ORGANOGRAM IMAGE WRAPPER --- */
+    .organogram-wrapper { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: clamp(2rem, 4vw, 4rem); box-shadow: var(--shadow-sm); text-align: center; }
+    .organogram-wrapper img { max-width: 100%; height: auto; display: inline-block; margin: 0 auto; border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
+
+    /* --- LEGAL ACCORDION (PRIVACY & TERMS) --- */
+    .faq-list { max-width: 52rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+    .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .faq-item summary { list-style: none; cursor: pointer; padding: 1.5rem 1.75rem; font-weight: 700; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--text-main); }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary .icon-svg { color: var(--primary-green); transition: transform 0.2s ease; flex-shrink: 0; }
+    .faq-item[open] summary .icon-svg { transform: rotate(180deg); }
+    .faq-item .faq-answer { padding: 0 1.75rem 1.5rem 1.75rem; color: var(--text-muted); font-size: 0.95rem; line-height: 1.75; }
+    .faq-answer h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; color: var(--text-main); font-size: 1rem; }
+
+    .float-wa { position: fixed; bottom: 2rem; right: 2rem; background: #25D366; color: #FFFFFF; padding: 0.85rem 1.35rem; border-radius: 3rem; display: flex; align-items: center; gap: 0.65rem; font-weight: 800; font-size: 1rem; box-shadow: 0 12px 24px rgba(37, 211, 102, 0.35); z-index: 9990; transition: transform 0.3s ease, border-radius 0.3s ease, padding 0.3s ease; cursor: pointer; }
+    .float-wa:hover { transform: scale(1.05); }
+    .float-wa.minimized { padding: 0; width: 3.5rem; height: 3.5rem; justify-content: center; border-radius: 50%; }
+    .float-wa.minimized .wa-label, .float-wa.minimized .wa-dismiss-btn { display: none; }
+    .wa-dismiss-btn { background: rgba(0, 0, 0, 0.18); border: none; color: #FFFFFF; width: 1.5rem; height: 1.5rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; margin-left: 0.25rem; transition: background 0.2s ease; }
+    .wa-dismiss-btn:hover { background: rgba(0, 0, 0, 0.35); }
+
+    .float-theme-btn { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9990; transition: all 0.2s ease; }
+    .float-theme-btn:hover { background: var(--primary-green); color: #FFFFFF; transform: scale(1.08); border-color: var(--primary-green); }
+
+    footer { background: #090D16; color: #94A3B8; padding: 6.5rem 0 4.5rem 0; font-size: 0.95rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.5rem; }
+    .social-links { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .social-icon-btn { width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary-green); border-color: var(--primary-green); transform: translateY(-2px); }
+    .contact-row-item { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; transition: color 0.2s ease; line-height: 1.5; }
+    .contact-icon-glyph { width: 1.5rem; height: 1.5rem; min-width: 1.5rem; min-height: 1.5rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: #94A3B8; transition: color 0.2s ease; }
+    .contact-icon-glyph svg { width: 1.25rem; height: 1.25rem; display: block; }
+    .contact-row-item:hover { color: #FFFFFF; }
+    .contact-row-item:hover .contact-icon-glyph { color: var(--coop-gold); }
+    .footer-col h4 { color: #FFFFFF; font-size: 0.95rem; font-weight: 700; margin-bottom: 1.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+    .footer-links li a { color: #94A3B8; transition: color 0.2s ease; font-weight: 500; }
+    .footer-links li a:hover { color: #FFFFFF; }
+    .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; }
+    .spear-link { color: var(--coop-gold); font-weight: 800; transition: opacity 0.2s ease; text-decoration: none; }
+    .spear-link:hover { opacity: 0.8; }
+
+    @media (max-width: 64rem) { nav ul { display: none; } .menu-toggle { display: inline-flex; } .nav-actions { display: none; } .footer-grid { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 3rem; } }
+    @media (max-width: 48rem) {
+      .container { padding: 0 1.25rem; }
+      footer { padding-bottom: 8rem; }
+      .float-wa { bottom: 1.25rem; right: 1.25rem; padding: 0.75rem 1.15rem; font-size: 0.9rem; }
+      .float-theme-btn { bottom: 1.25rem; left: 1.25rem; width: 3rem; height: 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <img src="assets/images/logo.jpg" alt="Ghana Co-operative Pharmacists' Credit Union Official Logo" class="official-logo-img">
+        <div class="logo-text">
+          <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html">Products & Services</a></li>
+          <li><a href="calculator.html">Calculator</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="news.html">News & Blog</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-primary">Portal Login</a>
+      </div>
+      <button class="menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></span>
+      </button>
+    </div>
+    <div class="mobile-drawer" id="mobileDrawer">
+      <a href="index.html">Home</a>
+      <a href="about.html" class="active">Who We Are</a>
+      <a href="products.html">Products & Services</a>
+      <a href="calculator.html">Calculator</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="news.html">News & Blog</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION WITH BACKGROUND IMAGE AND ANIMATION -->
+  <section class="hero">
+    <img src="assets/images/linda-landing.jpg" alt="About Hero" class="hero-bg-anim" onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1600&q=80';">
+    <div class="hero-bg-overlay"></div>
+    <div class="container" style="position: relative; z-index: 3;">
+      <div class="hero-content-wrapper">
+        <div class="breadcrumb">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/></svg></span>
+          Who We Are
+        </div>
+        <h2 class="hero-title">Empowering the Healthcare Community through <span>Cooperative Wealth</span>.</h2>
+        <p class="hero-desc">Established by pharmacists, for pharmacists. We exist to provide transparent, high-yield financial solutions that secure your professional and personal future.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION & VISION -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span>Our Core Purpose</span>
+        <h2>Mission, Vision & Core Values</h2>
+      </div>
+      <div class="mission-grid">
+        <div class="mission-card">
+          <div class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg></div>
+          <h3>Our Mission</h3>
+          <p>To cultivate a robust savings culture and provide timely, affordable credit facilities that drive the socioeconomic advancement of all our members.</p>
+        </div>
+        <div class="mission-card">
+          <div class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+          <h3>Our Vision</h3>
+          <p>To be the premier, most trusted co-operative financial institution delivering unparalleled economic empowerment to healthcare professionals in Ghana.</p>
+        </div>
+        <div class="mission-card">
+          <div class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div>
+          <h3>Core Values</h3>
+          <p>Integrity, Transparency, Member-Centricity, and Absolute Confidentiality. We manage your wealth with zero administrative traps and total accountability.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGE-BASED ORGANOGRAM HIERARCHY -->
+  <section class="section" id="leadership" style="background: var(--bg-section-alt);">
+    <div class="container">
+      <div class="section-header">
+        <span>Democratic Structure</span>
+        <h2>Governance Organogram</h2>
+      </div>
+
+      <div class="organogram-wrapper">
+        <img src="assets/images/organogram.png" alt="GCPCUL Governance Organogram">
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL & COMPLIANCE ACCORDION (DEEP LINK TARGETS) -->
+  <section class="section" id="legal">
+    <div class="container">
+      <div class="section-header">
+        <span>Legal & Compliance</span>
+        <h2>Institutional Policies</h2>
+      </div>
+      
+      <div class="faq-list">
+        <!-- Target for footer Privacy Policy link -->
+        <details class="faq-item" id="privacy-policy">
+          <summary>
+            <span>Privacy & Data Protection Policy</span>
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+          </summary>
+          <div class="faq-answer">
+            <h4>Data Collection & Usage</h4>
+            <p>GCPCUL operates under a strict zero-trust data mandate. We collect necessary KYC (Know Your Customer) information—including Ghana Card details—solely to verify identity and process financial disbursements as mandated by the Bank of Ghana and CUA.</p>
+            <h4>Data Security</h4>
+            <p>We never store payment PINs or sensitive authentication details on our web servers. All document uploads via our Digital Vault are end-to-end encrypted. Access is strictly limited to authorized Management and the Loans Committee via secure Maker-Checker workflows.</p>
+            <h4>Information Sharing</h4>
+            <p>Your financial status, loan history, and share capital are completely confidential. We do not sell or share your data with third-party marketing agencies under any circumstances.</p>
+          </div>
+        </details>
+
+        <!-- Target for footer Terms of Service link -->
+        <details class="faq-item" id="terms-of-service">
+          <summary>
+            <span>Terms of Service & Cooperative Rules</span>
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+          </summary>
+          <div class="faq-answer">
+            <h4>Membership Obligations</h4>
+            <p>By registering, members agree to maintain a minimum Share Capital of GH¢500.00 and a minimum regular savings account balance of GH¢100.00. Members must contribute consistently for three (3) months before becoming eligible for any loan facility.</p>
+            <h4>Loan Repayment Terms</h4>
+            <p>Loans are disbursed based on the 3x savings multiplier rule. Flat annual interest is applied to the original principal. Members authorize GCPCUL to deduct agreed monthly installments directly from payroll (via Controller) or via mandated direct debit mandates.</p>
+            <h4>Dividend Distribution</h4>
+            <p>Dividends are declared at the Annual General Meeting based on the audited surplus. Payouts are directly proportional to a member's average share capital maintained throughout the fiscal year without deductions.</p>
+          </div>
+        </details>
+
+        <!-- Target for footer CUA Affiliation link -->
+        <details class="faq-item" id="cua-affiliation">
+          <summary>
+            <span>CUA Affiliation & LPP Insurance</span>
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+          </summary>
+          <div class="faq-answer">
+            <p>The Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL) is a fully registered and compliant affiliate of the Ghana Co-operative Credit Unions Association (CUA). Reg No: CO-OP/847.</p>
+            <p>Every loan disbursed is automatically covered by the CUA Loan Protection Plan (LPP). This premium is deducted upfront, ensuring that in the tragic event of death or total permanent disability, the outstanding loan balance is fully written off by CUA, completely protecting the member's family and next-of-kin from inherited debt.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOM WHATSAPP FLOAT FOR ABOUT PAGE -->
+  <div class="float-wa" id="floatWaWidget">
+    <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20I'm%20on%20the%20About%20Us%20page%20and%20would%20like%20to%20learn%20more%20about%20the%20credit%20union." target="_blank" style="display: flex; align-items: center; gap: 0.65rem; color: inherit;">
+      <img src="assets/images/whatsapp-logo.png" alt="WhatsApp" class="wa-logo-png" onerror="this.onerror=null; this.src='https://www.svgrepo.com/show/110197/whatsapp.svg';">
+      <span class="wa-label">WhatsApp Support</span>
+    </a>
+    <button class="wa-dismiss-btn" id="waDismissBtn" aria-label="Minimize Support Widget" title="Minimize">×</button>
+  </div>
+
+  <button class="float-theme-btn" id="floatThemeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Theme">
+    <span class="icon-svg" id="floatThemeIcon">
+      <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+    </span>
+  </button>
+
+  <!-- OFFICIAL BALANCED FOOTER WITH DEEP ANCHOR LINKS -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand-header">
+            <img src="assets/images/logo.jpg" alt="GCPCUL Official Logo" class="official-logo-img" style="height: 3.5rem; width: 3.5rem;">
+          </div>
+          <p style="margin-bottom: 1.5rem; max-width: 22rem; line-height: 1.7;">A registered member-owned financial institution serving pharmacists and healthcare professionals across Ghana.</p>
+          
+          <div class="social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg></span></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path><circle cx="4" cy="4" r="2"></circle></svg></span></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></span></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"></path></svg></span></a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"></path></svg></span></a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg></span></a>
+          </div>
+
+          <div style="color: #CBD5E1; font-weight: 600; display: flex; flex-direction: column; gap: 0.85rem;">
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></span>
+              <span>030-7010334 / 0532015364</span>
+            </div>
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              <span>info@gcpculgh.com</span>
+            </div>
+          </div>
+          <p style="color: #94A3B8; font-size: 0.85rem; margin-top: 1rem;">P. O. Box GP 2133, Accra, Ghana • Reg No: CO-OP/847</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Loans & Products</h4>
+          <ul class="footer-links">
+            <li><a href="products.html#personal-loan">Personal & Emergency Loans</a></li>
+            <li><a href="products.html#isl-loan">Import Support & Pharmacy Loans</a></li>
+            <li><a href="products.html#asset-loan">Vehicle & Housing Loans</a></li>
+            <li><a href="products.html#shares-savings">Share Capital & Regular Savings</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Member Portal</h4>
+          <ul class="footer-links">
+            <li><a href="login.html">Portal Login</a></li>
+            <li><a href="calculator.html">Online Loan Application</a></li>
+            <li><a href="calculator.html">Loan Repayment Calculator</a></li>
+            <li><a href="downloads.html">Document Vault</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About & Legal</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">Who We Are</a></li>
+            <li><a href="about.html#leadership">Governance & Leadership</a></li>
+            <li><a href="about.html#privacy-policy">Privacy Policy</a></li>
+            <li><a href="about.html#terms-of-service">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL). All rights reserved.</p>
+        <p>Powered by <a href="https://wa.me/233548685362?text=Hello%20Wiselyn%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services." target="_blank" class="spear-link">Wiselyn Spear Solutions</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const drawer = document.getElementById('mobileDrawer');
+    if (menuBtn && drawer) {
+      menuBtn.addEventListener('click', () => { drawer.classList.toggle('open'); });
+    }
+
+    const floatThemeBtn = document.getElementById('floatThemeToggleBtn');
+    const floatThemeIcon = document.getElementById('floatThemeIcon');
+    const root = document.documentElement;
+    const moonSVG = '<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>';
+    const sunSVG = '<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41a.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zM7.05 18.36l-1.06-1.06a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06z"/></svg>';
+
+    const savedTheme = localStorage.getItem('gcpcul-theme') || 'light';
+    if (savedTheme === 'dark') { root.setAttribute('data-theme', 'dark'); if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG; }
+
+    if (floatThemeBtn) {
+      floatThemeBtn.addEventListener('click', () => {
+        if (root.getAttribute('data-theme') === 'dark') {
+          root.removeAttribute('data-theme');
+          localStorage.setItem('gcpcul-theme', 'light');
+          if (floatThemeIcon) floatThemeIcon.innerHTML = moonSVG;
+        } else {
+          root.setAttribute('data-theme', 'dark');
+          localStorage.setItem('gcpcul-theme', 'dark');
+          if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG;
+        }
+      });
+    }
+
+    const waWidget = document.getElementById('floatWaWidget');
+    const waDismissBtn = document.getElementById('waDismissBtn');
+    if (waDismissBtn && waWidget) {
+      waDismissBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        waWidget.classList.toggle('minimized');
+      });
+    }
+    
+    // Automatically open accordion targets
+    document.addEventListener("DOMContentLoaded", function() {
+      if(window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if(targetElement && targetElement.tagName.toLowerCase() === 'details') {
+          targetElement.setAttribute('open', '');
+        }
+      }
+    });
+
+    window.addEventListener('hashchange', function() {
+      if(window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if(targetElement && targetElement.tagName.toLowerCase() === 'details') {
+          targetElement.setAttribute('open', '');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
