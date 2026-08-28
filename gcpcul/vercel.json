@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/static/assets/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "gcpcul/wsgi.py"
     }
