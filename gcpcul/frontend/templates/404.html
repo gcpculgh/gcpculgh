@@ -1,0 +1,65 @@
+{% extends "base.html" %} <!-- Adjust this if your main layout file is named differently -->
+{% load static %}
+
+{% block content %}
+<style>
+    .not-found-wrapper {
+        min-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: #f8f9fa;
+        font-family: inherit;
+    }
+    .not-found-code {
+        font-size: clamp(6rem, 15vw, 10rem);
+        font-weight: 900;
+        color: #0d3b2a; /* GCPCUL Dark Green */
+        line-height: 1;
+        margin: 0;
+        letter-spacing: -2px;
+    }
+    .not-found-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 700;
+        color: #2d3748;
+        margin: 1rem 0;
+    }
+    .not-found-message {
+        font-size: 1.125rem;
+        color: #4a5568;
+        max-width: 500px;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+    }
+    .not-found-btn {
+        display: inline-block;
+        background-color: #f0b429; /* GCPCUL Gold */
+        color: #0d3b2a;
+        font-weight: 700;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .not-found-btn:hover {
+        background-color: #d9a224;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<div class="not-found-wrapper">
+    <h1 class="not-found-code">404</h1>
+    <h2 class="not-found-title">We couldn't find that page.</h2>
+    <p class="not-found-message">
+        The page you are looking for may have been moved, renamed, or deleted during our recent system upgrade. 
+    </p>
+    <!-- Ensure 'home' matches the name of your index path in urls.py -->
+    <a href="{% url 'home' %}" class="not-found-btn">Return to Homepage</a>
+</div>
+{% endblock %}
