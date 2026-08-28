@@ -1,0 +1,1972 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Apply for a Loan | GCPCUL</title>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23059669'/><text x='50' y='58' font-family='sans-serif' font-size='42' font-weight='700' fill='white' text-anchor='middle'>GC</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-app: #F4F7F6;
+    --bg-surface: #FFFFFF;
+    --bg-inset: #F8FAFC;
+
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --text-label: #94A3B8;
+
+    --primary: #059669;
+    --primary-hover: #047857;
+    --primary-light: #D1FAE5;
+
+    --card-gradient: linear-gradient(135deg, #065F46 0%, #047857 50%, #064E3B 100%);
+    --gold: #D97706;
+    --gold-light: #FEF3C7;
+
+    --warning: #F59E0B;
+    --warning-tint: #FEF3C7;
+    --error: #EF4444;
+    --error-tint: #FEF2F2;
+
+    --border-light: #E2E8F0;
+
+    --radius-xl: 1.5rem;
+    --radius-md: 1rem;
+
+    --shadow-sm: 0 4px 15px -3px rgba(15, 23, 42, 0.05);
+    --shadow-float: 0 20px 40px -10px rgba(15, 23, 42, 0.1);
+    --shadow-card: 0 15px 35px -5px rgba(6, 95, 70, 0.35);
+    --shadow-dropdown: 0 20px 40px -10px rgba(15, 23, 42, 0.15);
+    --shadow-modal: 0 30px 60px -15px rgba(15, 23, 42, 0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: var(--bg-app); color: var(--text-main); min-height: 100vh; overflow-x: hidden; line-height: 1.5; }
+
+  .icon, .icon-sm, .icon-lg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; display: inline-block; vertical-align: middle; }
+  .icon { width: 20px; height: 20px; }
+  .icon-sm { width: 16px; height: 16px; }
+  .icon-lg { width: 28px; height: 28px; }
+
+  /* TOAST ENGINE */
+  .toast-container { position: fixed; top: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; width: min(92vw, 360px); }
+  @media (min-width: 1024px) { .toast-container { left: auto; right: 1.5rem; transform: none; } }
+  .toast { background: var(--bg-surface); border-radius: 16px; padding: 1rem 1.15rem; display: flex; align-items: flex-start; gap: 0.75rem; box-shadow: var(--shadow-float); border: 1px solid var(--border-light); transform: translateY(-12px); opacity: 0; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .toast-icon.success { color: var(--primary); background: var(--primary-light); }
+  .toast-icon.error { color: var(--error); background: var(--error-tint); }
+  .toast-icon.warning { color: #92600A; background: var(--warning-tint); }
+  .toast-content h4 { font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.1rem; }
+  .toast-content p { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); line-height: 1.35; }
+
+  /* LAYOUT */
+  .app-container { width: 100%; max-width: 1200px; margin: 0 auto; }
+  .app-layout-grid { background: var(--bg-surface); min-height: 100vh; padding: 1.5rem 1rem 7rem 1rem; display: flex; flex-direction: column; }
+  .desktop-sidebar { display: none; }
+
+  @media (min-width: 1024px) {
+    body { background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; background-attachment: fixed; }
+    body::before { content: ''; position: fixed; inset: 0; background: rgba(243, 244, 246, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: -1; }
+    .app-layout-grid { background: transparent; padding: 3rem 2rem; display: grid; grid-template-columns: 1fr 420px; gap: 4rem; align-items: flex-start; min-height: auto; }
+    .main-form-flow { background: var(--bg-surface); padding: 3.5rem; border-radius: 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); }
+    .desktop-sidebar { display: flex; position: sticky; top: 3rem; flex-direction: column; gap: 2rem; }
+  }
+
+  /* HEADER */
+  .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .back-btn { width: 44px; height: 44px; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main); cursor: pointer; transition: background 0.2s; box-shadow: var(--shadow-sm); }
+  .back-btn:active { background: var(--bg-inset); transform: scale(0.95); }
+  .brand-logo { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-surface); box-shadow: var(--shadow-sm); }
+  .placeholder-div { width: 44px; height: 44px; display: flex; align-items: center; justify-content: flex-end; }
+
+  /* SAVE INDICATOR — server-first autosave, never sensitive data in the browser */
+  .save-indicator { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); opacity: 0; transition: opacity 0.25s ease; white-space: nowrap; }
+  .save-indicator.show { opacity: 1; }
+  .save-indicator.saved { color: var(--primary); }
+  .save-indicator .icon { width: 14px; height: 14px; }
+  .save-indicator .spin { animation: spin 0.8s linear infinite; }
+
+  .mobile-warmth-banner { display: block; width: 100%; height: 130px; border-radius: 18px; overflow: hidden; margin-bottom: 1.5rem; position: relative; box-shadow: var(--shadow-sm); }
+  .mobile-warmth-banner img { width: 100%; height: 100%; object-fit: cover; }
+  .mobile-warmth-banner .scrim { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(6,78,59,0.65), transparent 60%); }
+  .mobile-warmth-banner .caption { position: absolute; bottom: 0.75rem; left: 1rem; right: 1rem; color: #fff; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+  @media (min-width: 1024px) { .mobile-warmth-banner { display: none; } }
+
+  .hero-container { margin-bottom: 2rem; text-align: left; border-left: 4px solid var(--primary); padding-left: 1.25rem; animation: fadeDown 0.4s ease; }
+  .step-indicator { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; display: block; }
+  .hero-text { font-size: 1.85rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--text-main); transition: opacity 0.3s; margin-bottom: 0.35rem; }
+  .hero-subtext { font-size: 0.92rem; color: var(--text-muted); font-weight: 500; line-height: 1.5; max-width: 95%; }
+
+  .avatar-stack-container { display: none; align-items: center; justify-content: flex-start; margin-bottom: 0.5rem; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  .avatar-stack { display: flex; align-items: center; }
+  .avatar-stack img { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--bg-surface); margin-left: -12px; object-fit: cover; box-shadow: var(--shadow-sm); transition: transform 0.2s; }
+  .avatar-stack img:first-child { margin-left: 0; }
+  .avatar-stack img:hover { transform: translateY(-4px); z-index: 20; position: relative; }
+  .more-count { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--bg-surface); margin-left: -12px; background: var(--bg-inset); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; color: var(--text-main); z-index: 10; }
+
+  .step-section { display: none; flex-direction: column; gap: 2rem; animation: fadeIn 0.4s ease-out; }
+  .step-section.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes bubblePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,0.35); } 70% { box-shadow: 0 0 0 10px rgba(5,150,105,0); } }
+  @keyframes slideUpChat { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .stepper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; position: relative; padding: 0 1rem; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; z-index: 2; position: relative; width: 33.33%; transition: opacity 0.2s; }
+  .step.completed { cursor: pointer; }
+  .step.completed:hover { opacity: 0.8; }
+  .step-num { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--bg-app); border: 2px solid var(--border-light); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 800; color: var(--text-muted); transition: all 0.3s; box-shadow: 0 0 0 4px var(--bg-surface); }
+  .step.active .step-num { background: var(--primary-light); color: var(--primary); border-color: var(--primary); transform: scale(1.15); box-shadow: 0 0 0 4px var(--bg-surface), 0 0 15px rgba(5, 150, 105, 0.2); }
+  .step.completed .step-num { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .step-label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.3s; }
+  .step.active .step-label { color: var(--primary); }
+  .step.completed .step-label { color: var(--text-main); }
+  .step-line-bg { position: absolute; top: 1.25rem; left: 16%; width: 68%; height: 2px; background: var(--border-light); z-index: 1; transform: translateY(-50%); }
+  .step-line-progress { position: absolute; top: 1.25rem; left: 16%; height: 2px; background: var(--primary); z-index: 1; transform: translateY(-50%); transition: width 0.4s ease; width: 0%; max-width: 68%; }
+
+  .field-wrap { margin-bottom: 2.5rem; position: relative; }
+  .field-label { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); margin-bottom: 1rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.75rem; display: flex; align-items: flex-start; gap: 0.4rem; line-height: 1.45; }
+  .field-hint .icon { color: var(--primary); margin-top: 0.1rem; }
+
+  .amount-display-wrap { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-light); padding-bottom: 0.5rem; transition: border-color 0.3s; cursor: text; }
+  .amount-display-wrap:focus-within { border-bottom-color: var(--primary); }
+  .currency-symbol { font-size: 2rem; font-weight: 700; color: var(--text-muted); }
+  .amount-display { font-size: 3.25rem; font-weight: 800; color: var(--text-main); border: none; background: transparent; outline: none; width: 100%; letter-spacing: -0.02em; padding: 0; font-variant-numeric: tabular-nums; }
+
+  .segmented-control { display: flex; background: var(--bg-inset); padding: 4px; border-radius: 12px; overflow-x: auto; border: 1px solid var(--border-light); }
+  .segmented-control::-webkit-scrollbar { display: none; }
+  .segment-btn { flex: 1; text-align: center; padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.95rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; border-radius: 8px; white-space: nowrap; }
+  .segment-btn:hover { color: var(--text-main); }
+  .segment-btn.active { background: var(--bg-surface); color: var(--primary); box-shadow: var(--shadow-sm); }
+
+  .metallic-card { background: var(--card-gradient); border-radius: 20px; padding: 1.75rem; color: #fff; box-shadow: var(--shadow-card); position: relative; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); }
+  .metallic-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.12) 30%, transparent 60%); animation: cardShimmer 6s infinite; pointer-events: none; }
+  @keyframes cardShimmer { 0% { transform: translateX(-100%); } 30%, 100% { transform: translateX(100%); } }
+
+  .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; position: relative; z-index: 2; gap: 0.75rem; }
+  .mc-chip-icon { width: 30px; height: 22px; background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%); border-radius: 5px; box-shadow: inset 0 1px 2px rgba(255,255,255,0.6); flex-shrink: 0; }
+  .status-badge { display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.15); padding: 0.35rem 0.75rem; border-radius: 50px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; backdrop-filter: blur(4px); white-space: nowrap; color: #fff; }
+  .status-badge.warning { background: rgba(245, 158, 11, 0.25); }
+
+  .mc-body { margin-bottom: 1rem; position: relative; z-index: 2; }
+  .mc-label { font-size: 0.7rem; font-weight: 700; color: #A7F3D0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+  .mc-value { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 0.35rem; }
+  .mc-value small { font-size: 0.95rem; font-weight: 600; opacity: 0.85; }
+
+  .mc-secondary-row { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 2; padding-top: 0.85rem; margin-bottom: 0.9rem; border-top: 1px dashed rgba(255,255,255,0.2); }
+  .mc-secondary-text { font-size: 0.82rem; color: rgba(255,255,255,0.85); font-weight: 600; }
+  .mc-secondary-text strong { font-weight: 800; color: #fff; }
+  .mc-breakdown-toggle { background: rgba(255,255,255,0.14); border: none; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.4rem 0.7rem; border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; }
+  .mc-breakdown-toggle .icon { transition: transform 0.25s ease; }
+  .mc-breakdown-toggle.open .icon { transform: rotate(180deg); }
+
+  .mc-breakdown-panel { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; position: relative; z-index: 2; }
+  .mc-breakdown-panel.open { max-height: 220px; }
+  .mc-bar-track { width: 100%; height: 8px; border-radius: 8px; display: flex; overflow: hidden; margin: 0.9rem 0 0.75rem 0; background: rgba(255,255,255,0.18); }
+  .mc-bar-principal { background: #fff; transition: width 0.4s ease; }
+  .mc-bar-interest { background: var(--gold); transition: width 0.4s ease; }
+  .mc-bar-legend { display: flex; gap: 1.25rem; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 0.75rem; }
+  .mc-bar-legend span { display: flex; align-items: center; gap: 0.4rem; }
+  .mc-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .mc-footer { display: flex; gap: 2rem; border-top: 1px dashed rgba(255,255,255,0.2); padding-top: 1rem; position: relative; z-index: 2; justify-content: space-between; }
+  .mc-stat span { font-size: 0.65rem; font-weight: 700; color: #A7F3D0; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem; }
+  .mc-stat strong { font-size: 1.05rem; font-weight: 800; }
+  .mc-confidence { font-size: 0.74rem; color: rgba(255,255,255,0.75); margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px dashed rgba(255,255,255,0.2); position: relative; z-index: 2; display: flex; align-items: center; gap: 0.4rem; }
+
+  .list-group { display: flex; flex-direction: column; gap: 0.75rem; }
+  .list-row-input { display: none; }
+  .list-row-label { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border: 1.5px solid var(--border-light); border-radius: 16px; background: var(--bg-surface); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+  .list-row-label:hover { border-color: var(--primary-light); }
+  .list-row-content { display: flex; align-items: center; gap: 1.25rem; }
+  .list-row-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--bg-inset); display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s; flex-shrink: 0; }
+  .list-row-text h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.1rem; }
+  .list-row-text p { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+  .radio-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .radio-circle::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); transform: scale(0); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  .list-row-input:checked + .list-row-label { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 4px 15px rgba(5, 150, 105, 0.08); }
+  .list-row-input:checked + .list-row-label .list-row-icon { background: var(--primary); color: #fff; }
+  .list-row-input:checked + .list-row-label .radio-circle { border-color: var(--primary); }
+  .list-row-input:checked + .list-row-label .radio-circle::after { transform: scale(1); }
+
+  .input-with-icon { position: relative; display: flex; align-items: center; width: 100%; }
+  .input-with-icon .icon { position: absolute; left: 1.25rem; color: #9CA3AF; transition: color 0.3s ease; z-index: 2; pointer-events: none; }
+  .input-with-icon:focus-within .icon { color: var(--primary); }
+  .form-input { width: 100%; padding: 1.25rem 1.25rem 1.25rem 3.5rem; background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 16px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); outline: none; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+  .form-input::placeholder { color: #9CA3AF; font-weight: 500; }
+  .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+  .form-input.error { border-color: var(--error); background: var(--error-tint); animation: shake 0.4s; }
+
+  .premium-dropdown { position: relative; width: 100%; user-select: none; z-index: 50; }
+  .dropdown-trigger { width: 100%; padding: 1.25rem 1.25rem 1.25rem 3.5rem; background: var(--bg-surface); border: 1.5px solid var(--border-light); border-radius: 16px; font-size: 1.05rem; font-weight: 600; color: #9CA3AF; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+  .dropdown-trigger.filled { color: var(--text-main); font-weight: 700; }
+  .dropdown-trigger.active { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); z-index: 51; }
+  .dropdown-trigger.active .chevron { transform: rotate(180deg); color: var(--primary); }
+  .dropdown-trigger.error { border-color: var(--error); background: var(--error-tint); animation: shake 0.4s; }
+  .chevron { transition: transform 0.2s ease; }
+
+  .dropdown-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(16px); border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-dropdown); z-index: 100; max-height: 0; overflow: hidden; opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); visibility: hidden; }
+  .premium-dropdown.open .dropdown-menu { max-height: 250px; opacity: 1; visibility: visible; overflow-y: auto; padding: 0.5rem 0; }
+  .dropdown-menu::-webkit-scrollbar { width: 4px; }
+  .dropdown-menu::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+  .dropdown-item { padding: 1rem 1.25rem; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: background 0.2s; }
+  .dropdown-item:hover { background: var(--primary-light); color: var(--primary); }
+
+  .form-row-responsive { display: flex; gap: 1rem; width: 100%; }
+  @media (max-width: 600px) { .form-row-responsive { flex-direction: column; gap: 1rem; } }
+
+  .conditional-block { display: none; margin-top: 1rem; animation: fadeIn 0.3s ease-out; }
+  .conditional-block.active { display: block; }
+
+  .dropzone-label { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #CBD5E1; border-radius: 16px; padding: 2.5rem 1.5rem; text-align: center; background: var(--bg-inset); cursor: pointer; transition: all 0.2s; position: relative; }
+  .dropzone-label:hover { border-color: var(--primary); background: var(--primary-light); }
+  .dropzone-label input[type="file"] { display: none; }
+
+  .guarantor-ring-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 20px; padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; transition: box-shadow 0.2s; }
+  @media (min-width: 1024px) { .guarantor-ring-card { padding: 2rem; } }
+  .grc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; }
+  .badge-optional { background: var(--bg-inset); color: var(--text-muted); font-size: 0.7rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; border: 1px solid var(--border-light); }
+  .badge-required { background: var(--error-tint); color: var(--error); border-color: rgba(239,68,68,0.2); }
+  .grc-body { display: flex; align-items: center; gap: 1.5rem; }
+  .ring-container { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+  .circular-chart { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .circle-bg { fill: none; stroke: var(--bg-inset); stroke-width: 3.5; }
+  .circle-fill { fill: none; stroke: var(--primary); stroke-width: 3.5; stroke-linecap: round; transition: stroke-dasharray 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s; }
+  .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.95rem; font-weight: 900; color: var(--text-main); }
+  .grc-info h4 { font-size: 1.15rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.25rem; }
+  .grc-info p { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+
+  .peer-card { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: var(--bg-surface); border-radius: 16px; margin-bottom: 0.75rem; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); animation: fadeIn 0.3s ease-out; }
+  .peer-remove { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border-light); background: var(--bg-inset); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .peer-remove:hover { background: var(--error-tint); color: var(--error); border-color: rgba(239,68,68,0.2); }
+  .empty-guarantor-state { background: var(--bg-surface); border: 1.5px dashed var(--border-light); border-radius: 20px; padding: 2.5rem 2rem; text-align: center; color: var(--text-muted); font-size: 0.88rem; font-weight: 600; }
+  .empty-illustration { width: 110px; height: 84px; margin: 0 auto 0.9rem auto; opacity: 0.9; }
+
+  .wizard-footer { margin-top: 1.5rem; display: flex; gap: 0.75rem; }
+  @media (max-width: 1023px) {
+    .wizard-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 1.25rem; margin-top: 0; z-index: 100; border-top: 1px solid var(--border-light); }
+  }
+  .action-btn { background: var(--primary); color: #fff; border: none; border-radius: 14px; padding: 1.15rem 1rem; font-size: 1.05rem; font-weight: 800; width: 100%; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s; display: flex; justify-content: center; align-items: center; gap: 0.5rem; flex: 2; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.2); white-space: nowrap; }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn:disabled { background: var(--border-light); color: #9CA3AF; cursor: not-allowed; box-shadow: none; }
+  .btn-secondary { background: var(--bg-surface); color: var(--text-main); border: 1.5px solid var(--border-light); box-shadow: none; flex: 1; }
+  .btn-secondary:active { background: var(--bg-inset); }
+
+  .lifestyle-img { width: 100%; height: 220px; border-radius: 20px; object-fit: cover; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); animation: fadeIn 0.5s ease; }
+
+  .trust-strip { display: flex; align-items: center; gap: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 18px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+  .trust-photos { display: flex; align-items: center; flex-shrink: 0; }
+  .trust-photos img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-surface); margin-left: -10px; box-shadow: var(--shadow-sm); }
+  .trust-photos img:first-child { margin-left: 0; }
+  .trust-copy { font-size: 0.82rem; color: var(--text-main); font-weight: 700; line-height: 1.4; }
+  .trust-copy span { display: block; font-weight: 500; color: var(--text-muted); font-size: 0.76rem; margin-top: 0.1rem; }
+
+  .info-bullet-card { background: var(--bg-surface); border-radius: 20px; padding: 1.75rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 1.5rem; animation: fadeIn 0.4s ease; }
+  @media (min-width: 1024px) { .info-bullet-card { padding: 2rem; } }
+  .info-bullet-item { display: flex; gap: 1.25rem; align-items: flex-start; }
+  .info-bullet-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .info-bullet-text h4 { font-size: 1rem; font-weight: 800; margin-bottom: 0.25rem; color: var(--text-main); }
+  .info-bullet-text p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; line-height: 1.5; }
+
+  .soft-check-note { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.9rem; }
+  .soft-check-note .icon { color: var(--primary); margin-top: 0.1rem; }
+  .quick-fix-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.9rem; }
+  .quick-fix-chip { font-size: 0.78rem; font-weight: 700; padding: 0.5rem 0.9rem; border-radius: 50px; background: #fff; border: 1.5px solid var(--border-light); color: var(--primary-hover); cursor: pointer; transition: all 0.15s; }
+  .quick-fix-chip:hover { border-color: var(--primary); background: var(--primary-light); }
+
+  .summary-card { background: var(--bg-surface); border-radius: 20px; padding: 2rem; margin-bottom: 1.5rem; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+  .summary-row { display: flex; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px dashed var(--border-light); font-size: 0.9rem; color: var(--text-muted); }
+  .summary-row strong { color: var(--text-main); font-weight: 700; }
+  .summary-total { display: flex; justify-content: space-between; padding-top: 1rem; margin-top: 0.25rem; font-size: 1.05rem; font-weight: 800; color: var(--text-muted); }
+  .summary-total strong { font-size: 1.35rem; font-weight: 900; color: var(--primary); }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; padding: 1.5rem; }
+  .modal-content { background: var(--bg-surface); width: 100%; max-width: 440px; border-radius: 28px; padding: 3rem 2.5rem; text-align: center; transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; align-items: center; box-shadow: var(--shadow-modal); }
+  .check-icon-wrap { width: 72px; height: 72px; aspect-ratio: 1 / 1; flex-shrink: 0; border-radius: 50%; border: 4px solid var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; color: var(--primary); background: var(--primary-light); }
+  .next-steps-note { background: var(--bg-inset); border-radius: 14px; padding: 0.9rem 1rem; font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 0.5rem; align-items: flex-start; text-align: left; margin-bottom: 1.25rem; }
+  .next-steps-note .icon { color: var(--primary); margin-top: 0.1rem; flex-shrink: 0; }
+
+  .modal-summary-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0; border-bottom: 1px dashed var(--border-light); }
+  .modal-summary-row:last-child { border-bottom: none; }
+  .modal-summary-row span { flex: 1; font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+  .modal-summary-row strong { font-size: 0.85rem; color: var(--text-main); font-weight: 800; text-align: right; }
+  .modal-summary-icon { width: 30px; height: 30px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .receipt-total-box { width: 100%; background: var(--card-gradient); color: #fff; border-radius: 16px; padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; text-align: left; }
+  .receipt-total-box > div { display: flex; justify-content: space-between; align-items: center; }
+  .receipt-total-box span { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(255,255,255,0.8); }
+  .receipt-total-box strong { font-size: 1.3rem; font-weight: 900; }
+
+  .success-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(8px); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 1.5rem; overflow-y: auto; }
+  .success-overlay.show { display: flex; animation: overlayIn 0.3s ease; }
+  .success-content { background: var(--bg-surface); border-radius: 28px; padding: 2.5rem 2.25rem; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-modal); animation: popIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275); margin: auto; }
+  .success-check-circle { fill: none; stroke: var(--primary); stroke-width: 3; stroke-dasharray: 166; stroke-dashoffset: 166; animation: drawCircle 0.6s ease forwards 0.1s; }
+  .success-check-mark { fill: none; stroke: var(--primary); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 48; stroke-dashoffset: 48; animation: drawCircle 0.35s ease forwards 0.65s; }
+  .success-content h2 { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin: 1rem 0 0.6rem 0; letter-spacing: -0.02em; }
+  .success-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 1.25rem; }
+
+  /* MINI STATUS PREVIEW inside success screen */
+  .status-preview { display: flex; justify-content: space-between; align-items: flex-start; margin: 1.5rem 0; text-align: left; }
+  .status-preview-step { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+  .status-preview-step:not(:last-child)::after { content: ''; position: absolute; top: 12px; left: 55%; width: 90%; height: 2px; background: var(--border-light); z-index: 0; }
+  .status-preview-step.done:not(:last-child)::after { background: var(--primary); }
+  .status-preview-dot { width: 26px; height: 26px; border-radius: 50%; background: var(--border-light); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; z-index: 1; margin-bottom: 0.5rem; }
+  .status-preview-step.done .status-preview-dot { background: var(--primary); color: #fff; }
+  .status-preview-label { font-size: 0.62rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.3; }
+  .status-preview-step.done .status-preview-label { color: var(--text-main); }
+  .status-preview-note { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  .share-milestone-btn { background: var(--bg-inset); color: var(--text-main); border: 1.5px solid var(--border-light); border-radius: 14px; padding: 0.9rem 1rem; font-size: 0.86rem; font-weight: 700; flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.15s; white-space: nowrap; }
+  .share-milestone-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary-hover); }
+  .share-milestone-btn:disabled { opacity: 0.6; cursor: default; }
+
+  /* ASSISTANT BUBBLE — client-side FAQ shell only. Wiring this to a real
+     AI model requires a backend proxy endpoint; never call an LLM API
+     directly from the browser (that exposes your API key). */
+  .assist-bubble { position: fixed; right: 1.25rem; bottom: 1.75rem; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 24px -6px rgba(5,150,105,0.5); z-index: 500; animation: bubblePulse 2.5s infinite; }
+  @media (max-width: 1023px) { .assist-bubble { bottom: 6.5rem; } }
+  .assist-bubble:active { transform: scale(0.94); }
+
+  .assist-panel { position: fixed; right: 1.25rem; bottom: 5.75rem; width: min(92vw, 340px); max-height: 460px; background: var(--bg-surface); border-radius: 20px; box-shadow: var(--shadow-modal); border: 1px solid var(--border-light); display: none; flex-direction: column; overflow: hidden; z-index: 501; animation: slideUpChat 0.25s ease-out; }
+  @media (max-width: 1023px) { .assist-panel { bottom: 10.25rem; } }
+  .assist-panel.open { display: flex; }
+  .assist-header { background: var(--card-gradient); color: #fff; padding: 1rem 1.1rem; display: flex; align-items: center; justify-content: space-between; }
+  .assist-header-title { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 0.92rem; }
+  .assist-close { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .assist-body { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.65rem; background: var(--bg-app); }
+  .assist-msg { max-width: 85%; padding: 0.7rem 0.9rem; border-radius: 14px; font-size: 0.83rem; line-height: 1.45; }
+  .assist-msg.bot { background: var(--bg-surface); border: 1px solid var(--border-light); align-self: flex-start; border-bottom-left-radius: 4px; color: var(--text-main); }
+  .assist-msg.user { background: var(--primary); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .assist-suggestions { display: flex; flex-direction: column; gap: 0.5rem; padding: 0 1rem 1rem 1rem; background: var(--bg-app); }
+  .assist-suggestion-btn { text-align: left; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.65rem 0.85rem; font-size: 0.8rem; font-weight: 600; color: var(--primary-hover); cursor: pointer; }
+  .assist-suggestion-btn:hover { background: var(--primary-light); }
+  .assist-input-row { display: flex; gap: 0.5rem; padding: 0.85rem; border-top: 1px solid var(--border-light); background: var(--bg-surface); }
+  .assist-input-row input { flex: 1; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.7rem 0.9rem; font-size: 0.85rem; outline: none; }
+  .assist-input-row input:focus { border-color: var(--primary); }
+  .assist-input-row button { background: var(--primary); color: #fff; border: none; border-radius: 12px; width: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></symbol>
+  <symbol id="i-health" viewBox="0 0 24 24"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8.5" cy="12" r="2"/><line x1="14" y1="9" x2="19" y2="9"/><line x1="14" y1="12" x2="19" y2="12"/><line x1="14" y1="15" x2="17" y2="15"/></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><line x1="6" y1="10" x2="6" y2="10.01"/><line x1="18" y1="14" x2="18" y2="14.01"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.59 13.41L11 3.83A2 2 0 0 0 9.5 3.17L4 3a1 1 0 0 0-1 1l.17 5.5a2 2 0 0 0 .66 1.5l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><line x1="7.5" y1="7.5" x2="7.51" y2="7.5"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+  <symbol id="i-signal" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24"><line x1="3" y1="21" x2="21" y2="21"/><path d="M4 17V7"/><path d="M8 17V7"/><path d="M12 17V7"/><path d="M16 17V7"/><path d="M20 17V7"/><path d="M2 7l10-5 10 5"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-spinner" viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></symbol>
+</defs>
+</svg>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<main class="app-container">
+  <div class="app-layout-grid">
+
+    <div class="main-form-flow">
+
+      <header class="app-header">
+        <button class="back-btn" aria-label="Back to Dashboard" onclick="window.location.href='member_dashboard.html'">
+          <svg class="icon"><use href="#i-arrow-left"/></svg>
+        </button>
+        <div class="brand-center">
+          <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="brand-logo" onerror="this.src='https://ui-avatars.com/api/?name=GC&background=059669&color=fff'">
+        </div>
+        <div class="placeholder-div">
+          <span class="save-indicator" id="saveIndicator"><svg class="icon"><use href="#i-check-circle"/></svg><span id="saveIndicatorText">Saved</span></span>
+        </div>
+      </header>
+
+      <div class="mobile-warmth-banner">
+        <img src="{% static 'assets/images/gallery-backdrop.png' %}" alt="GCPCUL member" onerror="this.style.display='none'">
+        <div class="scrim"></div>
+        <div class="caption"><svg class="icon icon-sm"><use href="#i-star"/></svg> Trusted by thousands of GCPCUL members</div>
+      </div>
+
+      <div class="hero-container">
+        <div class="step-indicator" id="heroBadge">STEP 1 OF 3</div>
+        <div class="avatar-stack-container" id="heroAvatarStack">
+          <div class="avatar-stack">
+            <img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Peer 1">
+            <img src="{% static 'assets/images/peer_one.jpg' %}" alt="Peer 2">
+            <img src="{% static 'assets/images/dr-paul-owusu.jpg' %}" alt="Peer 3">
+            <div class="more-count">+12</div>
+          </div>
+        </div>
+        <h1 class="hero-text" id="heroText">Let's get your loan sorted.</h1>
+        <p class="hero-subtext" id="heroSubtext">Pick an amount and a repayment period that feel comfortable — you can adjust these anytime before you submit.</p>
+      </div>
+
+      <div class="stepper">
+        <div class="step-line-bg"></div>
+        <div class="step-line-progress" id="stepProgress"></div>
+        <div class="step active" id="st1" onclick="navigateStep(1)"><div class="step-num" data-n="1">1</div><span class="step-label">Terms</span></div>
+        <div class="step" id="st2" onclick="navigateStep(2)"><div class="step-num" data-n="2">2</div><span class="step-label">Peers</span></div>
+        <div class="step" id="st3" onclick="navigateStep(3)"><div class="step-num" data-n="3">3</div><span class="step-label">Details</span></div>
+      </div>
+
+      <form id="loanAppForm">
+
+        <div class="step-section active" id="step1">
+
+          <div class="field-wrap">
+            <label class="field-label">Loan amount</label>
+            <div class="amount-display-wrap" tabindex="0" onclick="document.getElementById('visualAmount').focus()">
+              <span class="currency-symbol">GH¢</span>
+              <input type="text" inputmode="numeric" class="amount-display" id="visualAmount" value="5,000" oninput="syncFromVisual()">
+            </div>
+            <div class="segmented-control">
+              <div class="segment-btn amount-preset" onclick="setPresetAmount(1000, this)">1,000</div>
+              <div class="segment-btn amount-preset" onclick="setPresetAmount(2000, this)">2,000</div>
+              <div class="segment-btn amount-preset active" onclick="setPresetAmount(5000, this)">5,000</div>
+              <div class="segment-btn amount-preset" onclick="setPresetAmount(10000, this)">10,000</div>
+            </div>
+            <input type="hidden" id="hiddenAmount" value="5000">
+          </div>
+
+          <div class="field-wrap" style="margin-bottom: 1.5rem;">
+            <label class="field-label">Duration</label>
+            <div class="segmented-control">
+              <div class="segment-btn duration-chip" onclick="setDuration(6, this)">6 mo</div>
+              <div class="segment-btn duration-chip active" onclick="setDuration(12, this)">12 mo</div>
+              <div class="segment-btn duration-chip" onclick="setDuration(24, this)">24 mo</div>
+              <div class="segment-btn duration-chip" onclick="setDuration(48, this)">48 mo</div>
+            </div>
+            <input type="hidden" id="hiddenDuration" value="12">
+          </div>
+
+          <div class="metallic-card" id="summaryCard">
+            <div class="mc-header">
+              <div class="mc-chip-icon"></div>
+              <div class="status-badge" id="oddsMeter"><svg class="icon icon-sm"><use href="#i-check-circle"/></svg> High approval</div>
+            </div>
+            <div class="mc-body">
+              <div class="mc-label">You'll receive</div>
+              <div class="mc-value"><span id="mcAmount">5,000</span> <small>GH¢</small></div>
+            </div>
+            <div class="mc-secondary-row">
+              <div class="mc-secondary-text">Est. <strong id="mcMonthly">479</strong> GH¢/mo for <span id="mcTerm">12 months</span></div>
+              <button type="button" class="mc-breakdown-toggle" id="breakdownToggle" onclick="toggleBreakdown()">
+                Details <svg class="icon icon-sm"><use href="#i-chevron-down"/></svg>
+              </button>
+            </div>
+            <div class="mc-breakdown-panel" id="breakdownPanel">
+              <div class="mc-bar-track">
+                <div class="mc-bar-principal" id="mcBarPrincipal" style="width: 87%;"></div>
+                <div class="mc-bar-interest" id="mcBarInterest" style="width: 13%;"></div>
+              </div>
+              <div class="mc-bar-legend">
+                <span><div class="mc-dot" style="background:#fff;"></div> Principal</span>
+                <span><div class="mc-dot" style="background:var(--gold);"></div> Interest</span>
+              </div>
+              <div class="mc-footer" style="border-top:none; padding-top:0;">
+                <div class="mc-stat"><span>Interest</span><strong id="mcInterest">GH¢ 750</strong></div>
+                <div class="mc-stat"><span>Total repayment</span><strong id="mcTotal">GH¢ 5,750</strong></div>
+              </div>
+            </div>
+            <div class="mc-confidence"><svg class="icon icon-sm"><use href="#i-zap"/></svg> Most members like you hear back within 24 hours.</div>
+          </div>
+
+          <div class="field-wrap" style="margin-bottom: 0;">
+            <label class="field-label">Loan category</label>
+            <div class="list-group">
+              <input type="radio" name="loanType" id="typePersonal" class="list-row-input" checked value="Personal">
+              <label for="typePersonal" class="list-row-label">
+                <div class="list-row-content">
+                  <div class="list-row-icon"><svg class="icon"><use href="#i-user"/></svg></div>
+                  <div class="list-row-text"><h4>Personal loan</h4><p>Standard member facility.</p></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+              <input type="radio" name="loanType" id="typeEmergency" class="list-row-input" value="Emergency">
+              <label for="typeEmergency" class="list-row-label">
+                <div class="list-row-content">
+                  <div class="list-row-icon"><svg class="icon"><use href="#i-health"/></svg></div>
+                  <div class="list-row-text"><h4>Emergency loan</h4><p>Fast-tracked for urgent needs.</p></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="step-section" id="step2">
+
+          <div class="guarantor-ring-card" id="guarantorProgressWrap">
+            <div class="grc-header">
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-label); text-transform: uppercase; letter-spacing: 0.05em;">Guarantor coverage</span>
+              <div class="badge-optional" id="coverageBadge">Optional</div>
+            </div>
+            <div class="grc-body">
+              <div class="ring-container">
+                <svg viewBox="0 0 36 36" class="circular-chart">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  <path class="circle-fill" id="gRingFill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
+                <div class="ring-text" id="gRingText">0%</div>
+              </div>
+              <div class="grc-info">
+                <h4 id="gCoverageText">GH¢ 0 / GH¢ 5,000</h4>
+                <p id="gCoverageSub">Pledges will calculate here.</p>
+              </div>
+            </div>
+            <div class="soft-check-note">
+              <svg class="icon icon-sm"><use href="#i-info"/></svg>
+              <span>Pledges are fully refunded once your loan is repaid — there's no risk to a guarantor's savings if you stay on track.</span>
+            </div>
+          </div>
+
+          <div class="field-wrap" style="margin-bottom: 1.5rem;">
+            <label class="field-label">Invite a peer</label>
+            <div class="form-row-responsive">
+              <div class="input-with-icon" style="flex: 1.3;">
+                <svg class="icon"><use href="#i-id"/></svg>
+                <input type="text" id="guarantorId" class="form-input" placeholder="Member ID (e.g. GCP-110)" style="text-transform: uppercase;">
+              </div>
+              <div class="input-with-icon" style="flex: 1;">
+                <svg class="icon"><use href="#i-cash"/></svg>
+                <input type="text" inputmode="numeric" id="guarantorPledge" class="form-input" placeholder="Amount" oninput="formatCurrency(this)">
+              </div>
+            </div>
+            <button type="button" class="action-btn btn-secondary" id="addGuarantorBtn" style="margin-top: 1rem; width: 100%;">
+              <svg class="icon"><use href="#i-user-plus"/></svg> Send invite
+            </button>
+          </div>
+
+          <div id="guarantorList" class="list-group">
+            <div class="empty-guarantor-state" id="emptyGuarantorState">
+              <svg class="empty-illustration" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="80" cy="106" rx="54" ry="8" fill="var(--bg-inset)"/>
+                <circle cx="56" cy="52" r="22" fill="var(--primary-light)"/>
+                <circle cx="104" cy="52" r="22" fill="var(--warning-tint)"/>
+                <path d="M46 62 Q56 78 66 62" stroke="var(--primary)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <path d="M94 62 Q104 78 114 62" stroke="var(--gold)" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="48" cy="46" r="3" fill="var(--primary-hover)"/>
+                <circle cx="64" cy="46" r="3" fill="var(--primary-hover)"/>
+                <circle cx="96" cy="46" r="3" fill="var(--gold)"/>
+                <circle cx="112" cy="46" r="3" fill="var(--gold)"/>
+              </svg>
+              No guarantors added yet — invite someone you trust above
+            </div>
+          </div>
+        </div>
+
+        <div class="step-section" id="step3">
+
+          <div class="field-wrap" style="z-index: 60;">
+            <label class="field-label">Loan purpose</label>
+            <div class="input-with-icon">
+              <svg class="icon"><use href="#i-tag"/></svg>
+              <div class="premium-dropdown" data-target="loanPurpose">
+                <div class="dropdown-trigger" id="lpTrigger">
+                  <span class="dropdown-label" id="lpText">Select purpose...</span>
+                  <svg class="icon chevron"><use href="#i-chevron-down"/></svg>
+                </div>
+                <div class="dropdown-menu">
+                  <div class="dropdown-item" data-value="Household">Household &amp; family</div>
+                  <div class="dropdown-item" data-value="Housing">Housing &amp; rent</div>
+                  <div class="dropdown-item" data-value="School">School fees</div>
+                  <div class="dropdown-item" data-value="Business">Business</div>
+                  <div class="dropdown-item" data-value="Medical">Medical bills</div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="loanPurpose" class="req-step-3">
+          </div>
+
+          <div id="documentDropzone" class="conditional-block">
+            <label class="dropzone-label" id="dropzoneLabel">
+              <input type="file" id="fileUploadInput" accept=".pdf, .jpg, .jpeg, .png">
+              <svg class="icon icon-lg" style="color: var(--primary); margin-bottom: 0.5rem;"><use href="#i-upload"/></svg>
+              <p style="font-weight:700; font-size:0.95rem; color:var(--text-main);">Upload verification document</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">Invoices or estimates help us process faster</p>
+            </label>
+          </div>
+
+          <div class="field-wrap">
+            <label class="field-label">Monthly salary (GH¢)</label>
+            <div class="input-with-icon">
+              <svg class="icon"><use href="#i-wallet"/></svg>
+              <input type="text" inputmode="numeric" id="monthlySalary" class="form-input req-step-3" placeholder="e.g. 3,500" oninput="formatCurrency(this); triggerDTI();">
+            </div>
+
+            <div id="dtiContainer" style="display:none; margin-top:1rem; padding:1.25rem; background:var(--bg-surface); border-radius:16px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; font-weight:700; font-size:0.8rem;">
+                <span style="color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Budget fit</span>
+                <span id="dtiPercentage" style="color:var(--primary);">0%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="dtiFill" style="width:0%; background: var(--primary);"></div>
+              </div>
+              <p id="dtiStatus" style="font-size:0.82rem; font-weight:600; color:var(--text-muted); margin-top:0.85rem;"></p>
+              <div class="quick-fix-row" id="quickFixRow" style="display:none;"></div>
+              <div class="soft-check-note">
+                <svg class="icon icon-sm"><use href="#i-info"/></svg>
+                <span>This is just an internal estimate to help find your best offer — it never affects your credit score.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-wrap" style="z-index: 50;">
+            <label class="field-label">Preferred deduction date</label>
+            <div class="input-with-icon">
+              <svg class="icon"><use href="#i-calendar"/></svg>
+              <div class="premium-dropdown" data-target="deductionDate">
+                <div class="dropdown-trigger" id="ddDateTrigger">
+                  <span class="dropdown-label" id="ddDateText">Align with your payroll</span>
+                  <svg class="icon chevron"><use href="#i-chevron-down"/></svg>
+                </div>
+                <div class="dropdown-menu">
+                  <div class="dropdown-item" data-value="15">15th of the month</div>
+                  <div class="dropdown-item" data-value="25">25th of the month</div>
+                  <div class="dropdown-item" data-value="28">28th of the month</div>
+                  <div class="dropdown-item" data-value="end">End of the month</div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="deductionDate" class="req-step-3">
+          </div>
+
+          <div class="field-wrap" style="z-index: 40;">
+            <label class="field-label">Payout destination</label>
+            <div class="list-group" style="margin-bottom: 1rem;">
+              <input type="radio" name="payMode" id="payMomo" class="list-row-input" checked onchange="togglePayMode('momo')">
+              <label for="payMomo" class="list-row-label">
+                <div class="list-row-content">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/a/af/MTN_Logo.svg" style="width:40px; border-radius:8px;">
+                  <div class="list-row-text"><h4>Mobile money</h4></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+              <input type="radio" name="payMode" id="payBank" class="list-row-input" onchange="togglePayMode('bank')">
+              <label for="payBank" class="list-row-label">
+                <div class="list-row-content">
+                  <div class="list-row-icon" style="width:40px; height:40px; border-radius:8px; border:1px solid var(--border-light); background:#fff;"><svg class="icon"><use href="#i-bank"/></svg></div>
+                  <div class="list-row-text"><h4>Bank transfer</h4></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+            </div>
+
+            <div id="momoDetails" class="conditional-block active">
+              <div class="form-row-responsive">
+                <div class="input-with-icon" style="flex:1; z-index: 40;">
+                  <svg class="icon"><use href="#i-signal"/></svg>
+                  <div class="premium-dropdown" data-target="momoNetwork">
+                    <div class="dropdown-trigger filled" id="nwTrigger">
+                      <span class="dropdown-label" id="nwText">MTN MoMo</span>
+                      <svg class="icon chevron"><use href="#i-chevron-down"/></svg>
+                    </div>
+                    <div class="dropdown-menu">
+                      <div class="dropdown-item" data-value="MTN MoMo">MTN MoMo</div>
+                      <div class="dropdown-item" data-value="Telecel Cash">Telecel Cash</div>
+                      <div class="dropdown-item" data-value="ATMoney">AT Money</div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" id="momoNetwork" value="MTN MoMo">
+                <div class="input-with-icon" style="flex: 1.5;">
+                  <svg class="icon"><use href="#i-phone"/></svg>
+                  <input type="text" id="momoNumber" class="form-input req-momo" value="0558694231">
+                </div>
+              </div>
+            </div>
+
+            <div id="bankDetails" class="conditional-block">
+              <div class="input-with-icon" style="margin-bottom: 1rem;">
+                <svg class="icon"><use href="#i-bank"/></svg>
+                <input type="text" id="bankName" class="form-input req-bank" placeholder="Bank name">
+              </div>
+              <div class="form-row-responsive">
+                <div class="input-with-icon" style="flex: 1;">
+                  <svg class="icon"><use href="#i-store"/></svg>
+                  <input type="text" id="bankBranch" class="form-input req-bank" placeholder="Branch">
+                </div>
+                <div class="input-with-icon" style="flex: 1.5;">
+                  <svg class="icon"><use href="#i-hash"/></svg>
+                  <input type="text" id="bankAcc" inputmode="numeric" class="form-input req-bank" placeholder="Account number">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-wrap" style="margin-bottom: 0;">
+            <label class="field-label">Health declaration</label>
+            <div class="list-group">
+              <input type="radio" name="healthStatus" id="healthGood" class="list-row-input" checked onchange="toggleHealth(true)">
+              <label for="healthGood" class="list-row-label">
+                <div class="list-row-content">
+                  <div class="list-row-icon" style="border:1px solid var(--border-light); background:#fff;"><svg class="icon"><use href="#i-health"/></svg></div>
+                  <div class="list-row-text"><h4>I'm in good health</h4><p>No conditions to declare.</p></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+              <input type="radio" name="healthStatus" id="healthConditions" class="list-row-input" onchange="toggleHealth(false)">
+              <label for="healthConditions" class="list-row-label">
+                <div class="list-row-content">
+                  <div class="list-row-icon" style="border:1px solid var(--border-light); background:#fff;"><svg class="icon"><use href="#i-edit"/></svg></div>
+                  <div class="list-row-text"><h4>I have a condition</h4><p>Kept fully confidential.</p></div>
+                </div>
+                <div class="radio-circle"></div>
+              </label>
+            </div>
+            <div id="healthDetails" class="conditional-block">
+              <div class="input-with-icon">
+                <svg class="icon" style="top: 1.25rem; align-self: flex-start;"><use href="#i-edit"/></svg>
+                <textarea id="healthInput" class="form-input" style="padding-top: 1.25rem; min-height: 90px;" placeholder="Specify conditions..."></textarea>
+              </div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.6rem; display:flex; gap:0.4rem;"><svg class="icon icon-sm" style="color:var(--primary); flex-shrink:0;"><use href="#i-lock"/></svg> This information is seen only by our review team and never shared.</p>
+            </div>
+          </div>
+
+          <div class="info-bullet-card" style="margin-top: 2rem;">
+            <div class="info-bullet-item">
+              <div class="info-bullet-icon"><svg class="icon"><use href="#i-lock"/></svg></div>
+              <div class="info-bullet-text"><h4>Bank-grade security</h4><p>Your routing data is secured using 256-bit TLS, compliant with Bank of Ghana standards.</p></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wizard-footer">
+          <button type="button" class="action-btn btn-secondary" id="btnBack" style="display: none;">Back</button>
+          <button type="button" class="action-btn" id="btnNext">Continue</button>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="desktop-sidebar">
+
+      <div id="desktopSidebarStep1">
+        <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" class="lifestyle-img" alt="Financial empowerment">
+
+        <div class="trust-strip">
+          <div class="trust-photos">
+            <img src="https://images.unsplash.com/photo-1531123897727-8f129e1bf98c?w=100&h=100&fit=crop" alt="">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="">
+          </div>
+          <div class="trust-copy">12,400+ members funded this year<span>Average decision time: under 24 hours</span></div>
+        </div>
+      </div>
+
+      <div id="desktopSidebarStep2" style="display:none;">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" class="lifestyle-img" alt="Community support">
+        <div class="info-bullet-card">
+          <div class="info-bullet-item">
+            <div class="info-bullet-icon"><svg class="icon"><use href="#i-handshake"/></svg></div>
+            <div class="info-bullet-text"><h4>Peer pledges</h4><p>When a peer vouches for you, their pledge is held until your loan is repaid — then fully released back to them.</p></div>
+          </div>
+          <div class="info-bullet-item">
+            <div class="info-bullet-icon"><svg class="icon"><use href="#i-bell"/></svg></div>
+            <div class="info-bullet-text"><h4>Automated invites</h4><p>Peers get an instant notification to confirm their pledge in one tap.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="desktopSidebarStep3" style="display:none;">
+        <div class="info-bullet-card">
+          <div class="info-bullet-item">
+            <div class="info-bullet-icon"><svg class="icon"><use href="#i-lock"/></svg></div>
+            <div class="info-bullet-text"><h4>Bank-grade security</h4><p>Routing data is secured using 256-bit TLS, compliant with Bank of Ghana standards.</p></div>
+          </div>
+          <div class="info-bullet-item">
+            <div class="info-bullet-icon"><svg class="icon"><use href="#i-zap"/></svg></div>
+            <div class="info-bullet-text"><h4>Fast disbursement</h4><p>Funds are routed to your wallet or bank account immediately after approval.</p></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<div id="reviewModal" class="modal-overlay">
+  <div class="modal-content" id="modalContent" style="max-width: 480px; max-height: 90vh; overflow-y: auto;">
+    <div class="check-icon-wrap"><svg class="icon icon-lg" width="28" height="28" viewBox="0 0 24 24"><use href="#i-check-circle"/></svg></div>
+    <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);">Review before you submit</h2>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; font-weight: 500;">Take a last look — everything here is editable by going back a step.</p>
+
+    <!-- FULL ITEMIZED SUMMARY — industry standard before an irreversible action -->
+    <div style="width:100%; background:var(--bg-app); border:1px solid var(--border-light); border-radius:18px; padding:0.5rem 1.25rem; text-align:left; margin-bottom:1.25rem;">
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-cash"/></svg></div><span>Amount requested</span><strong id="modAmount">GH¢ 5,000</strong></div>
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-calendar"/></svg></div><span>Repayment term</span><strong id="modDuration">12 months</strong></div>
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-user"/></svg></div><span>Loan type</span><strong id="modType">Personal</strong></div>
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-tag"/></svg></div><span>Purpose</span><strong id="modPurpose">Not selected</strong></div>
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-calendar"/></svg></div><span>Deduction date</span><strong id="modDeduction">—</strong></div>
+      <div class="modal-summary-row"><div class="modal-summary-icon"><svg class="icon icon-sm"><use href="#i-handshake"/></svg></div><span>Guarantor coverage</span><strong id="modGuarantor">Not required</strong></div>
+      <div class="modal-summary-row">
+        <div class="modal-summary-icon" id="modPayoutIconWrap"><svg class="icon icon-sm"><use href="#i-wallet"/></svg></div>
+        <span>Payout to</span>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <img id="modPayoutLogo" src="" alt="" style="width:22px; height:22px; border-radius:5px; object-fit:contain; background:#fff; display:none;">
+          <strong id="modPayout">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="receipt-total-box">
+      <div><span>Est. monthly payment</span><strong id="modMonthly">GH¢ 479</strong></div>
+      <div style="border-top:1px dashed rgba(255,255,255,0.25); margin-top:0.75rem; padding-top:0.75rem;"><span>Total repayment</span><strong id="modTotal" style="font-size:1rem;">GH¢ 5,750</strong></div>
+    </div>
+
+    <div class="next-steps-note">
+      <svg class="icon"><use href="#i-info"/></svg>
+      <span>Once submitted, you'll get a decision within 24 hours. No further action is needed until then.</span>
+    </div>
+
+    <div style="background:var(--bg-app); border:1px solid var(--border-light); border-radius:16px; padding:1.25rem; text-align:left; margin-bottom: 1.5rem; display: flex; gap: 0.75rem; align-items: flex-start; width:100%;">
+      <input type="checkbox" id="legalConsentToggle" style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 0.15rem; cursor: pointer; accent-color: var(--primary);">
+      <span style="font-size:0.8rem; color:var(--text-muted); line-height:1.5; font-weight: 600;">
+        I confirm my details are accurate and authorize GCPCUL to process this per the <strong style="color:var(--text-main); cursor:pointer; text-decoration:underline;">Member Loan Policy</strong>.
+      </span>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; width:100%;">
+      <button type="button" class="action-btn btn-secondary" id="editApplicationBtn">Edit</button>
+      <button class="action-btn" id="confirmSubmitBtn" disabled style="flex:2;">Submit application</button>
+    </div>
+  </div>
+</div>
+
+<div id="successOverlay" class="success-overlay">
+  <div class="success-content">
+    <svg viewBox="0 0 52 52" width="72" height="72">
+      <circle class="success-check-circle" cx="26" cy="26" r="24"/>
+      <path class="success-check-mark" d="M14 27l7 7 16-16"/>
+    </svg>
+    <h2>You're all set</h2>
+    <p>Your application has been securely routed to the credit committee.</p>
+
+    <!-- Preview of the live tracker they'll see on their dashboard.
+         Real-time status beyond "Submitted" requires your backend to push
+         actual state — this is a preview, not fabricated live data. -->
+    <div class="status-preview">
+      <div class="status-preview-step done"><div class="status-preview-dot"><svg class="icon icon-sm"><use href="#i-check-circle"/></svg></div><div class="status-preview-label">Submitted</div></div>
+      <div class="status-preview-step"><div class="status-preview-dot">2</div><div class="status-preview-label">Under review</div></div>
+      <div class="status-preview-step"><div class="status-preview-dot">3</div><div class="status-preview-label">Approved</div></div>
+      <div class="status-preview-step"><div class="status-preview-dot">4</div><div class="status-preview-label">Disbursed</div></div>
+    </div>
+    <p class="status-preview-note">Track live status anytime from your dashboard. We'll also notify you the moment it changes.</p>
+
+    <div style="display:flex; gap:0.6rem; margin-bottom:0.75rem;">
+      <button class="share-milestone-btn" id="shareMilestoneBtn" style="margin-bottom:0;"><svg class="icon icon-sm"><use href="#i-share"/></svg> Share</button>
+      <button class="share-milestone-btn" id="saveMilestoneBtn" style="margin-bottom:0;"><svg class="icon icon-sm"><use href="#i-download"/></svg> Save image</button>
+    </div>
+    <button class="action-btn" id="successContinueBtn">Go to dashboard</button>
+  </div>
+</div>
+
+<!-- ASSISTANT BUBBLE (client-side FAQ shell) -->
+<button class="assist-bubble" id="assistBubble" aria-label="Open assistant"><svg class="icon icon-lg"><use href="#i-chat"/></svg></button>
+<div class="assist-panel" id="assistPanel">
+  <div class="assist-header">
+    <div class="assist-header-title"><svg class="icon"><use href="#i-chat"/></svg> GCPCUL Assistant</div>
+    <button class="assist-close" id="assistClose"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="assist-body" id="assistBody">
+    <div class="assist-msg bot">Hi! I can answer quick questions about your application. What would you like to know?</div>
+  </div>
+  <div class="assist-suggestions" id="assistSuggestions">
+    <button type="button" class="assist-suggestion-btn" data-q="salary">Why do you need my salary?</button>
+    <button type="button" class="assist-suggestion-btn" data-q="miss">What if I miss a payment?</button>
+    <button type="button" class="assist-suggestion-btn" data-q="safe">Is my data safe?</button>
+  </div>
+  <div class="assist-input-row">
+    <input type="text" id="assistInput" placeholder="Type a question...">
+    <button type="button" id="assistSend"><svg class="icon icon-sm"><use href="#i-send"/></svg></button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function showToast(type, title, message) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    let iconHref = '#i-check-circle', iconClass = 'success';
+    if (type === 'error') { iconClass = 'error'; iconHref = '#i-x'; }
+    else if (type === 'warning') { iconClass = 'warning'; iconHref = '#i-alert'; }
+    toast.innerHTML = `
+      <div class="toast-icon ${iconClass}"><svg class="icon icon-sm"><use href="${iconHref}"/></svg></div>
+      <div class="toast-content"><h4>${title}</h4><p>${message}</p></div>
+    `;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
+  }
+
+  /* ==========================================================
+     AUTOSAVE — server-first. Only the current step index (not
+     sensitive) falls back to sessionStorage for resilience if a
+     save request fails on a flaky mobile connection. Every other
+     field (salary, health, bank/MoMo details) is sent straight to
+     the backend and is NEVER written to browser storage.
+  ========================================================== */
+  function getCookie(name) {
+    const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? decodeURIComponent(match.pop()) : '';
+  }
+
+  const saveIndicator = document.getElementById('saveIndicator');
+  const saveIndicatorText = document.getElementById('saveIndicatorText');
+  let autosaveTimer = null;
+
+  function setSaveState(state) {
+    saveIndicator.classList.add('show');
+    saveIndicator.classList.toggle('saved', state === 'saved');
+    if (state === 'saving') {
+      saveIndicatorText.innerText = 'Saving...';
+      saveIndicator.querySelector('.icon').classList.add('spin');
+      saveIndicator.querySelector('use').setAttribute('href', '#i-spinner');
+    } else if (state === 'saved') {
+      saveIndicatorText.innerText = 'Saved';
+      saveIndicator.querySelector('.icon').classList.remove('spin');
+      saveIndicator.querySelector('use').setAttribute('href', '#i-check-circle');
+      setTimeout(() => saveIndicator.classList.remove('show'), 2000);
+    } else if (state === 'error') {
+      saveIndicatorText.innerText = 'Not saved — retrying';
+      saveIndicator.querySelector('.icon').classList.remove('spin');
+      saveIndicator.querySelector('use').setAttribute('href', '#i-alert');
+    }
+  }
+
+  function collectDraftPayload() {
+    // Everything here is sent to the server only — nothing sensitive
+    // touches localStorage/sessionStorage.
+    return {
+      amount: hiddenAmount ? hiddenAmount.value : null,
+      duration_months: document.getElementById('hiddenDuration').value,
+      loan_type: document.querySelector('input[name="loanType"]:checked')?.value,
+      loan_purpose: document.getElementById('loanPurpose').value,
+      deduction_date: document.getElementById('deductionDate').value,
+      monthly_salary: document.getElementById('monthlySalary').value.replace(/,/g, ''),
+      pay_mode: document.querySelector('input[name="payMode"]:checked')?.id,
+      momo_network: document.getElementById('momoNetwork').value,
+      momo_number: document.getElementById('momoNumber').value,
+      bank_name: document.getElementById('bankName')?.value,
+      bank_branch: document.getElementById('bankBranch')?.value,
+      bank_account: document.getElementById('bankAcc')?.value,
+      health_status: document.querySelector('input[name="healthStatus"]:checked')?.id,
+      health_notes: document.getElementById('healthInput').value,
+      current_step: currentStep
+    };
+  }
+
+  async function autosaveDraft() {
+    setSaveState('saving');
+    try {
+      const res = await fetch('/api/loan-applications/draft/autosave/', {
+        method: 'PATCH',
+        credentials: 'same-origin', // send the auth session cookie
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF protection
+        },
+        body: JSON.stringify(collectDraftPayload())
+      });
+      if (!res.ok) throw new Error('Autosave failed');
+      setSaveState('saved');
+      // Only the step index — not sensitive — cached as a resilience fallback
+      try { sessionStorage.setItem('gcpcul_draft_step', String(currentStep)); } catch (e) {}
+    } catch (err) {
+      setSaveState('error');
+      // Retry once after a short delay; if it fails again we just leave the
+      // "not saved" indicator up rather than silently pretending it worked.
+      setTimeout(() => autosaveDraft(), 4000);
+    }
+  }
+
+  function queueAutosave() {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autosaveDraft, 900);
+  }
+
+  // Wire autosave to every meaningful field change (debounced above)
+  document.addEventListener('input', (e) => {
+    if (e.target.closest('#loanAppForm')) queueAutosave();
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.closest('#loanAppForm')) queueAutosave();
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => showToast('success', 'Draft loaded', 'Your saved loan preferences have been restored.'), 500);
+  });
+
+  document.getElementById('loanAppForm').addEventListener('submit', e => e.preventDefault());
+
+  function formatCurrency(input) {
+    let val = input.value.replace(/,/g, '');
+    if (!val) return;
+    if (!isNaN(val)) input.value = parseFloat(val).toLocaleString('en-US');
+  }
+
+  document.querySelectorAll('.premium-dropdown').forEach(dropdown => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const label = dropdown.querySelector('.dropdown-label');
+    const targetInput = document.getElementById(dropdown.dataset.target);
+    const items = dropdown.querySelectorAll('.dropdown-item');
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.premium-dropdown').forEach(d => {
+        if (d !== dropdown) { d.classList.remove('open'); d.querySelector('.dropdown-trigger').classList.remove('active'); }
+      });
+      dropdown.classList.toggle('open');
+      trigger.classList.toggle('active');
+    });
+
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = item.dataset.value;
+        label.textContent = item.textContent;
+        trigger.classList.add('filled');
+        targetInput.value = val;
+        dropdown.classList.remove('open');
+        trigger.classList.remove('active');
+        trigger.classList.remove('error');
+        targetInput.dispatchEvent(new Event('change'));
+      });
+    });
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.premium-dropdown').forEach(d => {
+      d.classList.remove('open');
+      d.querySelector('.dropdown-trigger').classList.remove('active');
+    });
+  });
+
+  const visualAmount = document.getElementById('visualAmount');
+  const hiddenAmount = document.getElementById('hiddenAmount');
+
+  function syncFromVisual() {
+    let val = visualAmount.value.replace(/,/g, '');
+    if (val && !isNaN(val)) {
+      if (val > 25000) val = 25000;
+      hiddenAmount.value = val;
+      formatCurrency(visualAmount);
+      document.querySelectorAll('.amount-preset').forEach(c => c.classList.remove('active'));
+      calculateRepayment();
+    }
+  }
+
+  function setPresetAmount(amt, el) {
+    hiddenAmount.value = amt;
+    visualAmount.value = amt.toLocaleString('en-US');
+    document.querySelectorAll('.amount-preset').forEach(c => c.classList.remove('active'));
+    if (el) el.classList.add('active');
+    calculateRepayment();
+  }
+
+  function setDuration(months, el) {
+    document.getElementById('hiddenDuration').value = months;
+    document.querySelectorAll('.duration-chip').forEach(c => c.classList.remove('active'));
+    if (el) el.classList.add('active');
+    calculateRepayment();
+  }
+
+  function togglePayMode(mode) {
+    document.getElementById('momoDetails').classList.remove('active');
+    document.getElementById('bankDetails').classList.remove('active');
+    if (mode === 'momo') document.getElementById('momoDetails').classList.add('active');
+    if (mode === 'bank') document.getElementById('bankDetails').classList.add('active');
+  }
+
+  function toggleHealth(isGood) {
+    const details = document.getElementById('healthDetails');
+    if (isGood) details.classList.remove('active'); else details.classList.add('active');
+  }
+
+  function toggleBreakdown() {
+    document.getElementById('breakdownPanel').classList.toggle('open');
+    document.getElementById('breakdownToggle').classList.toggle('open');
+  }
+
+  let currentMonthlyPay = 0;
+  let oldMonthlyPay = 0;
+  const mockUserSavings = 10250;
+  const limitThreshold = mockUserSavings * 2;
+  let totalPledged = 0;
+  let guarantorCount = 0;
+
+  function applyQuickFix(newAmount, newMonths) {
+    hiddenAmount.value = newAmount;
+    visualAmount.value = newAmount.toLocaleString('en-US');
+    document.querySelectorAll('.amount-preset').forEach(c => c.classList.remove('active'));
+    document.getElementById('hiddenDuration').value = newMonths;
+    document.querySelectorAll('.duration-chip').forEach(c => {
+      c.classList.toggle('active', parseInt(c.innerText) === newMonths);
+    });
+    calculateRepayment();
+    showToast('success', 'Updated', `Adjusted to GH¢ ${newAmount.toLocaleString()} over ${newMonths} months.`);
+  }
+
+  function triggerDTI() {
+    const salaryRaw = document.getElementById('monthlySalary').value.replace(/,/g, '');
+    const dtiContainer = document.getElementById('dtiContainer');
+    const quickFixRow = document.getElementById('quickFixRow');
+    if (!salaryRaw) { dtiContainer.style.display = 'none'; return; }
+
+    dtiContainer.style.display = 'block';
+    const salary = parseFloat(salaryRaw);
+    let dti = (currentMonthlyPay / salary) * 100;
+
+    const dtiText = document.getElementById('dtiPercentage');
+    const dtiFill = document.getElementById('dtiFill');
+    const dtiStatus = document.getElementById('dtiStatus');
+
+    dtiText.innerText = dti.toFixed(1) + '%';
+    dtiFill.style.width = Math.min(dti, 100) + '%';
+    quickFixRow.style.display = 'none';
+    quickFixRow.innerHTML = '';
+
+    if (dti <= 20) {
+      dtiFill.style.background = 'var(--primary)';
+      dtiText.style.color = 'var(--primary)';
+      dtiStatus.innerText = 'Great fit — comfortably within a healthy repayment range.';
+      dtiStatus.style.color = 'var(--text-muted)';
+    } else if (dti <= 35) {
+      dtiFill.style.background = 'var(--warning)';
+      dtiText.style.color = '#92600A';
+      dtiStatus.innerText = 'Workable, but a little tight. Our team may confirm a few details.';
+      dtiStatus.style.color = '#92600A';
+    } else {
+      dtiFill.style.background = 'var(--error)';
+      dtiText.style.color = 'var(--error)';
+      dtiStatus.innerText = 'This could stretch your monthly budget. Try one of these:';
+      dtiStatus.style.color = 'var(--error)';
+
+      const principal = parseFloat(hiddenAmount.value);
+      const months = parseFloat(document.getElementById('hiddenDuration').value);
+      const suggestedAmount = Math.max(500, Math.round((principal * 0.7) / 500) * 500);
+      const suggestedMonths = Math.min(48, months * 2);
+
+      quickFixRow.style.display = 'flex';
+      quickFixRow.innerHTML = `
+        <button type="button" class="quick-fix-chip" onclick="applyQuickFix(${suggestedAmount}, ${months})">Try GH¢ ${suggestedAmount.toLocaleString()}</button>
+        <button type="button" class="quick-fix-chip" onclick="applyQuickFix(${principal}, ${suggestedMonths})">Try ${suggestedMonths} months</button>
+      `;
+    }
+  }
+
+  function animateValue(obj, start, end, duration) {
+    if (!obj) return;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const currentVal = Math.floor(eased * (end - start) + start);
+      obj.innerHTML = currentVal.toLocaleString('en-US');
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  function calculateRepayment() {
+    const principal = parseFloat(hiddenAmount.value || 0);
+    const months = parseFloat(document.getElementById('hiddenDuration').value || 12);
+
+    const annualRate = 0.15;
+    const interest = principal * (annualRate * (months / 12));
+    const totalToRepay = principal + interest;
+
+    oldMonthlyPay = currentMonthlyPay;
+    currentMonthlyPay = totalToRepay / months;
+
+    const mcAmount = document.getElementById('mcAmount');
+    if (mcAmount) mcAmount.innerText = principal.toLocaleString();
+    const mcMonthly = document.getElementById('mcMonthly');
+    if (mcMonthly) animateValue(mcMonthly, oldMonthlyPay, Math.round(currentMonthlyPay), 300);
+    const mcTerm = document.getElementById('mcTerm');
+    if (mcTerm) mcTerm.innerText = `${months} months`;
+    const mcInterest = document.getElementById('mcInterest');
+    if (mcInterest) mcInterest.innerText = `GH¢ ${Math.round(interest).toLocaleString()}`;
+    const mcTotal = document.getElementById('mcTotal');
+    if (mcTotal) mcTotal.innerText = `GH¢ ${Math.round(totalToRepay).toLocaleString()}`;
+
+    const pRatio = (principal / totalToRepay) * 100;
+    const mcBarPrincipal = document.getElementById('mcBarPrincipal');
+    if (mcBarPrincipal) mcBarPrincipal.style.width = `${pRatio}%`;
+    const mcBarInterest = document.getElementById('mcBarInterest');
+    if (mcBarInterest) mcBarInterest.style.width = `${100 - pRatio}%`;
+
+    const oddsMeter = document.getElementById('oddsMeter');
+    const coverageBadge = document.getElementById('coverageBadge');
+
+    if (principal > limitThreshold) {
+      if (oddsMeter) { oddsMeter.className = 'status-badge warning'; oddsMeter.innerHTML = '<svg class="icon icon-sm"><use href="#i-alert"/></svg> Guarantors needed'; }
+      if (coverageBadge) { coverageBadge.className = 'badge-optional badge-required'; coverageBadge.innerText = 'Required'; }
+    } else {
+      if (oddsMeter) { oddsMeter.className = 'status-badge'; oddsMeter.innerHTML = '<svg class="icon icon-sm"><use href="#i-check-circle"/></svg> High approval'; }
+      if (coverageBadge) { coverageBadge.className = 'badge-optional'; coverageBadge.innerText = 'Optional'; }
+    }
+
+    updateGuarantorProgress();
+    triggerDTI();
+  }
+
+  function updateGuarantorProgress() {
+    const principal = parseFloat(hiddenAmount.value);
+    const coverageText = document.getElementById('gCoverageText');
+    const gRingFill = document.getElementById('gRingFill');
+    const gRingText = document.getElementById('gRingText');
+    const coverageStatus = document.getElementById('gCoverageSub');
+
+    if (coverageText) coverageText.innerText = `GH¢ ${totalPledged.toLocaleString()} / GH¢ ${principal.toLocaleString()}`;
+
+    let percent = Math.round((totalPledged / principal) * 100);
+    if (percent > 100) percent = 100;
+
+    if (gRingText) gRingText.innerText = `${percent}%`;
+    if (gRingFill) gRingFill.setAttribute('stroke-dasharray', `${percent}, 100`);
+
+    if (percent >= 100) {
+      if (gRingFill) gRingFill.style.stroke = 'var(--primary)';
+      if (gRingText) gRingText.style.color = 'var(--primary)';
+      if (coverageStatus) { coverageStatus.innerText = '100% coverage secured.'; coverageStatus.style.color = 'var(--primary)'; }
+    } else {
+      if (gRingFill) gRingFill.style.stroke = 'var(--gold)';
+      if (gRingText) gRingText.style.color = 'var(--text-main)';
+      if (coverageStatus) {
+        coverageStatus.innerText = `Pledged: GH¢ ${totalPledged.toLocaleString()}. Remaining: GH¢ ${(principal - totalPledged).toLocaleString()}.`;
+        coverageStatus.style.color = '#92600A';
+      }
+    }
+  }
+
+  document.getElementById('addGuarantorBtn').addEventListener('click', () => {
+    const gidInput = document.getElementById('guarantorId');
+    const gAmtInput = document.getElementById('guarantorPledge');
+    const gid = gidInput.value;
+    const gAmtRaw = gAmtInput.value.replace(/,/g, '');
+    const principal = parseFloat(hiddenAmount.value);
+
+    if (!gid || !gAmtRaw) {
+      showToast('error', 'Incomplete entry', 'Provide both a Member ID and a pledge amount.');
+      if (!gid) gidInput.classList.add('error');
+      if (!gAmtRaw) gAmtInput.classList.add('error');
+      setTimeout(() => { gidInput.classList.remove('error'); gAmtInput.classList.remove('error'); }, 1200);
+      return;
+    }
+
+    let pledgeAmount = parseFloat(gAmtRaw);
+    const remainingNeeded = principal - totalPledged;
+
+    if (pledgeAmount > remainingNeeded) {
+      pledgeAmount = remainingNeeded;
+      showToast('warning', 'Pledge adjusted', 'Matched to your exact remaining balance.');
+    }
+
+    totalPledged += pledgeAmount;
+    guarantorCount++;
+    updateGuarantorProgress();
+
+    const emptyState = document.getElementById('emptyGuarantorState');
+    if (emptyState) emptyState.style.display = 'none';
+
+    const list = document.getElementById('guarantorList');
+    const card = document.createElement('div');
+    card.className = 'peer-card';
+    card.dataset.pledge = pledgeAmount;
+    card.innerHTML = `
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <div class="list-row-icon" style="background:var(--primary-light); color:var(--primary);"><svg class="icon"><use href="#i-user"/></svg></div>
+        <div class="list-row-text">
+          <h4 style="text-transform:uppercase;">${gid}</h4>
+          <p>Pledged: GH¢ ${pledgeAmount.toLocaleString()}</p>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <div style="font-size:0.75rem; font-weight:800; color:#92600A; background:var(--warning-tint); padding:0.3rem 0.7rem; border-radius:50px;">Pending</div>
+        <button type="button" class="peer-remove" aria-label="Remove guarantor"><svg class="icon icon-sm"><use href="#i-x"/></svg></button>
+      </div>
+    `;
+    card.querySelector('.peer-remove').addEventListener('click', () => {
+      totalPledged -= parseFloat(card.dataset.pledge);
+      guarantorCount--;
+      card.remove();
+      updateGuarantorProgress();
+      if (guarantorCount <= 0 && emptyState) emptyState.style.display = 'block';
+    });
+    list.appendChild(card);
+
+    gidInput.value = '';
+    gAmtInput.value = '';
+    queueAutosave();
+  });
+
+  calculateRepayment();
+
+  function navigateStep(target) {
+    if (target <= currentStep) { currentStep = target; updateWizard(); }
+    else if (target === currentStep + 1) { if (validateStep()) { currentStep = target; updateWizard(); } }
+  }
+
+  const loanPurpose = document.getElementById('loanPurpose');
+  const dropzone = document.getElementById('documentDropzone');
+  const fileInput = document.getElementById('fileUploadInput');
+
+  loanPurpose.addEventListener('change', () => {
+    const val = loanPurpose.value;
+    const requiresDoc = ['Business', 'Medical', 'Housing', 'School'].includes(val);
+    if (requiresDoc) dropzone.classList.add('active');
+    else { dropzone.classList.remove('active'); fileInput.value = ""; }
+  });
+
+  function validateStep() {
+    let isValid = true;
+    let firstErrorField = null;
+
+    if (currentStep === 2) {
+      const principal = parseFloat(hiddenAmount.value);
+      if (principal > limitThreshold && totalPledged < principal) {
+        isValid = false;
+        showToast('error', 'Pledges incomplete', `You need GH¢ ${(principal - totalPledged).toLocaleString()} more in pledges to continue.`);
+      }
+    }
+
+    if (currentStep === 3) {
+      if (!loanPurpose.value) {
+        document.getElementById('lpTrigger').classList.add('error');
+        isValid = false;
+        if (!firstErrorField) firstErrorField = document.getElementById('lpTrigger');
+      }
+      const deductionDate = document.getElementById('deductionDate').value;
+      if (!deductionDate) {
+        document.getElementById('ddDateTrigger').classList.add('error');
+        isValid = false;
+        if (!firstErrorField) firstErrorField = document.getElementById('ddDateTrigger');
+      }
+      document.querySelectorAll('.req-step-3').forEach(el => {
+        if (!el.value) { el.classList.add('error'); isValid = false; if (!firstErrorField) firstErrorField = el; }
+      });
+      if (document.getElementById('payMomo').checked) {
+        document.querySelectorAll('.req-momo').forEach(el => {
+          if (!el.value) { el.classList.add('error'); isValid = false; if (!firstErrorField) firstErrorField = el; }
+        });
+      }
+      if (document.getElementById('payBank').checked) {
+        document.querySelectorAll('.req-bank').forEach(el => {
+          if (!el.value) { el.classList.add('error'); isValid = false; if (!firstErrorField) firstErrorField = el; }
+        });
+      }
+    }
+
+    if (!isValid && firstErrorField) {
+      firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { document.querySelectorAll('.error').forEach(el => el.classList.remove('error')); }, 2000);
+    }
+    return isValid;
+  }
+
+  const heroText = document.getElementById('heroText');
+  const heroSubtext = document.getElementById('heroSubtext');
+  const heroBadge = document.getElementById('heroBadge');
+  const avatarStack = document.getElementById('heroAvatarStack');
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  let currentStep = 1;
+
+  // Resume step position if a previous session left one cached (non-sensitive only)
+  try {
+    const cachedStep = parseInt(sessionStorage.getItem('gcpcul_draft_step'), 10);
+    if (cachedStep >= 1 && cachedStep <= 3) currentStep = cachedStep;
+  } catch (e) {}
+
+  function checkSvg() { return '<svg class="icon"><use href="#i-check-circle"/></svg>'; }
+
+  function updateWizard() {
+    document.querySelectorAll('.step-section').forEach((el, index) => {
+      if (index + 1 === currentStep) el.classList.add('active'); else el.classList.remove('active');
+    });
+
+    document.querySelectorAll('.step').forEach((el, index) => {
+      const numEl = el.querySelector('.step-num');
+      if (index + 1 < currentStep) { el.className = 'step completed'; numEl.innerHTML = checkSvg(); }
+      else if (index + 1 === currentStep) { el.className = 'step active'; numEl.innerHTML = (index + 1); }
+      else { el.className = 'step'; numEl.innerHTML = (index + 1); }
+    });
+
+    if (currentStep === 1) document.getElementById('stepProgress').style.width = '0%';
+    if (currentStep === 2) document.getElementById('stepProgress').style.width = '50%';
+    if (currentStep === 3) document.getElementById('stepProgress').style.width = '100%';
+
+    heroBadge.innerText = `STEP ${currentStep} OF 3`;
+
+    if (currentStep === 1) {
+      avatarStack.style.display = 'none';
+      heroText.style.opacity = 0;
+      setTimeout(() => {
+        heroText.innerText = "Let's get your loan sorted.";
+        heroSubtext.innerText = "Pick an amount and a repayment period that feel comfortable — you can adjust these anytime before you submit.";
+        heroText.style.opacity = 1;
+      }, 200);
+      document.getElementById('desktopSidebarStep1').style.display = 'block';
+      document.getElementById('desktopSidebarStep2').style.display = 'none';
+      document.getElementById('desktopSidebarStep3').style.display = 'none';
+    }
+    if (currentStep === 2) {
+      avatarStack.style.display = 'flex';
+      heroText.style.opacity = 0;
+      setTimeout(() => {
+        heroText.innerText = "Bring a member on board.";
+        heroSubtext.innerText = "Ask someone you trust to vouch for you. Their pledge is fully refunded once you repay — no risk to their savings if you stay on track.";
+        heroText.style.opacity = 1;
+      }, 200);
+      document.getElementById('desktopSidebarStep1').style.display = 'none';
+      document.getElementById('desktopSidebarStep2').style.display = 'block';
+      document.getElementById('desktopSidebarStep3').style.display = 'none';
+    }
+    if (currentStep === 3) {
+      avatarStack.style.display = 'none';
+      heroText.style.opacity = 0;
+      setTimeout(() => {
+        heroText.innerText = "Almost there — just the essentials.";
+        heroSubtext.innerText = "Tell us where to send your funds and a bit about your finances so we can finalize your offer.";
+        heroText.style.opacity = 1;
+      }, 200);
+      document.getElementById('desktopSidebarStep1').style.display = 'none';
+      document.getElementById('desktopSidebarStep2').style.display = 'none';
+      document.getElementById('desktopSidebarStep3').style.display = 'block';
+    }
+
+    btnBack.style.display = currentStep > 1 ? 'flex' : 'none';
+    btnNext.innerText = currentStep === 3 ? "Review application" : "Continue";
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  updateWizard();
+
+  const reviewModal = document.getElementById('reviewModal');
+  const legalConsentToggle = document.getElementById('legalConsentToggle');
+  const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+
+  legalConsentToggle.addEventListener('change', (e) => { confirmSubmitBtn.disabled = !e.target.checked; });
+
+  const NETWORK_LOGOS = {
+    'MTN MoMo': 'https://upload.wikimedia.org/wikipedia/commons/a/af/MTN_Logo.svg',
+    'Telecel Cash': 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="#E4032E"/><text x="20" y="27" font-family="sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">T</text></svg>'),
+    'ATMoney': 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="#0033A0"/><text x="20" y="27" font-family="sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">A</text></svg>')
+  };
+
+  function maskTail(value, visible) {
+    if (!value) return '—';
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= visible) return value;
+    return '•••• ' + digits.slice(-visible);
+  }
+
+  function populateReviewModal() {
+    const principal = parseFloat(hiddenAmount.value);
+    const months = parseFloat(document.getElementById('hiddenDuration').value);
+
+    document.getElementById('modAmount').innerText = `GH¢ ${principal.toLocaleString()}`;
+    document.getElementById('modDuration').innerText = `${months} months`;
+    document.getElementById('modType').innerText = document.querySelector('input[name="loanType"]:checked')?.value || '—';
+
+    let purpose = loanPurpose.value || 'Not selected';
+    document.getElementById('modPurpose').innerText = purpose;
+
+    const ddText = document.getElementById('ddDateText').innerText;
+    document.getElementById('modDeduction').innerText = ddText;
+
+    if (totalPledged > 0) {
+      document.getElementById('modGuarantor').innerText = `GH¢ ${totalPledged.toLocaleString()} pledged (${guarantorCount})`;
+    } else {
+      const required = principal > limitThreshold;
+      document.getElementById('modGuarantor').innerText = required ? 'Required — none added' : 'Not required';
+    }
+
+    const modPayoutLogo = document.getElementById('modPayoutLogo');
+    const modPayoutIconWrap = document.getElementById('modPayoutIconWrap');
+
+    if (document.getElementById('payMomo').checked) {
+      const network = document.getElementById('nwText').innerText;
+      const num = document.getElementById('momoNumber').value;
+      // A recognizable logo scans faster than a spelled-out network name
+      modPayoutLogo.src = NETWORK_LOGOS[network] || '';
+      modPayoutLogo.style.display = NETWORK_LOGOS[network] ? 'block' : 'none';
+      modPayoutIconWrap.style.display = NETWORK_LOGOS[network] ? 'none' : 'flex';
+      document.getElementById('modPayout').innerText = maskTail(num, 4);
+    } else {
+      const bank = document.getElementById('bankName').value || 'Bank';
+      const acc = document.getElementById('bankAcc').value;
+      modPayoutLogo.style.display = 'none';
+      modPayoutIconWrap.style.display = 'flex';
+      modPayoutIconWrap.innerHTML = '<svg class="icon icon-sm"><use href="#i-bank"/></svg>';
+      document.getElementById('modPayout').innerText = `${bank} ${maskTail(acc, 4)}`;
+    }
+
+    document.getElementById('modMonthly').innerText = `GH¢ ${Math.round(currentMonthlyPay).toLocaleString()}`;
+    const interest = principal * (0.15 * (months / 12));
+    document.getElementById('modTotal').innerText = `GH¢ ${Math.round(principal + interest).toLocaleString()}`;
+  }
+
+  btnNext.addEventListener('click', () => {
+    if (!validateStep()) return;
+    if (currentStep < 3) { currentStep++; updateWizard(); }
+    else {
+      populateReviewModal();
+      legalConsentToggle.checked = false;
+      confirmSubmitBtn.disabled = true;
+      confirmSubmitBtn.innerHTML = 'Submit application';
+      reviewModal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        reviewModal.style.opacity = '1';
+        document.getElementById('modalContent').style.transform = 'scale(1) translateY(0)';
+      });
+    }
+  });
+
+  btnBack.addEventListener('click', () => { if (currentStep > 1) { currentStep--; updateWizard(); } });
+
+  function closeReviewModal() {
+    reviewModal.style.opacity = '0';
+    document.getElementById('modalContent').style.transform = 'scale(0.95) translateY(10px)';
+    setTimeout(() => reviewModal.style.display = 'none', 300);
+  }
+
+  reviewModal.addEventListener('click', (e) => { if (e.target === reviewModal) closeReviewModal(); });
+  document.getElementById('editApplicationBtn').addEventListener('click', closeReviewModal);
+
+  function fireConfetti() {
+    if (typeof confetti !== 'function' || reduceMotion) return;
+    const colors = ['#059669', '#047857', '#D97706', '#FDE68A'];
+    confetti({ particleCount: 90, spread: 75, origin: { y: 0.35 }, colors, startVelocity: 38, ticks: 200 });
+  }
+
+  confirmSubmitBtn.addEventListener('click', () => {
+    confirmSubmitBtn.innerHTML = '<svg class="icon" style="animation: spin 1s linear infinite;"><use href="#i-spinner"/></svg> Processing...';
+    confirmSubmitBtn.style.opacity = '0.7';
+    confirmSubmitBtn.style.pointerEvents = 'none';
+    setTimeout(() => {
+      closeReviewModal();
+      setTimeout(() => {
+        document.getElementById('successOverlay').classList.add('show');
+        fireConfetti();
+      }, 250);
+    }, 900);
+  });
+
+  document.getElementById('successContinueBtn').addEventListener('click', () => {
+    window.location.href = "member_dashboard.html";
+  });
+
+  /* ==========================================================
+     SHAREABLE MILESTONE CARD — generated fully client-side with
+     Canvas. Says "submitted," never "approved" (that status isn't
+     known yet at this point in the flow, and claiming otherwise
+     would be misleading). Fire a second one of these from your
+     dashboard once the backend confirms real approval.
+
+     Rendered at 2x internal resolution so the export stays crisp
+     even after social platforms recompress/resize it, and the
+     logo is drawn inside a white ring so a lower-resolution source
+     image reads as an intentional "seal" rather than looking soft.
+  ========================================================== */
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const words = text.split(' ');
+    let line = '';
+    let curY = y;
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + words[n] + ' ';
+      if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+        ctx.fillText(line, x, curY);
+        line = words[n] + ' ';
+        curY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(line, x, curY);
+  }
+
+  function loadImageSafe(src) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';   
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  function addGrain(ctx, w, h, density) {
+    // Subtle grain gives a flat gradient a physical, printed-card feel
+    // instead of looking like a plain vector fill.
+    for (let i = 0; i < density; i++) {
+      const x = Math.random() * w;
+      const y = Math.random() * h;
+      const shade = Math.random() > 0.5 ? 255 : 0;
+      ctx.fillStyle = `rgba(${shade},${shade},${shade},${Math.random() * 0.035})`;
+      ctx.fillRect(x, y, 1.4, 1.4);
+    }
+  }
+
+  async function generateMilestoneBlob() {
+    try { await ensureQRCodeLib(); } catch (e) { /* still fine — falls through to no QR */ }
+    const SCALE = 2; // render at 2x so exports stay crisp after platform recompression
+    const SIZE = 1080;
+    const canvas = document.createElement('canvas');
+    canvas.width = SIZE * SCALE; canvas.height = SIZE * SCALE;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(SCALE, SCALE);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    // Pull real numbers so this is genuinely personalized — the same
+    // principle Spotify Wrapped uses (actual listening stats, not
+    // generic copy) applied to what we actually have: the loan itself.
+    const principal = parseFloat(hiddenAmount.value || 0);
+    const months = document.getElementById('hiddenDuration').value;
+    const purpose = loanPurpose.value || 'Personal';
+    const monthly = Math.round(currentMonthlyPay || 0);
+
+    // ---- Colorful brand border frame (the "Wrapped" edge treatment,
+    // in our own gold-to-emerald palette instead of a literal rainbow) ----
+    const borderGrad = ctx.createLinearGradient(0, 0, SIZE, SIZE);
+    borderGrad.addColorStop(0, '#FDE68A');
+    borderGrad.addColorStop(0.35, '#D97706');
+    borderGrad.addColorStop(0.65, '#0E6B4F');
+    borderGrad.addColorStop(1, '#083D30');
+    ctx.fillStyle = borderGrad;
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    // ---- Near-black inner card — the premium "Wrapped/Replay" base,
+    // far more editorial than a flat mid-tone fill ----
+    const inset = 22;
+    roundRectPath(ctx, inset, inset, SIZE - inset * 2, SIZE - inset * 2, 32);
+    const cardGrad = ctx.createLinearGradient(0, 0, SIZE, SIZE);
+    cardGrad.addColorStop(0, '#0B1512');
+    cardGrad.addColorStop(1, '#071410');
+    ctx.fillStyle = cardGrad;
+    ctx.fill();
+
+    ctx.save();
+    roundRectPath(ctx, inset, inset, SIZE - inset * 2, SIZE - inset * 2, 32);
+    ctx.clip(); // keep every decoration inside the card, off the colorful frame
+
+    ctx.fillStyle = 'rgba(14,107,79,0.35)';
+    ctx.beginPath(); ctx.arc(900, 150, 260, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(217,119,6,0.10)';
+    ctx.beginPath(); ctx.arc(120, 950, 220, 0, Math.PI * 2); ctx.fill();
+    addGrain(ctx, SIZE, SIZE, 3000);
+
+    // ---- Brand mark, top-left, small and understated ----
+    ctx.textAlign = 'left';
+    const realLogo = await loadImageSafe("{% static 'assets/images/logo.jpg' %}");
+    const logoX = 70, logoY = 62, logoSize = 56;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(logoX + logoSize/2, logoY + logoSize/2, logoSize/2 + 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(logoX + logoSize/2, logoY + logoSize/2, logoSize/2, 0, Math.PI * 2);
+    ctx.clip();
+    if (realLogo) {
+      ctx.drawImage(realLogo, logoX, logoY, logoSize, logoSize);
+    } else {
+      ctx.fillStyle = '#D97706'; ctx.fillRect(logoX, logoY, logoSize, logoSize);
+      ctx.fillStyle = '#064E3B'; ctx.font = 'bold 24px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('GC', logoX + logoSize/2, logoY + logoSize/2 + 8);
+      ctx.textAlign = 'left';
+    }
+    ctx.restore();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '700 26px sans-serif';
+    ctx.fillText('GCPCUL', logoX + logoSize + 16, logoY + 36);
+
+    // ---- Hero stat: the loan amount, huge and bold, Wrapped-style,
+    // with a slight dynamic skew instead of sitting perfectly flat ----
+    ctx.save();
+    ctx.translate(70, 290);
+    ctx.transform(1, 0, -0.06, 1, 0, 0);
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = '900 104px sans-serif';
+    ctx.fillText(`GH¢${principal.toLocaleString()}`, 0, 0);
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '600 30px sans-serif';
+    ctx.fillText('Loan application submitted', 74, 340);
+
+    // ---- Labeled stat rows, same pattern as "STREAMS / HOURS / LISTENERS" ----
+    const stats = [
+      { label: 'TERM', value: `${months} months` },
+      { label: 'EST. MONTHLY', value: `GH¢${monthly.toLocaleString()}` },
+      { label: 'PURPOSE', value: purpose }
+    ];
+    let statY = 450;
+    stats.forEach((s) => {
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '700 20px sans-serif';
+      ctx.fillText(s.label, 74, statY);
+      ctx.fillStyle = '#fff';
+      ctx.font = '800 40px sans-serif';
+      ctx.fillText(s.value, 74, statY + 42);
+      statY += 96;
+    });
+
+    // ---- Right-side graphic panel — stands in for a photo the way
+    // Wrapped uses artwork, but built from our own icon language ----
+        // ---- Right-side graphic panel — a smiling member photo with a
+    // notification-badge-style checkmark overlaid in the corner ----
+    ctx.save();
+    ctx.translate(890, 340);
+    const panelR = 140;
+
+    ctx.beginPath(); ctx.arc(0, 0, panelR + 6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(253,230,138,0.35)'; ctx.fill(); // thin gold framing ring
+
+    const memberPhoto = await loadImageSafe("{% static 'assets/images/smiling_lady.avif' %}");
+    ctx.save();
+    ctx.beginPath(); ctx.arc(0, 0, panelR, 0, Math.PI * 2);
+    ctx.clip();
+    if (memberPhoto) {
+      ctx.drawImage(memberPhoto, -panelR, -panelR, panelR * 2, panelR * 2);
+    } else {
+      const panelGrad = ctx.createRadialGradient(-40, -40, 10, 0, 0, panelR);
+      panelGrad.addColorStop(0, '#1A6B52');
+      panelGrad.addColorStop(0.6, '#0E6B4F');
+      panelGrad.addColorStop(1, '#083D30');
+      ctx.fillStyle = panelGrad; ctx.fillRect(-panelR, -panelR, panelR * 2, panelR * 2);
+    }
+    ctx.restore();
+
+    // Notification-badge-style checkmark overlaid bottom-right, like a
+    // verified/online badge on a profile photo
+    const badgeR = 42;
+    const badgeX = panelR * 0.68, badgeY = panelR * 0.68;
+    ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeR + 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#0B1512'; ctx.fill(); // dark ring so the badge lifts off the photo
+    ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
+    ctx.fillStyle = '#0E6B4F'; ctx.fill();
+    ctx.strokeStyle = 'rgba(253,230,138,0.7)'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(badgeX - 16, badgeY + 2); ctx.lineTo(badgeX - 4, badgeY + 14); ctx.lineTo(badgeX + 18, badgeY - 14);
+    ctx.stroke();
+    ctx.restore();
+
+    // ---- Footer: brand tag on the left, real scannable QR code on the
+    // right (the same "scan to act" pattern Cash App builds its whole
+    // card design around) ----
+    const footerY = SIZE - inset - 132;
+    roundRectPath(ctx, 70, footerY, SIZE - 140, 100, 20);
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fill();
+
+    ctx.font = '700 24px sans-serif';
+    ctx.fillStyle = '#FDE68A';
+    ctx.fillText('#GCPCULMember', 96, footerY + 42);
+    ctx.font = '500 21px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.fillText('Member-owned · Community-backed', 96, footerY + 74);
+
+    let qrImg = null;
+    if (window.QRCode) {
+      try {
+        const qrDataUrl = await QRCode.toDataURL('https://gcpculgh.com', {
+          margin: 0, width: 160, color: { dark: '#0B1512', light: '#FFFFFF' }
+        });
+        qrImg = await loadImageSafe(qrDataUrl);
+      } catch (e) { /* proceed without a QR code if generation fails */ }
+    }
+
+    function ensureQRCodeLib() {
+      if (window.QRCode) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    const qrSize = 74;
+    const qrX = SIZE - 70 - 24 - qrSize;
+    const qrY = footerY + 13;
+    roundRectPath(ctx, qrX - 6, qrY - 6, qrSize + 12, qrSize + 12, 10);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    if (qrImg) ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '600 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Scan to apply', qrX + qrSize / 2, qrY + qrSize + 20);
+    ctx.textAlign = 'left';
+
+    ctx.restore(); // end inner-card clip
+
+    return new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 1));
+  }
+
+  const shareBtn = document.getElementById('shareMilestoneBtn');
+  const saveBtn = document.getElementById('saveMilestoneBtn');
+
+
+  function downloadBlob(blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'gcpcul-milestone.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  shareBtn.addEventListener('click', async () => {
+    shareBtn.disabled = true;
+    const originalHTML = shareBtn.innerHTML;
+    shareBtn.innerHTML = '<svg class="icon icon-sm" style="animation: spin 1s linear infinite;"><use href="#i-spinner"/></svg> Preparing...';
+    try {
+      const blob = await generateMilestoneBlob();
+      const file = new File([blob], 'gcpcul-milestone.png', { type: 'image/png' });
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+        try {
+          await navigator.share({ files: [file], title: 'GCPCUL', text: "I just took a step toward my goals with GCPCUL!" });
+          showToast('success', 'Shared', 'Your milestone card was sent.');
+        } catch (e) {
+          // user cancelled the native share sheet — not an error, do nothing
+        }
+      } else {
+        // No native share support on this browser (common on desktop) —
+        // fall back to a direct download so the action still succeeds.
+        downloadBlob(blob);
+        showToast('success', 'Image saved', 'Sharing isn\u2019t supported in this browser, so we saved the image instead.');
+      }
+    } finally {
+      shareBtn.disabled = false;
+      shareBtn.innerHTML = originalHTML;
+    }
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    const originalHTML = saveBtn.innerHTML;
+    saveBtn.innerHTML = '<svg class="icon icon-sm" style="animation: spin 1s linear infinite;"><use href="#i-spinner"/></svg> Preparing...';
+    try {
+      const blob = await generateMilestoneBlob();
+      downloadBlob(blob);
+      showToast('success', 'Image saved', 'Your milestone card has been saved to your device.');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalHTML;
+    }
+  });
+
+  /* ==========================================================
+     ASSISTANT BUBBLE — canned FAQ only, entirely client-side.
+     To make this a real AI assistant, add a backend endpoint
+     (e.g. /api/assistant/ask/) that calls an LLM API server-side
+     and returns the answer — never call an AI API directly from
+     the browser, since that would expose your API key.
+  ========================================================== */
+  const FAQ = {
+    salary: "We ask for your monthly salary so we can estimate a repayment amount that fits your budget comfortably — it's never shared outside our review team.",
+    miss: "If you ever think you'll miss a payment, reach out before the due date — we can often adjust your schedule. Missed payments may affect your guarantors' pledges, which is why we recommend keeping them informed too.",
+    safe: "Yes — all your data is encrypted in transit and at rest, and access is limited to authorized GCPCUL staff reviewing your application.",
+    guarantor: "A guarantor's pledge is held only until your loan is fully repaid, then released back to them in full. There's no risk to their savings if you stay on track.",
+    default: "Good question — I've noted it, and a member of our team will follow up if needed. In the meantime, you can also call our member support line for anything urgent."
+  };
+
+  const assistBubble = document.getElementById('assistBubble');
+  const assistPanel = document.getElementById('assistPanel');
+  const assistBody = document.getElementById('assistBody');
+  const assistInput = document.getElementById('assistInput');
+
+  function addAssistMsg(text, from) {
+    const msg = document.createElement('div');
+    msg.className = 'assist-msg ' + from;
+    msg.innerText = text;
+    assistBody.appendChild(msg);
+    assistBody.scrollTop = assistBody.scrollHeight;
+  }
+
+  function answerFAQ(key, userText) {
+    if (userText) addAssistMsg(userText, 'user');
+    setTimeout(() => addAssistMsg(FAQ[key] || FAQ.default, 'bot'), 350);
+  }
+
+  document.querySelectorAll('.assist-suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', () => answerFAQ(btn.dataset.q, btn.innerText));
+  });
+
+  function matchFAQ(text) {
+    const t = text.toLowerCase();
+    if (t.includes('salary') || t.includes('income')) return 'salary';
+    if (t.includes('miss') || t.includes('late') || t.includes('default')) return 'miss';
+    if (t.includes('safe') || t.includes('secure') || t.includes('privacy') || t.includes('data')) return 'safe';
+    if (t.includes('guarantor') || t.includes('peer') || t.includes('pledge')) return 'guarantor';
+    return 'default';
+  }
+
+  function sendAssistInput() {
+    const text = assistInput.value.trim();
+    if (!text) return;
+    answerFAQ(matchFAQ(text), text);
+    assistInput.value = '';
+  }
+
+  document.getElementById('assistSend').addEventListener('click', sendAssistInput);
+  assistInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendAssistInput(); });
+
+  assistBubble.addEventListener('click', () => assistPanel.classList.toggle('open'));
+  document.getElementById('assistClose').addEventListener('click', () => assistPanel.classList.remove('open'));
+</script>
+</body>
+</html>

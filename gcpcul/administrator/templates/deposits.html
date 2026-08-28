@@ -1,0 +1,50 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Ledger | GCPCUL Admin{% endblock %}
+
+{% block content %}
+<header class="top-header">
+  <div class="page-title">
+    <h1>Ledger & Deposits</h1>
+    <p>Immutable log of all financial transactions.</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-outline">Filter Dates</button>
+  </div>
+</header>
+
+<div class="panel-card" style="padding:0; overflow:hidden;">
+  <div style="width: 100%; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px;">
+      <thead>
+        <tr>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Txn ID</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Date & Time</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Member ID</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Transaction Type</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Method</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase; text-align:right;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1.25rem; font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">TX-992384</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Aug 11, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">10:04 AM</span></td>
+          <td style="padding: 1.25rem; font-weight: 600; color: var(--text-main);">GCP-00456</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Share Capital Top-Up</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Mobile Money</td>
+          <td style="padding: 1.25rem; text-align: right; font-weight: 600; font-family: monospace; font-size: 0.95rem; color: var(--emerald-500);">+ GH¢ 500.00</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1.25rem; font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">TX-992382</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Aug 10, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">16:45 PM</span></td>
+          <td style="padding: 1.25rem; font-weight: 600; color: var(--text-main);">GCP-00892</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Loan Disbursal</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Bank Transfer</td>
+          <td style="padding: 1.25rem; text-align: right; font-weight: 600; font-family: monospace; font-size: 0.95rem; color: var(--text-main);">- GH¢ 5,000.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

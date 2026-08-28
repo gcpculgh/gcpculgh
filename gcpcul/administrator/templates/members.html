@@ -1,0 +1,94 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Members | GCPCUL Admin{% endblock %}
+
+{% block content %}
+<header class="top-header">
+  <div class="page-title">
+    <h1>Member Directory</h1>
+    <p>Manage all registered pharmacists and their accounts.</p>
+  </div>
+  <div class="header-actions">
+    <div class="search-bar">
+      <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" placeholder="Search ID or Name...">
+    </div>
+    <button class="btn-primary">Add Member</button>
+  </div>
+</header>
+
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));">
+  <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+    <div class="stat-title">Total Members</div>
+    <div class="stat-value" style="font-size: 1.5rem;">{{ total_members }}</div>
+  </div>
+  <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+    <div class="stat-title">Pending KYC</div>
+    <div class="stat-value" style="font-size: 1.5rem; color: var(--amber-500);">14</div>
+  </div>
+  <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+    <div class="stat-title">Total Shares Capital</div>
+    <div class="stat-value" style="font-size: 1.5rem;">GH¢ 8.4M</div>
+  </div>
+</div>
+
+<div class="panel-card" style="padding:0; overflow:visible;">
+  <div style="width: 100%; overflow-x: auto; padding-bottom: 4rem; margin-bottom: -4rem;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px;">
+      <thead>
+        <tr>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Member Profile</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Member ID</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Status</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Total Shares</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase; text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for person in members %}
+        <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;">
+          <td style="padding: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 2rem; height: 2rem; border-radius: 50%; background: var(--bg-hover); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text-main);">
+                <!-- Get their initials -->
+                {{ person.first_name|make_list|first }}{{ person.last_name|make_list|first }}
+              </div>
+              <div>
+                <div style="font-weight:600; color: var(--text-main);">{{ person.first_name }} {{ person.last_name }}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">{{ person.phone_number }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 1.25rem; font-family: monospace; font-size: 0.9rem; color: var(--text-main);">{{ person.member_id }}</td>
+          <td style="padding: 1.25rem;">
+            {% if person.status == 'ACTIVE' %}
+                <span class="badge badge-success">Active</span>
+            {% elif person.status == 'PENDING' %}
+                <span class="badge badge-warning">KYC Pending</span>
+            {% else %}
+                <span class="badge badge-danger">Suspended</span>
+            {% endif %}
+          </td>
+          <td style="padding: 1.25rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main);">GH¢ {{ person.total_shares }}</td>
+          <td style="padding: 1.25rem; text-align: right;"><button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button></td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">No members found in the system yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); background: var(--bg-panel); border-bottom-left-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg);">
+    <div style="font-size: 0.8rem; color: var(--text-muted);">Showing 1 to 10 of 1,248 entries</div>
+    <div style="display: flex; gap: 0.25rem;">
+      <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Prev</button>
+      <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">1</button>
+      <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">2</button>
+      <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Next</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

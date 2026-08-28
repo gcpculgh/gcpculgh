@@ -1,0 +1,369 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>{% block title %}Ghana Co-operative Pharmacists' Credit Union Limited | GCPCUL{% endblock %}</title>
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/favicon/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicon/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/favicon/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'assets/favicon/site.webmanifest' %}">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       GLOBAL VARIABLES & BASE STYLES
+       ========================================== */
+    :root {
+      --primary-green: #0A5C36;
+      --heading-green: #0A5C36;
+      --accent-green: #148F5B;
+      --coop-gold: #EBAA14;
+      --gold-light: #FEF7E6;
+      --bg-page: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-section-alt: #F1F5F9;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --border-color: #CBD5E1;
+      --navbar-bg: rgba(255, 255, 255, 0.96);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px -5px rgba(10, 92, 54, 0.08);
+      --shadow-lg: 0 20px 35px -10px rgba(10, 92, 54, 0.15);
+      --radius-sm: 0.625rem;
+      --radius-md: 1rem;
+      --radius-lg: 1.5rem;
+    }
+
+    [data-theme="dark"] {
+      --heading-green: #34D399;
+      --primary-green: #0A5C36;
+      --accent-green: #10B981;
+      --bg-page: #0B1120;
+      --bg-card: #111827;
+      --bg-section-alt: #0F172A;
+      --text-main: #F8FAFC;
+      --text-muted: #CBD5E1;
+      --border-color: #1E293B;
+      --navbar-bg: rgba(17, 24, 39, 0.96);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.75; transition: background-color 0.3s ease, color 0.3s ease; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; }
+
+    [id] { scroll-margin-top: 6rem; }
+
+    @keyframes targetGlow {
+      0% { box-shadow: 0 0 0 0 rgba(10, 92, 54, 0.4); border-color: var(--primary-green); }
+      50% { box-shadow: 0 0 25px 8px rgba(10, 92, 54, 0.15); border-color: var(--accent-green); }
+      100% { box-shadow: 0 0 0 0 rgba(10, 92, 54, 0); border-color: var(--border-color); }
+    }
+
+    :target { animation: targetGlow 2s ease-out; border-radius: var(--radius-lg); }
+
+    .container { width: 100%; max-width: 88rem; margin: 0 auto; padding: 0 clamp(1.5rem, 4vw, 3.5rem); }
+    
+    /* UTILITY CLASSES */
+    .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-svg svg { width: 1.25em; height: 1.25em; fill: currentColor; }
+    .number-pill { display: inline-flex; align-items: center; gap: 0.45rem; background: #F0FDF4; color: #0A5C36; font-family: monospace; font-weight: 800; font-size: 0.95rem; padding: 0.3rem 0.4rem 0.3rem 0.8rem; border-radius: 50px; border: 1px solid #BBF7D0; }
+    .copy-btn { background: #FFFFFF; border: 1px solid #CBD5E1; color: #334155; border-radius: 50px; padding: 0.25rem 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; font-weight: 700; transition: all 0.2s ease; vertical-align: middle; font-family: inherit; }
+    .copy-btn:hover { background: #0A5C36; color: #FFFFFF; border-color: #0A5C36; }
+    .copy-btn.copied { background: #059669; color: #FFFFFF; border-color: #059669; }
+    
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.4rem; font-size: 0.88rem; font-weight: 700; border-radius: var(--radius-sm); transition: all 0.2s ease; cursor: pointer; border: none; white-space: nowrap; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--primary-green); color: var(--heading-green); }
+    .btn-outline:hover { background: var(--primary-green); color: #FFFFFF; }
+    .btn-primary { background: var(--primary-green); color: #FFFFFF; box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
+    .btn-primary:hover { background: var(--accent-green); transform: translateY(-2px); }
+    .btn-gold { background: var(--coop-gold); color: #0F172A; font-weight: 800; }
+    .btn-gold:hover { background: #D89A0E; }
+
+    /* ==========================================
+       GLOBAL NAVIGATION HEADER
+       ========================================== */
+    header { background: var(--navbar-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-sm); transition: background 0.3s ease, border-color 0.3s ease; }
+    .nav-container { display: flex; justify-content: space-between; align-items: center; height: 4.85rem; gap: 1.5rem; }
+    .logo { display: flex; align-items: center; gap: 1rem; flex-shrink: 1; min-width: 0; }
+    .official-logo-img { height: 3.25rem; width: 3.25rem; object-fit: contain; display: block; flex-shrink: 0; border-radius: 0.65rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: #FFFFFF; padding: 0.15rem; }
+    .logo-text { display: flex; flex-direction: column; min-width: 0; }
+    .logo-text h1 { font-size: clamp(0.98rem, 1.25vw, 1.12rem); font-weight: 800; color: var(--heading-green); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    nav ul { display: flex; list-style: none; gap: clamp(1.25rem, 2vw, 2.35rem); align-items: center; margin: 0 auto; }
+    nav ul li a { font-size: 0.98rem; font-weight: 700; color: var(--text-main); transition: color 0.2s ease; white-space: nowrap; }
+    nav ul li a:hover, nav ul li a.active { color: var(--heading-green); }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .menu-toggle { display: none; background: transparent; border: none; color: var(--text-main); cursor: pointer; padding: 0.5rem; width: 3rem; height: 3rem; align-items: center; justify-content: center; }
+    .mobile-drawer { display: none; flex-direction: column; background: var(--bg-card); border-top: 1px solid var(--border-color); padding: 1.5rem; gap: 1.1rem; }
+    .mobile-drawer.open { display: flex; }
+    .mobile-drawer a { font-weight: 700; font-size: 1.05rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); }
+
+    /* ==========================================
+       GLOBAL FLOATING WIDGETS
+       ========================================== */
+    .float-wa { position: fixed; bottom: 2rem; right: 2rem; background: #25D366; color: #FFFFFF; padding: 0.85rem 1.35rem; border-radius: 3rem; display: flex; align-items: center; gap: 0.65rem; font-weight: 700; font-size: 0.95rem; box-shadow: 0 12px 24px rgba(37, 211, 102, 0.35); z-index: 10000; transition: all 0.3s ease; }
+    .float-wa:hover { transform: scale(1.05); }
+    .float-wa.minimized { padding: 0; width: 3.25rem; height: 3.25rem; justify-content: center; border-radius: 50%; }
+    .float-wa.minimized .wa-label, .float-wa.minimized .wa-dismiss-btn { display: none; }
+    .wa-dismiss-btn { background: rgba(0, 0, 0, 0.18); border: none; color: #FFFFFF; width: 1.4rem; height: 1.4rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; line-height: 1; margin-left: 0.25rem; transition: background 0.2s ease; }
+    .wa-dismiss-btn:hover { background: rgba(0, 0, 0, 0.35); }
+
+    .float-theme-btn { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10000; transition: all 0.2s ease; }
+    .float-theme-btn:hover { background: var(--primary-green); color: #FFFFFF; transform: scale(1.08); border-color: var(--primary-green); }
+
+    /* ==========================================
+       GLOBAL FOOTER
+       ========================================== */
+    footer { background: #090D16; color: #94A3B8; padding: 6.5rem 0 3.5rem 0; font-size: 0.95rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 4rem; margin-bottom: 5rem; }
+    .footer-brand-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.5rem; }
+    .social-links { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .social-icon-btn { width: 2.6rem; height: 2.6rem; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.2s ease; }
+    .social-icon-btn:hover { background: var(--primary-green); border-color: var(--primary-green); transform: translateY(-2px); }
+    .contact-row-item { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; transition: color 0.2s ease; line-height: 1.5; }
+    .contact-icon-glyph { width: 1.5rem; height: 1.5rem; min-width: 1.5rem; min-height: 1.5rem; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: #94A3B8; transition: color 0.2s ease; }
+    .contact-icon-glyph svg { width: 1.25rem; height: 1.25rem; display: block; }
+    .contact-row-item:hover { color: #FFFFFF; }
+    .contact-row-item:hover .contact-icon-glyph { color: var(--coop-gold); }
+    .footer-col h4 { color: #FFFFFF; font-size: 0.95rem; font-weight: 700; margin-bottom: 1.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+    .footer-links li a { color: #94A3B8; transition: color 0.2s ease; font-weight: 500; }
+    .footer-links li a:hover { color: #FFFFFF; }
+    .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; font-size: 0.85rem; }
+    .spear-link { color: var(--coop-gold); font-weight: 800; transition: opacity 0.2s ease; text-decoration: none; }
+    .spear-link:hover { opacity: 0.8; }
+
+    @media (max-width: 64rem) { 
+      nav ul { display: none; } 
+      .menu-toggle { display: inline-flex; } 
+      .nav-actions { display: none; } 
+      .footer-grid { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 3rem; } 
+    }
+    @media (max-width: 48rem) {
+      .container { padding: 0 1.5rem; }
+      .btn { width: 100%; justify-content: center; }
+      footer { padding-bottom: 7.5rem; }
+      .float-wa { bottom: 1.25rem; right: 1.25rem; padding: 0.75rem 1.15rem; font-size: 0.88rem; }
+      .float-theme-btn { bottom: 1.25rem; left: 1.25rem; width: 3rem; height: 3rem; }
+    }
+  </style>
+  
+  <!-- DYNAMIC PAGE STYLES WILL INJECT HERE -->
+  {% block extra_css %}{% endblock %}
+
+</head>
+<body>
+
+  <!-- GLOBAL HEADER -->
+  <header>
+    <div class="container nav-container">
+      <a href="{% url 'home' %}" class="logo">
+        <img src="{% static 'assets/images/logo.jpg' %}" alt="Ghana Co-operative Pharmacists' Credit Union Official Logo" class="official-logo-img">
+        <div class="logo-text">
+          <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
+        </div>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="{% url 'home' %}" class="active">Home</a></li>
+          <li><a href="{% url 'products' %}">Products & Services</a></li>
+          <li><a href="{% url 'calculator' %}">Calculator</a></li>
+          <li><a href="{% url 'gallery' %}">Gallery</a></li>
+          <li><a href="{% url 'news' %}">News & Blog</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <a href="{% url 'login' %}" class="btn btn-primary">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></span>
+          Portal Login
+        </a>
+      </div>
+      <button class="menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <span class="icon-svg" style="font-size: 1.75rem;"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></span>
+      </button>
+    </div>
+    
+    <div class="mobile-drawer" id="mobileDrawer">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'about' %}">Who We Are</a>
+      <a href="{% url 'products' %}">Products & Services</a>
+      <a href="{% url 'calculator' %}">Calculator</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
+      <a href="{% url 'downloads' %}">Downloads</a>
+      <a href="{% url 'news' %}">News & Blog</a>
+      <a href="{% url 'login' %}" class="btn btn-primary" style="margin-top: 0.5rem; justify-content: center;">Portal Login</a>
+    </div>
+  </header>
+
+  <!-- DYNAMIC PAGE CONTENT INJECTS HERE -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- GLOBAL FLOATING WIDGETS -->
+  <div class="float-wa" id="floatWaWidget">
+    <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20I'm%20visiting%20your%20website%20homepage%20and%20would%20like%20to%20know%20more%20about%20becoming%20a%20member." target="_blank" style="display: flex; align-items: center; gap: 0.65rem; color: inherit;">
+      <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg></span>
+      <span class="wa-label">WhatsApp Support</span>
+    </a>
+    <button class="wa-dismiss-btn" id="waDismissBtn" aria-label="Minimize Support Widget" title="Minimize">×</button>
+  </div>
+
+  <button class="float-theme-btn" id="floatThemeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Theme">
+    <span class="icon-svg" id="floatThemeIcon">
+      <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+    </span>
+  </button>
+
+  <!-- GLOBAL FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="footer-brand-header">
+            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Official Logo" class="official-logo-img" style="height: 3.5rem; width: 3.5rem;">
+          </div>
+          <p style="margin-bottom: 1.5rem; max-width: 22rem; line-height: 1.7;">A registered member-owned financial institution serving pharmacists and healthcare professionals across Ghana.</p>
+          
+          <div class="social-links">
+            <!-- Facebook -->
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path></svg></span></a>
+            
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path><circle cx="4" cy="4" r="2"></circle></svg></span></a>
+            
+            <!-- X (Twitter) -->
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></span></a>
+            
+            <!-- Instagram -->
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"></path></svg></span></a>
+            
+            <!-- TikTok -->
+            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"></path></svg></span></a>
+            
+            <!-- YouTube -->
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="social-icon-btn"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg></span></a>
+          </div>
+
+          <div style="color: #CBD5E1; font-weight: 600; display: flex; flex-direction: column; gap: 0.85rem;">
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></span>
+              <span>030-7010334 / 0532015364</span>
+            </div>
+            <div class="contact-row-item">
+              <span class="contact-icon-glyph">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </span>
+              <span>info@gcpculgh.com</span>
+            </div>
+          </div>
+          <p style="color: #94A3B8; font-size: 0.85rem; margin-top: 1rem;">P. O. Box GP 2133, Accra, Ghana • Reg No: CO-OP/847</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Loans & Products</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'products' %}#personal-loan">Personal & Emergency Loans</a></li>
+            <li><a href="{% url 'products' %}#isl-loan">Import Support & Pharmacy Loans</a></li>
+            <li><a href="{% url 'products' %}#asset-loan">Vehicle & Housing Loans</a></li>
+            <li><a href="{% url 'products' %}#shares-savings">Share Capital & Regular Savings</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Member Portal</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'login' %}">Portal Login</a></li>
+            <li><a href="{% url 'login' %}">Online Loan Application</a></li>
+            <li><a href="{% url 'calculator' %}">Loan Repayment Calculator</a></li>
+            <li><a href="{% url 'downloads' %}">Document Vault</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>About & Legal</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'about' %}">Who We Are</a></li>
+            <li><a href="{% url 'about' %}#leadership">Governance & Leadership</a></li>
+            <li><a href="{% url 'about' %}#privacy-policy">Privacy Policy</a></li>
+            <li><a href="{% url 'about' %}#terms-of-service">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL). All rights reserved.</p>
+        <p>Powered by <a href="https://wa.me/+233245641987?text=Hello%20Wiselyn%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services." target="_blank" class="spear-link" style="color: var(--coop-gold); font-weight: 800; text-decoration: none;">Wiselyn Spear Solutions</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GLOBAL SCRIPTS -->
+  <script>
+    // Copy Text to Clipboard
+    function copyText(text, btnElement) {
+      navigator.clipboard.writeText(text).then(() => {
+        btnElement.classList.add('copied');
+        const originalHTML = btnElement.innerHTML;
+        btnElement.innerHTML = '<span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span> Copied';
+        setTimeout(() => {
+          btnElement.classList.remove('copied');
+          btnElement.innerHTML = originalHTML;
+        }, 1800);
+      });
+    }
+
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const drawer = document.getElementById('mobileDrawer');
+    if (menuBtn && drawer) {
+      menuBtn.addEventListener('click', () => {
+        drawer.classList.toggle('open');
+      });
+    }
+
+    // Theme Toggle Logic
+    const floatThemeBtn = document.getElementById('floatThemeToggleBtn');
+    const root = document.documentElement;
+
+    const savedTheme = localStorage.getItem('gcpcul-theme') || 'light';
+    if (savedTheme === 'dark') { root.setAttribute('data-theme', 'dark'); }
+
+    if (floatThemeBtn) {
+      floatThemeBtn.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+          root.removeAttribute('data-theme');
+          localStorage.setItem('gcpcul-theme', 'light');
+        } else {
+          root.setAttribute('data-theme', 'dark');
+          localStorage.setItem('gcpcul-theme', 'dark');
+        }
+      });
+    }
+
+    // Floating WhatsApp Dismiss
+    const waWidget = document.getElementById('floatWaWidget');
+    const waDismissBtn = document.getElementById('waDismissBtn');
+    if (waDismissBtn && waWidget) {
+      waDismissBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        waWidget.classList.toggle('minimized');
+      });
+    }
+  </script>
+
+  <!-- DYNAMIC PAGE SCRIPTS WILL INJECT HERE -->
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

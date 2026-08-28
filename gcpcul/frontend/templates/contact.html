@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Support | Ghana Co-operative Pharmacists' Credit Union (GCPCUL){% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header { padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; position: relative; overflow: hidden; }
+    .page-header::after { content: ''; position: absolute; right: -6rem; top: -6rem; width: 22rem; height: 22rem; border-radius: 50%; background: radial-gradient(circle, rgba(235,170,20,0.18) 0%, transparent 70%); }
+    
+    .page-header-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; position: relative; z-index: 3; text-align: center; }
+    .breadcrumb { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.85rem; color: #A7F3D0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+    .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; line-height: 1.2; margin-bottom: 1.25rem; }
+    .page-header p { font-size: 1.15rem; color: #E2E8F0; line-height: 1.75; max-width: 40rem; margin: 0 auto; }
+
+    .section { padding: clamp(4.5rem, 7vw, 6.5rem) 0; }
+    
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.5rem; max-width: 65rem; margin: -5rem auto 0 auto; position: relative; z-index: 10; }
+    .contact-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 3rem 2.5rem; box-shadow: var(--shadow-md); text-align: center; display: flex; flex-direction: column; align-items: center; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .contact-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--accent-green); }
+    
+    .contact-card .icon-svg { width: 5.5rem; height: 5.5rem; background: var(--primary-light); color: var(--primary); border-radius: 50%; margin-bottom: 1.75rem; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; }
+    .contact-card h3 { font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem; }
+    .contact-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.5rem; }
+    .contact-card strong { color: var(--text-main); font-weight: 800; font-size: 1.15rem; display: block; margin-top: 1.25rem; }
+
+    /* GOOGLE MAPS IFRAME WRAPPER */
+    .map-wrapper { max-width: 65rem; margin: 4rem auto 0 auto; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border-color); height: 400px; position: relative; z-index: 10; }
+    .map-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    @media (max-width: 48rem) {
+      .page-header { padding: 4rem 0 6rem 0; }
+      .contact-grid { margin-top: -3rem; padding: 0 1rem; }
+      .map-wrapper { margin-top: 3rem; margin-left: 1rem; margin-right: 1rem; height: 300px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="page-header">
+    <div class="container page-header-grid">
+      <div class="hero-content-wrapper">
+        <div class="breadcrumb">
+          <span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+          Member Support
+        </div>
+        <h2 class="hero-title">We are here to help.</h2>
+        <p class="page-header-desc">Whether you have questions about dividend payouts, loan approvals, or portal access, our dedicated support team is available during official working hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0; background: var(--bg-page);">
+    <div class="container">
+      
+      <div class="contact-grid">
+        
+        <div class="contact-card">
+          <!-- UX FIX: Added material-symbols-outlined class to the span -->
+          <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
+          <h3>Official Working Hours</h3>
+          <p>Monday to Friday</p>
+          <strong>8:00 AM — 4:00 PM</strong>
+          <p style="font-size: 0.85rem; margin-top: 1rem; color: var(--error); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Closed Weekends & Public Holidays</p>
+        </div>
+
+        <div class="contact-card">
+          <div class="icon-svg"><span class="material-symbols-outlined">location_on</span></div>
+          <h3>Head Office Location</h3>
+          <p>Off the Spintex Road, within the Pharmaceutical Society of Ghana compound, Baatsonaa.</p>
+          <p style="font-size: 0.95rem; margin-top: 0.5rem; font-style: italic;">Opposite the Tema International Trade Fair (Texpo).</p>
+          <strong>P.O. Box GP 2133, Accra</strong>
+        </div>
+
+        <div class="contact-card">
+          <div class="icon-svg"><span class="material-symbols-outlined">support_agent</span></div>
+          <h3>Direct Contact Lines</h3>
+          <p style="font-size: 0.95rem;">General Enquiries:</p>
+          <strong>030-7010334</strong>
+          <strong>0532015364</strong>
+          <p style="font-size: 0.95rem; margin-top: 1.5rem;">Official WhatsApp Support:</p>
+          <a href="https://wa.me/233548685362" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #25D366; font-weight: 800; font-size: 1.15rem; text-decoration: none; margin-top: 0.5rem; transition: transform 0.2s ease;">
+            <img src="{% static 'assets/images/whatsapp-logo.png' %}" alt="WhatsApp" style="width: 22px; height: 22px; object-fit: contain;">
+            0548685362
+          </a>
+        </div>
+
+      </div>
+
+      <!-- UX UPGRADE: INTERACTIVE GOOGLE MAP EMBED -->
+      <div class="map-wrapper">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15882.529322271815!2d-0.0886567!3d5.6206103!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10207f9c2d1b764b%3A0x8bb85a1e2f6c0d6!2sSpintex%20Rd%2C%20Accra!5e0!3m2!1sen!2sgh!4v1701358942365!5m2!1sen!2sgh" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+
+    </div>
+  </section>
+{% endblock %}

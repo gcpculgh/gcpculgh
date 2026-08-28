@@ -1,0 +1,156 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Dashboard | GCPCUL Admin{% endblock %}
+
+{% block content %}
+<header class="top-header">
+  <div class="page-title">
+    <h1>Dashboard</h1>
+    <p>Overview of GCPCUL's financial health.</p>
+  </div>
+  <div class="header-actions">
+    <button class="theme-toggle-btn" id="themeToggleBtnHeader" aria-label="Toggle Theme" style="border: 1px solid var(--border-color); background: var(--bg-panel);">
+      <span class="icon-svg" id="themeIconHeader"></span>
+    </button>
+    <button class="btn-outline">
+      <span class="icon-svg"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+      Export Report
+    </button>
+  </div>
+</header>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Total Funds</span>
+      <span class="icon-svg stat-icon"><svg><rect x="2" y="20" width="20" height="2"/><path d="M12 2L2 7l2 2v9h16V9l2-2L12 2Z"/><path d="M6 9v9"/><path d="M10 9v9"/><path d="M14 9v9"/><path d="M18 9v9"/></svg></span>
+    </div>
+    <div>
+      <div class="stat-value">{{ metrics.total_funds|default:"14.2M" }}</div>
+      <div class="stat-trend trend-up">{{ metrics.funds_trend|default:"+2.4%" }} from last month</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Active Loans</span>
+      <span class="icon-svg stat-icon"><svg><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+    </div>
+    <div>
+      <div class="stat-value">{{ metrics.active_loans_value|default:"5.8M" }}</div>
+      <div class="stat-trend trend-up">{{ metrics.active_loans_count|default:"84" }} active contracts</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Approvals</span>
+      <span class="icon-svg stat-icon"><svg><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+    </div>
+    <div>
+      <div class="stat-value">{{ metrics.pending_approvals|default:"12" }}</div>
+      <div class="stat-trend trend-neutral">Pending review</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-header">
+      <span class="stat-title">Default Rate</span>
+      <span class="icon-svg stat-icon"><svg><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    </div>
+    <div>
+      <div class="stat-value">{{ metrics.default_rate|default:"0.8%" }}</div>
+      <div class="stat-trend trend-down">{{ metrics.default_trend|default:"-0.2%" }} vs last quarter</div>
+    </div>
+  </div>
+</div>
+
+<div class="data-grid">
+  <div class="panel-card">
+    <div class="panel-header">
+      <h3 class="panel-title">Savings vs Disbursals</h3>
+    </div>
+    <div class="chart-container">
+      <canvas id="financialChart"></canvas>
+    </div>
+  </div>
+  <div class="panel-card">
+    <div class="panel-header">
+      <h3 class="panel-title">Recent Activity</h3>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:1.2rem; flex:1; overflow-y:auto;">
+      
+      <!-- Using Django loop to pull from views.py -> services.py -->
+      {% for activity in recent_activity %}
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+        <div>
+          <p style="font-size:0.9rem; font-weight:600;">{{ activity.title }}</p>
+          <p style="font-size:0.8rem; color:var(--text-muted);">{{ activity.subtitle }}</p>
+        </div>
+        <span class="badge badge-{{ activity.status_color }}">{{ activity.status }}</span>
+      </div>
+      {% empty %}
+      <!-- Fallback if you haven't wired views.py yet -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+        <div>
+          <p style="font-size:0.9rem; font-weight:600;">Personal Loan (GCP-0012)</p>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Initiated by Teller 04</p>
+        </div>
+        <span class="badge badge-warning">Review</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <p style="font-size:0.9rem; font-weight:600;">Shares Top-Up (GCP-089)</p>
+          <p style="font-size:0.8rem; color:var(--text-muted);">MoMo Deposit</p>
+        </div>
+        <span class="badge badge-success">Cleared</span>
+      </div>
+      {% endfor %}
+      
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const chartElement = document.getElementById('financialChart');
+    if (!chartElement) return; 
+    
+    const ctx = chartElement.getContext('2d');
+    let gradientEmerald = ctx.createLinearGradient(0, 0, 0, 250);
+    gradientEmerald.addColorStop(0, 'rgba(16, 185, 129, 0.25)'); 
+    gradientEmerald.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+    window.myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        datasets: [
+          {
+            label: 'Savings (GH¢)',
+            data: [8.2, 8.5, 9.1, 10.4, 11.2, 12.5, 13.8, 14.2],
+            borderColor: '#10B981', backgroundColor: gradientEmerald, borderWidth: 2,
+            pointBackgroundColor: 'transparent', pointBorderColor: 'transparent', pointRadius: 4, fill: true, tension: 0.4 
+          },
+          {
+            label: 'Loans (GH¢)',
+            data: [3.1, 3.4, 3.2, 4.8, 4.1, 5.2, 5.5, 5.8],
+            borderColor: '#94A3B8', borderWidth: 2, borderDash: [4, 4],
+            pointBackgroundColor: 'transparent', pointBorderColor: 'transparent', pointRadius: 3, fill: false, tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top', align: 'end', labels: { color: '#64748B', font: { size: 12, weight: '500' }, usePointStyle: true, boxWidth: 6 } } },
+        scales: {
+          x: { grid: { display: false, drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 } } },
+          y: { grid: { color: 'rgba(148, 163, 184, 0.1)', drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 }, callback: function(value) { return value + 'M'; } } }
+        },
+        interaction: { intersect: false, mode: 'index' }
+      }
+    });
+  });
+
+  
+</script>
+{% endblock %}

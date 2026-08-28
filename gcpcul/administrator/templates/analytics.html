@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://ui-avatars.com https://via.placeholder.com; connect-src 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Admin Command Center | GCPCUL</title>
+  
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* ==========================================
+       1. TRUE SHADCN LIGHT/DARK THEME SYSTEM
+       ========================================== */
+    :root {
+      --emerald-500: #10B981;
+      --emerald-400: #34D399;
+      --amber-500: #F59E0B;
+      --rose-500: #EF4444;
+      --blue-500: #3B82F6;
+      --purple-500: #A855F7;
+      
+      /* Shadcn Light Theme (Default) */
+      --bg-base: #F8FAFC;       
+      --bg-panel: #FFFFFF;      
+      --bg-hover: #F1F5F9;      
+      --border-color: #E2E8F0;  
+      
+      --text-main: #0F172A;     
+      --text-muted: #64748B;    
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+    }
+
+    [data-theme="dark"] {
+      /* Shadcn Dark Theme */
+      --bg-base: #020817;       
+      --bg-panel: #0F172A;      
+      --bg-hover: #1E293B;      
+      --border-color: #1E293B;  
+      
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: var(--bg-base); 
+      color: var(--text-main); 
+      display: flex; 
+      flex-direction: row; 
+      height: 100vh; 
+      overflow: hidden; 
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    .icon-svg svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ==========================================
+       2. PREMIUM SIDEBAR
+       ========================================== */
+    .sidebar { width: 16.5rem; background: var(--bg-base); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 1.5rem 1rem; z-index: 20; transition: background-color 0.3s ease, border-color 0.3s ease; flex-shrink: 0; }
+    .sidebar-top { display: flex; justify-content: space-between; align-items: center; width: 100%; padding-bottom: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .brand { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-logo { width: 2.25rem; height: 2.25rem; border-radius: 0.4rem; object-fit: contain; background: #FFFFFF; padding: 0.15rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+    .brand-text h2 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+    .brand-text span { font-size: 0.65rem; color: var(--emerald-500); text-transform: uppercase; font-weight: 800; letter-spacing: 0.05em; display: block; }
+    [data-theme="dark"] .brand-text span { color: var(--emerald-400); }
+
+    .mobile-menu-btn { display: none; background: transparent; border: none; color: var(--text-main); cursor: pointer; padding: 0.5rem; }
+
+    .nav-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 1rem 0 0.5rem 0.75rem; }
+    .nav-menu { display: flex; flex-direction: column; gap: 0.2rem; flex: 1; overflow-y: auto; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: var(--radius-md); color: var(--text-muted); font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; text-decoration: none; }
+    .nav-item:hover { background: var(--bg-hover); color: var(--text-main); }
+    .nav-item.active { background: var(--bg-hover); color: var(--text-main); font-weight: 600; }
+    .nav-item.active .icon-svg { color: var(--emerald-500); }
+    [data-theme="dark"] .nav-item.active .icon-svg { color: var(--emerald-400); }
+
+    .admin-profile { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0.5rem 0 0.5rem; border-top: 1px solid var(--border-color); margin-top: 1rem; }
+    .admin-profile-left { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+    .avatar { width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--emerald-500); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .admin-info h4 { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+    .admin-info p { font-size: 0.75rem; color: var(--text-muted); }
+
+    .logout-btn { width: 2.25rem; height: 2.25rem; border-radius: 0.4rem; background: transparent; border: 1px solid transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; text-decoration: none; }
+    .logout-btn:hover { background: rgba(239, 68, 68, 0.1); color: var(--rose-500); }
+
+    .theme-toggle-btn { width: 2.25rem; height: 2.25rem; border-radius: 0.4rem; background: transparent; border: 1px solid transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+    .theme-toggle-btn:hover { background: var(--bg-hover); color: var(--text-main); }
+
+    /* ==========================================
+       3. MAIN CONTENT WORKSPACE
+       ========================================== */
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; min-width: 0; }
+
+    .page-view { display: none; flex-direction: column; padding: 2rem 3rem; max-width: 100rem; margin: 0 auto; width: 100%; }
+    .page-view.active { display: flex; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    .top-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; gap: 1.5rem; flex-wrap: wrap; }
+    .page-title h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; letter-spacing: -0.02em; color: var(--text-main); }
+    .page-title p { font-size: 0.9rem; color: var(--text-muted); }
+
+    .header-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    
+    .btn-primary { background: var(--text-main); color: var(--bg-base); border: none; padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 0.6rem 1.25rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background 0.2s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+    .btn-outline:hover { background: var(--bg-hover); }
+
+    .search-bar { display: flex; align-items: center; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.5rem 1rem; width: 18rem; transition: border-color 0.2s ease; }
+    .search-bar:focus-within { border-color: var(--emerald-500); }
+    .search-bar input { background: transparent; border: none; outline: none; color: var(--text-main); font-size: 0.85rem; width: 100%; margin-left: 0.5rem; font-family: inherit; }
+
+    /* ==========================================
+       4. SHADCN CARDS & METRICS
+       ========================================== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; box-shadow: var(--shadow-sm); transition: border-color 0.2s ease; }
+    .stat-card:hover { border-color: rgba(16, 185, 129, 0.4); }
+    .stat-header { display: flex; justify-content: space-between; align-items: center; }
+    .stat-title { font-size: 0.85rem; font-weight: 500; color: var(--text-muted); }
+    .stat-icon { color: var(--text-muted); }
+    .stat-value { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; color: var(--text-main); }
+    .stat-trend { font-size: 0.8rem; font-weight: 500; }
+    .trend-up { color: var(--emerald-500); }
+    [data-theme="dark"] .trend-up { color: var(--emerald-400); }
+    .trend-down { color: var(--rose-500); }
+    .trend-neutral { color: var(--text-muted); }
+
+    .data-grid { display: grid; grid-template-columns: 2.2fr 1fr; gap: 1.25rem; }
+    .panel-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .panel-title { font-size: 1.05rem; font-weight: 600; color: var(--text-main); letter-spacing: -0.01em; }
+    .chart-container { width: 100%; flex: 1; min-height: 18rem; position: relative; }
+
+    /* ==========================================
+       5. PREMIUM TABLES & LISTS
+       ========================================== */
+    .table-container { width: 100%; overflow-x: auto; margin-top: 1rem; }
+    .shadcn-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 600px; }
+    .shadcn-table th { padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.85rem; font-weight: 500; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+    .shadcn-table td { padding: 1.25rem; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; font-weight: 500; color: var(--text-main); }
+    .shadcn-table tr:last-child td { border-bottom: none; }
+    .shadcn-table tr:hover td { background: var(--bg-hover); }
+    .text-right { text-align: right; }
+
+    .table-user { display: flex; align-items: center; gap: 0.75rem; }
+    .table-avatar { width: 2rem; height: 2rem; border-radius: 50%; background: var(--bg-hover); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text-main); }
+    
+    .badge { display: inline-flex; align-items: center; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; white-space: nowrap; }
+    .badge-success { background: rgba(16, 185, 129, 0.1); color: var(--emerald-500); border: 1px solid rgba(16, 185, 129, 0.2); }
+    [data-theme="dark"] .badge-success { color: var(--emerald-400); }
+    .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--amber-500); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--rose-500); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-neutral { background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+    .money-in { color: var(--emerald-500); font-weight: 600; }
+    [data-theme="dark"] .money-in { color: var(--emerald-400); }
+    .money-out { color: var(--text-main); font-weight: 600; }
+
+    /* GALLERY */
+    .upload-dropzone { border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease; background: var(--bg-hover); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 2.5rem; }
+    .upload-dropzone:hover { border-color: var(--emerald-500); background: rgba(16, 185, 129, 0.05); }
+    .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1.5rem; }
+    .album-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16/10; background: var(--bg-hover); border: 1px solid var(--border-color); cursor: pointer; }
+    .album-thumb { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .album-card:hover .album-thumb { transform: scale(1.05); }
+    .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 60%); display: flex; align-items: flex-end; padding: 1.25rem; transition: opacity 0.3s ease; }
+    .album-details h4 { font-size: 1.05rem; font-weight: 600; color: #FFFFFF; margin-bottom: 0.2rem; }
+    .album-details p { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+    .album-actions { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
+    .album-card:hover .album-actions { opacity: 1; transform: translateY(0); }
+    .album-btn { width: 2rem; height: 2rem; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); color: white; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; }
+    .album-btn:hover { background: rgba(0,0,0,0.8); }
+
+    /* ==========================================
+       7. ANALYTICS SPECIFIC STYLES (TIKTOK/YT VIBE)
+       ========================================== */
+    .pulse-dot { width: 10px; height: 10px; background-color: var(--rose-500); border-radius: 50%; display: inline-block; margin-right: 0.5rem; box-shadow: 0 0 0 0 rgba(239, 68, 68, 1); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    
+    .retention-bar-container { width: 100%; height: 6px; background: var(--bg-hover); border-radius: 10px; overflow: hidden; margin-top: 0.5rem; }
+    .retention-bar { height: 100%; background: var(--emerald-500); border-radius: 10px; }
+    [data-theme="dark"] .retention-bar { background: var(--emerald-400); }
+
+    /* ==========================================
+       8. MOBILE RESPONSIVENESS
+       ========================================== */
+    @media (max-width: 1024px) {
+      body { flex-direction: column; } 
+      .sidebar { width: 100%; padding: 1rem 1.5rem; border-right: none; border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+      .sidebar-top { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+      .brand { padding: 0; margin: 0; border: none; }
+      .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+      .nav-menu { display: none; margin-top: 1.5rem; max-height: 60vh; }
+      .nav-menu.open { display: flex; }
+      .admin-profile { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .data-grid { grid-template-columns: 1fr; }
+      .page-view { padding: 1.5rem; }
+    }
+
+    @media (max-width: 640px) {
+      .top-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .search-bar { width: 100%; flex: 1; }
+      .stats-grid { grid-template-columns: 1fr; } 
+      .page-view { padding: 1rem; }
+      .album-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <img src="assets/images/logo.jpg" alt="GCPCUL" class="brand-logo" onerror="this.src='https://via.placeholder.com/50';">
+        <div class="brand-text">
+          <h2>GCPCUL Admin</h2>
+          <span>Operations Desk</span>
+        </div>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <button class="theme-toggle-btn" id="themeToggleBtnMobile" aria-label="Toggle Theme">
+          <span class="icon-svg" id="themeIconMobile"></span>
+        </button>
+        <button class="mobile-menu-btn icon-svg" id="mobileMenuBtn" aria-label="Toggle Menu">
+          <svg><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    
+    <nav class="nav-menu" id="navMenu">
+      <div class="nav-label">Overview</div>
+      <a onclick="showPage('dashboard', this)" class="nav-item active">
+        <span class="icon-svg"><svg><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+        Dashboard
+      </a>
+      <!-- THE FIX: Analytics Nav Item Added -->
+      <a onclick="showPage('analytics', this)" class="nav-item">
+        <span class="icon-svg"><svg><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+        Site Analytics
+      </a>
+
+      <div class="nav-label">Core Operations</div>
+      <a onclick="showPage('members', this)" class="nav-item">
+        <span class="icon-svg"><svg><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        Members
+      </a>
+      <a onclick="showPage('loans', this)" class="nav-item">
+        <span class="icon-svg"><svg><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+        Loans & Processing
+      </a>
+      <a onclick="showPage('deposits', this)" class="nav-item">
+        <span class="icon-svg"><svg><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></span>
+        Ledger & Deposits
+      </a>
+
+      <div class="nav-label">Content Management</div>
+      <a onclick="showPage('blog', this)" class="nav-item">
+        <span class="icon-svg"><svg><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+        News & Blog
+      </a>
+      <a onclick="showPage('gallery', this)" class="nav-item">
+        <span class="icon-svg"><svg><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
+        Gallery & Albums
+      </a>
+    </nav>
+
+    <div class="admin-profile">
+      <div class="admin-profile-left">
+        <div class="avatar">AD</div>
+        <div class="admin-info">
+          <h4>Chief Admin</h4>
+          <p>Superuser</p>
+        </div>
+      </div>
+      <a href="#" onclick="handleLogout(event)" class="logout-btn" aria-label="Log Out" title="Secure Log Out">
+        <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="main-wrapper">
+    
+    <!-- PAGE: DASHBOARD OVERVIEW -->
+    <div id="dashboard" class="page-view active">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Dashboard</h1>
+          <p>Overview of credit union financial health.</p>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle-btn" id="themeToggleBtnHeader" aria-label="Toggle Theme" style="border: 1px solid var(--border-color);">
+            <span class="icon-svg" id="themeIconHeader"></span>
+          </button>
+          <button class="btn-outline">
+            <span class="icon-svg"><svg><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+            Export Report
+          </button>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Total Funds</span>
+            <span class="icon-svg stat-icon"><svg><rect x="2" y="20" width="20" height="2"/><path d="M12 2L2 7l2 2v9h16V9l2-2L12 2Z"/><path d="M6 9v9"/><path d="M10 9v9"/><path d="M14 9v9"/><path d="M18 9v9"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">GH¢ 14.2M</div>
+            <div class="stat-trend trend-up">+2.4% from last month</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Active Loans</span>
+            <span class="icon-svg stat-icon"><svg><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">GH¢ 5.8M</div>
+            <div class="stat-trend trend-up">84 active contracts</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Approvals</span>
+            <span class="icon-svg stat-icon"><svg><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">12</div>
+            <div class="stat-trend trend-neutral">Pending review</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Default Rate</span>
+            <span class="icon-svg stat-icon"><svg><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">0.8%</div>
+            <div class="stat-trend trend-down">-0.2% vs last quarter</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-grid">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title">Savings vs Disbursals</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="financialChart"></canvas>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title">Recent Activity</h3>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1.2rem; flex:1; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+              <div>
+                <p style="font-size:0.9rem; font-weight:600;">Personal Loan (GCP-0012)</p>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Initiated by Teller 04</p>
+              </div>
+              <span class="badge badge-warning">Review</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:1rem; border-bottom:1px solid var(--border-color);">
+              <div>
+                <p style="font-size:0.9rem; font-weight:600;">Shares Top-Up (GCP-089)</p>
+                <p style="font-size:0.8rem; color:var(--text-muted);">MoMo Deposit</p>
+              </div>
+              <span class="badge badge-success">Cleared</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <p style="font-size:0.9rem; font-weight:600;">Business Loan (GCP-088)</p>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Guarantor Verified</p>
+              </div>
+              <span class="badge badge-warning">Disburse</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End Dashboard -->
+
+    <!-- PAGE: SITE ANALYTICS (YOUTUBE/TIKTOK STYLE) -->
+    <div id="analytics" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Site Analytics</h1>
+          <p>Real-time traffic, engagement, and audience retention metrics.</p>
+        </div>
+        <div class="header-actions">
+           <button class="btn-outline">Last 30 Days <span class="icon-svg" style="width:1rem;height:1rem;margin-left:0.5rem;"><svg><polyline points="6 9 12 15 18 9"/></svg></span></button>
+        </div>
+      </header>
+
+      <!-- Creator Studio Style Metrics -->
+      <div class="stats-grid">
+        <div class="stat-card" style="border-color: rgba(239, 68, 68, 0.4);">
+          <div class="stat-header">
+            <span class="stat-title">Active Users Right Now</span>
+            <span class="icon-svg stat-icon" style="color: var(--rose-500);"><svg><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 14a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value" style="display:flex; align-items:center;"><span class="pulse-dot"></span> 124</div>
+            <div class="stat-trend trend-neutral">Browsing public pages</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Total Page Views</span>
+            <span class="icon-svg stat-icon"><svg><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">34.2K</div>
+            <div class="stat-trend trend-up">+14.5% vs previous 30 days</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Unique Visitors</span>
+            <span class="icon-svg stat-icon"><svg><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">8.4K</div>
+            <div class="stat-trend trend-up">+5.2% vs previous 30 days</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Avg. Engagement Time</span>
+            <span class="icon-svg stat-icon"><svg><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          </div>
+          <div>
+            <div class="stat-value">2m 14s</div>
+            <div class="stat-trend trend-down">-12s vs previous 30 days</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-grid">
+        <!-- Traffic Chart -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title">Traffic Overview</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="trafficChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Traffic Sources (Doughnut) -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title">Traffic Sources</h3>
+          </div>
+          <div class="chart-container" style="display:flex; align-items:center; justify-content:center; min-height:14rem;">
+            <canvas id="sourceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- YouTube Style Audience Retention Table -->
+      <div class="panel-card" style="margin-top: 1.25rem; padding:0; overflow:hidden;">
+        <div class="panel-header" style="padding: 1.5rem 1.5rem 0 1.5rem; margin-bottom: 0.5rem;">
+          <h3 class="panel-title">Top Pages by Audience Retention</h3>
+        </div>
+        <div class="table-container">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Page URL</th>
+                <th style="width: 15%;">Views</th>
+                <th style="width: 40%;">Avg. View Duration & Retention</th>
+                <th style="width: 15%; text-align:right;">Bounce Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:600;">/products.html</td>
+                <td>12,450</td>
+                <td>
+                  <div style="display:flex; align-items:center; gap:1rem;">
+                    <span style="min-width: 3rem; font-weight:600; font-family:monospace;">3m 45s</span>
+                    <div style="flex:1;"><div class="retention-bar-container"><div class="retention-bar" style="width: 85%;"></div></div></div>
+                  </div>
+                </td>
+                <td style="text-align:right;">24.2%</td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">/calculator.html</td>
+                <td>8,230</td>
+                <td>
+                  <div style="display:flex; align-items:center; gap:1rem;">
+                    <span style="min-width: 3rem; font-weight:600; font-family:monospace;">4m 12s</span>
+                    <div style="flex:1;"><div class="retention-bar-container"><div class="retention-bar" style="width: 92%; background:var(--amber-500);"></div></div></div>
+                  </div>
+                </td>
+                <td style="text-align:right;">18.5%</td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">/index.html (Home)</td>
+                <td>22,100</td>
+                <td>
+                  <div style="display:flex; align-items:center; gap:1rem;">
+                    <span style="min-width: 3rem; font-weight:600; font-family:monospace;">1m 15s</span>
+                    <div style="flex:1;"><div class="retention-bar-container"><div class="retention-bar" style="width: 45%;"></div></div></div>
+                  </div>
+                </td>
+                <td style="text-align:right;">42.8%</td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">/downloads.html</td>
+                <td>4,500</td>
+                <td>
+                  <div style="display:flex; align-items:center; gap:1rem;">
+                    <span style="min-width: 3rem; font-weight:600; font-family:monospace;">0m 45s</span>
+                    <div style="flex:1;"><div class="retention-bar-container"><div class="retention-bar" style="width: 25%; background:var(--rose-500);"></div></div></div>
+                  </div>
+                </td>
+                <td style="text-align:right;">65.4%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- End Analytics -->
+
+    <!-- PAGE: MEMBERS DIRECTORY -->
+    <div id="members" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Member Directory</h1>
+          <p>Manage all registered pharmacists and their accounts.</p>
+        </div>
+        <div class="header-actions">
+          <div class="search-bar">
+            <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input type="text" placeholder="Search ID or Name...">
+          </div>
+          <button class="btn-primary">Add Member</button>
+        </div>
+      </header>
+
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));">
+        <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+          <div class="stat-title">Total Members</div>
+          <div class="stat-value" style="font-size: 1.5rem;">1,248</div>
+        </div>
+        <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+          <div class="stat-title">Pending KYC</div>
+          <div class="stat-value" style="font-size: 1.5rem; color: var(--amber-500);">14</div>
+        </div>
+        <div class="stat-card" style="min-height: auto; padding: 1.25rem;">
+          <div class="stat-title">Total Shares Capital</div>
+          <div class="stat-value" style="font-size: 1.5rem;">GH¢ 8.4M</div>
+        </div>
+      </div>
+
+      <div class="panel-card" style="padding:0; overflow:hidden;">
+        <div class="table-container">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>Member Profile</th>
+                <th>Member ID</th>
+                <th>Status</th>
+                <th>Total Shares</th>
+                <th>Joined Date</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="table-user">
+                    <div class="table-avatar">KM</div>
+                    <div>
+                      <div style="font-weight:600;">Dr. Kwame Mensah</div>
+                      <div style="font-size:0.8rem; color:var(--text-muted);">054 868 5362</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-family: monospace;">GCP-00456</td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td style="font-weight: 600;">GH¢ 12,450.00</td>
+                <td style="color:var(--text-muted);">Jan 12, 2024</td>
+                <td class="text-right"><button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="table-user">
+                    <div class="table-avatar">SO</div>
+                    <div>
+                      <div style="font-weight:600;">Sarah Osei-Bonsu</div>
+                      <div style="font-size:0.8rem; color:var(--text-muted);">024 112 3344</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-family: monospace;">GCP-00892</td>
+                <td><span class="badge badge-warning">KYC Pending</span></td>
+                <td style="font-weight: 600;">GH¢ 8,200.00</td>
+                <td style="color:var(--text-muted);">Mar 04, 2025</td>
+                <td class="text-right"><button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="table-user">
+                    <div class="table-avatar">EA</div>
+                    <div>
+                      <div style="font-weight:600;">Emmanuel Addo</div>
+                      <div style="font-size:0.8rem; color:var(--text-muted);">050 998 7766</div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-family: monospace;">GCP-01204</td>
+                <td><span class="badge badge-success">Active</span></td>
+                <td style="font-weight: 600;">GH¢ 45,000.00</td>
+                <td style="color:var(--text-muted);">Nov 22, 2021</td>
+                <td class="text-right"><button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- End Members -->
+
+    <!-- PAGE: LOAN PROCESSING -->
+    <div id="loans" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Loan Processing</h1>
+          <p>Review, approve, and track active member loans.</p>
+        </div>
+      </header>
+
+      <div class="panel-card" style="padding:0; overflow:hidden;">
+        <div style="padding:1rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <span class="badge badge-neutral" style="cursor:pointer; background:var(--text-main); color:var(--bg-base);">All Requests</span>
+          <span class="badge badge-warning" style="cursor:pointer;">Pending Approval (12)</span>
+          <span class="badge badge-success" style="cursor:pointer;">Active Loans (84)</span>
+          <span class="badge badge-danger" style="cursor:pointer;">Defaulted (2)</span>
+        </div>
+        <div class="table-container">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>App ID</th>
+                <th>Member</th>
+                <th>Loan Type</th>
+                <th>Amount Requested</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family: monospace;">LN-8842</td>
+                <td>
+                  <div style="font-weight:600;">GCP-00456</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Kwame Mensah</div>
+                </td>
+                <td>Personal Loan</td>
+                <td style="font-weight: 700;">GH¢ 15,000</td>
+                <td><span class="badge badge-warning">Review Maker</span></td>
+                <td class="text-right"><button class="btn-primary" style="padding:0.4rem 0.8rem;">Review</button></td>
+              </tr>
+              <tr>
+                <td style="font-family: monospace;">LN-8843</td>
+                <td>
+                  <div style="font-weight:600;">GCP-01204</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Emmanuel Addo</div>
+                </td>
+                <td>Business Loan</td>
+                <td style="font-weight: 700;">GH¢ 120,000</td>
+                <td><span class="badge badge-neutral">Awaiting Guarantor</span></td>
+                <td class="text-right"><button class="btn-outline" style="padding:0.4rem 0.8rem;">Details</button></td>
+              </tr>
+              <tr>
+                <td style="font-family: monospace;">LN-8790</td>
+                <td>
+                  <div style="font-weight:600;">GCP-00892</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Sarah Osei-Bonsu</div>
+                </td>
+                <td>Emergency Loan</td>
+                <td style="font-weight: 700;">GH¢ 5,000</td>
+                <td><span class="badge badge-success">Active & Paying</span></td>
+                <td class="text-right"><button class="btn-outline" style="padding:0.4rem 0.8rem;">Ledger</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- End Loans -->
+
+    <!-- PAGE: LEDGER & DEPOSITS -->
+    <div id="deposits" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Ledger & Deposits</h1>
+          <p>Immutable log of all financial transactions.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-outline">Filter Dates</button>
+        </div>
+      </header>
+
+      <div class="panel-card" style="padding:0; overflow:hidden;">
+        <div class="table-container">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Date & Time</th>
+                <th>Member ID</th>
+                <th>Transaction Type</th>
+                <th>Method</th>
+                <th class="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family: monospace; color:var(--text-muted);">TX-992384</td>
+                <td>Aug 11, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">10:04 AM</span></td>
+                <td style="font-weight: 600;">GCP-00456</td>
+                <td>Share Capital Top-Up</td>
+                <td>Mobile Money</td>
+                <td class="text-right money-in">+ GH¢ 500.00</td>
+              </tr>
+              <tr>
+                <td style="font-family: monospace; color:var(--text-muted);">TX-992383</td>
+                <td>Aug 11, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">09:30 AM</span></td>
+                <td style="font-weight: 600;">GCP-01204</td>
+                <td>Loan Repayment</td>
+                <td>Payroll Deduction</td>
+                <td class="text-right money-in">+ GH¢ 1,200.00</td>
+              </tr>
+              <tr>
+                <td style="font-family: monospace; color:var(--text-muted);">TX-992382</td>
+                <td>Aug 10, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">16:45 PM</span></td>
+                <td style="font-weight: 600;">GCP-00892</td>
+                <td>Loan Disbursal</td>
+                <td>Bank Transfer</td>
+                <td class="text-right money-out">- GH¢ 5,000.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- End Deposits -->
+
+    <!-- PAGE: NEWS & BLOG -->
+    <div id="blog" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>News & Announcements</h1>
+          <p>Manage public blog posts and member updates.</p>
+        </div>
+        <div class="header-actions">
+          <div class="search-bar" style="width:16rem;">
+            <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+            <input type="text" placeholder="Search posts...">
+          </div>
+          <button class="btn-primary">
+            <span class="icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            New Post
+          </button>
+        </div>
+      </header>
+
+      <div class="panel-card" style="padding:0;">
+        <div class="table-container">
+          <table class="shadcn-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500;">2026 Annual Dividend Declaration</td>
+                <td>System Admin</td>
+                <td><span class="badge badge-success">Published</span></td>
+                <td>Aug 10, 2026</td>
+                <td style="text-align:right; color:var(--text-muted); cursor:pointer;">
+                  <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Update on Fast-Track Loan Limits</td>
+                <td>Loans Dept</td>
+                <td><span class="badge badge-success">Published</span></td>
+                <td>Jul 22, 2026</td>
+                <td style="text-align:right; color:var(--text-muted); cursor:pointer;">
+                  <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:500;">Notice of Annual General Meeting</td>
+                <td>Board Sec.</td>
+                <td><span class="badge badge-warning">Draft</span></td>
+                <td>--</td>
+                <td style="text-align:right; color:var(--text-muted); cursor:pointer;">
+                  <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- End Blog -->
+
+    <!-- PAGE: GALLERY & ALBUMS -->
+    <div id="gallery" class="page-view">
+      <header class="top-header">
+        <div class="page-title">
+          <h1>Media Gallery</h1>
+          <p>Manage high-resolution albums for the public site.</p>
+        </div>
+      </header>
+
+      <div class="upload-dropzone">
+        <div class="upload-icon">
+          <span class="icon-svg" style="width:2rem; height:2rem;"><svg><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>
+        </div>
+        <div>
+          <p class="upload-text">Drag and drop photos to create a new album</p>
+          <p class="upload-sub">PNG, JPG, WEBP up to 10MB</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:1.1rem; font-weight:600; margin-bottom:1.25rem; color:var(--text-main);">Published Albums</h3>
+      
+      <div class="album-grid">
+        <div class="album-card">
+          <img src="https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?auto=format&fit=crop&w=400&q=80" alt="AGM 2025" class="album-thumb">
+          <div class="album-overlay">
+            <div class="album-details">
+              <h4>2025 Annual General Meeting</h4>
+              <p>42 Photos</p>
+            </div>
+          </div>
+          <div class="album-actions">
+            <button class="album-btn" aria-label="Edit Album"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span></button>
+            <button class="album-btn" aria-label="Delete Album" style="color: #FCA5A5;"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></button>
+          </div>
+        </div>
+
+        <div class="album-card">
+          <img src="https://images.unsplash.com/photo-1577415124269-fc1140a69e91?auto=format&fit=crop&w=400&q=80" alt="Inauguration" class="album-thumb">
+          <div class="album-overlay">
+            <div class="album-details">
+              <h4>Board Inauguration Ceremony</h4>
+              <p>18 Photos</p>
+            </div>
+          </div>
+          <div class="album-actions">
+            <button class="album-btn" aria-label="Edit Album"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span></button>
+            <button class="album-btn" aria-label="Delete Album" style="color: #FCA5A5;"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></button>
+          </div>
+        </div>
+
+        <div class="album-card">
+          <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&w=400&q=80" alt="Kumasi Outreach" class="album-thumb">
+          <div class="album-overlay">
+            <div class="album-details">
+              <h4>Kumasi Member Outreach</h4>
+              <p>25 Photos</p>
+            </div>
+          </div>
+          <div class="album-actions">
+            <button class="album-btn" aria-label="Edit Album"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span></button>
+            <button class="album-btn" aria-label="Delete Album" style="color: #FCA5A5;"><span class="icon-svg" style="width:1rem;height:1rem;"><svg><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span></button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End Gallery -->
+
+  </main>
+
+  <script>
+    function handleLogout(event) {
+      event.preventDefault();
+      localStorage.removeItem('gcpcul_auth_token');
+      sessionStorage.clear();
+      window.location.replace('login.html');
+    }
+
+    function showPage(pageId, element) {
+      document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      element.classList.add('active');
+      
+      if(window.innerWidth <= 1024) {
+        document.getElementById('navMenu').classList.remove('open');
+      }
+
+      // Initialize analytics charts only when the tab is opened
+      if (pageId === 'analytics' && !window.trafficChartInitialized) {
+        initAnalyticsCharts();
+        window.trafficChartInitialized = true;
+      }
+    }
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const navMenu = document.getElementById('navMenu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      navMenu.classList.toggle('open');
+    });
+
+    const root = document.documentElement;
+    const themeToggleBtnHeader = document.getElementById('themeToggleBtnHeader');
+    const themeIconHeader = document.getElementById('themeIconHeader');
+    const themeToggleBtnMobile = document.getElementById('themeToggleBtnMobile');
+    const themeIconMobile = document.getElementById('themeIconMobile');
+    
+    const themeButtons = [themeToggleBtnHeader, themeToggleBtnMobile];
+    const themeIcons = [themeIconHeader, themeIconMobile];
+
+    const sunSVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"/></svg>';
+    const moonSVG = '<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+    const savedTheme = localStorage.getItem('gcpcul-admin-theme') || 'dark';
+    
+    if (savedTheme === 'dark') { 
+      root.setAttribute('data-theme', 'dark'); 
+      themeIcons.forEach(icon => { if(icon) icon.innerHTML = sunSVG; });
+    } else {
+      root.removeAttribute('data-theme');
+      themeIcons.forEach(icon => { if(icon) icon.innerHTML = moonSVG; });
+    }
+
+    themeButtons.forEach(btn => {
+      if(btn) {
+        btn.addEventListener('click', () => {
+          if (root.hasAttribute('data-theme')) {
+            root.removeAttribute('data-theme');
+            localStorage.setItem('gcpcul-admin-theme', 'light');
+            themeIcons.forEach(icon => { if(icon) icon.innerHTML = moonSVG; });
+          } else {
+            root.setAttribute('data-theme', 'dark');
+            localStorage.setItem('gcpcul-admin-theme', 'dark');
+            themeIcons.forEach(icon => { if(icon) icon.innerHTML = sunSVG; });
+          }
+          
+          if(window.myChart) window.myChart.update();
+          if(window.trafficChart) window.trafficChart.update();
+          if(window.sourceChart) window.sourceChart.update();
+        });
+      }
+    });
+
+    // Chart.js Initialization for Dashboard
+    document.addEventListener("DOMContentLoaded", function() {
+      const chartElement = document.getElementById('financialChart');
+      if (!chartElement) return; 
+      
+      const ctx = chartElement.getContext('2d');
+      let gradientEmerald = ctx.createLinearGradient(0, 0, 0, 250);
+      gradientEmerald.addColorStop(0, 'rgba(16, 185, 129, 0.25)'); 
+      gradientEmerald.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+      window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+          datasets: [
+            {
+              label: 'Savings (GH¢)',
+              data: [8.2, 8.5, 9.1, 10.4, 11.2, 12.5, 13.8, 14.2],
+              borderColor: '#10B981', 
+              backgroundColor: gradientEmerald,
+              borderWidth: 2,
+              pointBackgroundColor: 'transparent',
+              pointBorderColor: 'transparent',
+              pointRadius: 4,
+              fill: true,
+              tension: 0.4 
+            },
+            {
+              label: 'Loans (GH¢)',
+              data: [3.1, 3.4, 3.2, 4.8, 4.1, 5.2, 5.5, 5.8],
+              borderColor: '#94A3B8', 
+              borderWidth: 2,
+              borderDash: [4, 4], 
+              pointBackgroundColor: 'transparent',
+              pointBorderColor: 'transparent',
+              pointRadius: 3,
+              fill: false,
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'end',
+              labels: { color: '#64748B', font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '500' }, usePointStyle: true, boxWidth: 6 }
+            },
+            tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#94A3B8', borderColor: '#1E293B', borderWidth: 1, padding: 10, displayColors: false }
+          },
+          scales: {
+            x: { grid: { display: false, drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 } } },
+            y: { grid: { color: 'rgba(148, 163, 184, 0.1)', drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 }, callback: function(value) { return value + 'M'; } } }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
+    });
+
+    // Chart.js Initialization for Analytics
+    function initAnalyticsCharts() {
+      const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+      const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+
+      let gradientBlue = trafficCtx.createLinearGradient(0, 0, 0, 250);
+      gradientBlue.addColorStop(0, 'rgba(59, 130, 246, 0.25)'); // Blue 500
+      gradientBlue.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+      window.trafficChart = new Chart(trafficCtx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Page Views',
+            data: [1200, 1900, 1500, 2200, 2800, 1100, 950],
+            borderColor: '#3B82F6', 
+            backgroundColor: gradientBlue,
+            borderWidth: 2,
+            pointBackgroundColor: 'transparent',
+            pointBorderColor: 'transparent',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#94A3B8', borderColor: '#1E293B', borderWidth: 1, padding: 10, displayColors: false } },
+          scales: {
+            x: { grid: { display: false, drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 } } },
+            y: { grid: { color: 'rgba(148, 163, 184, 0.1)', drawBorder: false }, ticks: { color: '#64748B', font: { size: 11 } } }
+          },
+          interaction: { intersect: false, mode: 'index' }
+        }
+      });
+
+      window.sourceChart = new Chart(sourceCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Direct Search', 'WhatsApp Link', 'Facebook', 'Referral'],
+          datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: ['#10B981', '#3B82F6', '#A855F7', '#F59E0B'],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '75%',
+          plugins: {
+            legend: { position: 'right', labels: { color: '#64748B', font: { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '500' }, usePointStyle: true, boxWidth: 6, padding: 15 } },
+            tooltip: { backgroundColor: '#0F172A', titleColor: '#F8FAFC', bodyColor: '#F8FAFC', borderColor: '#1E293B', borderWidth: 1, padding: 10, displayColors: true }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

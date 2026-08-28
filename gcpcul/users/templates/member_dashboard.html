@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Home | GCPCUL</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-app: #F9FAFB; --bg-card: #FFFFFF;
+      --text-main: #111827; --text-muted: #6B7280;
+      --primary: #2563EB; --primary-light: #EFF6FF;
+      --emerald: #10B981; --emerald-light: #ECFDF5;
+      --border-light: #E5E7EB;
+      --radius-xl: 1.5rem; --radius-lg: 1rem; --radius-md: 0.75rem;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-app); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
+    
+    /* MOBILE FIRST BASE */
+    .app-wrapper { width: 100%; max-width: 480px; margin: 0 auto; position: relative; padding-bottom: 6rem; transition: max-width 0.4s ease; }
+    
+    /* 1. TOP NAV */
+    .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; }
+    .user-greeting { display: flex; align-items: center; gap: 0.75rem; }
+    .avatar { width: 2.75rem; height: 2.75rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-card); box-shadow: var(--shadow-soft); }
+    .greeting-text h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .greeting-text p { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .nav-btn { background: var(--bg-card); border: 1px solid var(--border-light); width: 2.5rem; height: 2.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-soft); color: var(--text-main); transition: transform 0.1s; }
+    .nav-btn:active { transform: scale(0.95); }
+
+    /* 2. THE WEALTH CARD (Now with Sparkline) */
+    .balance-section { padding: 0 1.5rem; margin-bottom: 1.5rem; }
+    .wealth-card { background: var(--text-main); color: #FFFFFF; border-radius: var(--radius-xl); padding: 1.75rem; position: relative; overflow: hidden; box-shadow: 0 15px 30px -10px rgba(17, 24, 39, 0.3); }
+    .wealth-card::before { content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: var(--primary); border-radius: 50%; filter: blur(60px); opacity: 0.4; }
+    
+    /* The Glowing Background Sparkline */
+    .sparkline-bg { position: absolute; bottom: 10%; left: 0; right: 0; width: 100%; height: 60%; opacity: 0.15; pointer-events: none; z-index: 1; }
+    .sparkline-bg svg { width: 100%; height: 100%; preserveAspectRatio: none; }
+    .sparkline-path { fill: none; stroke: var(--emerald); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 4px 6px rgba(16, 185, 129, 0.5)); }
+
+    .wealth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; position: relative; z-index: 10; }
+    .wealth-label { font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.7); }
+    .toggle-btn { background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .total-balance { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 1rem; position: relative; z-index: 10; display: flex; align-items: center; gap: 0.5rem; }
+    .currency { font-size: 1.25rem; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .balance-split { display: flex; gap: 1.5rem; position: relative; z-index: 10; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+    .split-item p { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.2rem; }
+    .split-item h4 { font-size: 1.05rem; font-weight: 600; }
+
+    /* 3. QUICK ACTIONS */
+    .quick-actions { display: flex; justify-content: space-between; padding: 0 1.5rem; margin-bottom: 2rem; }
+    .action-item { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; }
+    .action-icon { width: 3.5rem; height: 3.5rem; border-radius: 1.2rem; background: var(--bg-card); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-soft); color: var(--primary); transition: transform 0.1s; }
+    .action-item:active .action-icon { transform: scale(0.92); }
+    .action-item span { font-size: 0.75rem; font-weight: 600; color: var(--text-main); }
+
+    /* NEW: QUICK TRANSFER ROW */
+    .quick-transfer-container { padding: 0 1.5rem; margin-bottom: 2rem; }
+    .section-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
+    .payee-row { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
+    .payee-row::-webkit-scrollbar { display: none; }
+    .payee-avatar { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; min-width: 4rem; }
+    .payee-img { width: 3.5rem; height: 3.5rem; border-radius: 50%; object-fit: cover; border: 2px solid transparent; transition: all 0.2s; }
+    .payee-avatar:hover .payee-img { border-color: var(--primary); transform: scale(1.05); }
+    .add-payee { background: var(--primary-light); color: var(--primary); border: 2px dashed var(--primary); display: flex; align-items: center; justify-content: center; }
+    .payee-name { font-size: 0.75rem; font-weight: 600; color: var(--text-main); }
+
+    /* 4. ACTIVE LOAN WIDGET */
+    .loan-widget { margin: 0 1.5rem 2rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-xl); padding: 1.25rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: var(--shadow-soft); border: 1px solid var(--border-light); }
+    .progress-ring { position: relative; width: 64px; height: 64px; }
+    .progress-ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .progress-bg { fill: none; stroke: var(--bg-app); stroke-width: 6; }
+    .progress-bar { fill: none; stroke: var(--emerald); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 175; stroke-dashoffset: 60; transition: stroke-dashoffset 1s ease-in-out; }
+    .progress-percent { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.75rem; font-weight: 700; color: var(--emerald); }
+    .loan-details { flex: 1; }
+    .loan-details h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .loan-details p { font-size: 0.8rem; color: var(--text-muted); }
+    .loan-amount { font-size: 1rem; font-weight: 700; color: var(--text-main); text-align: right; }
+
+    /* 5. PLAIN ENGLISH LEDGER */
+    .feed-container { background: var(--bg-card); border-top-left-radius: 1.5rem; border-top-right-radius: 1.5rem; padding: 1.5rem; min-height: 300px; border-top: 1px solid var(--border-light); box-shadow: 0 -4px 10px rgba(0,0,0,0.02); }
+    .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .feed-header h3 { font-size: 1.05rem; font-weight: 700; }
+    .feed-header a { font-size: 0.8rem; font-weight: 600; color: var(--primary); text-decoration: none; }
+    .txn-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .txn-left { display: flex; align-items: center; gap: 1rem; }
+    .txn-icon { width: 2.75rem; height: 2.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .icon-in { background: var(--emerald-light); color: var(--emerald); }
+    .icon-out { background: var(--bg-app); color: var(--text-main); }
+    .txn-info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.1rem; }
+    .txn-info p { font-size: 0.75rem; color: var(--text-muted); }
+    .txn-amount { text-align: right; }
+    .txn-amount h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.1rem; }
+    .amount-in { color: var(--emerald); }
+    .amount-out { color: var(--text-main); }
+
+    .icon-svg svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* =========================================
+       DESKTOP BENTO GRID UPGRADE
+       Activates automatically on screens wider than 1024px
+       ========================================= */
+    @media (min-width: 1024px) {
+      body { padding: 2rem 0; align-items: flex-start; }
+      
+      .app-wrapper { max-width: 1100px; padding: 0; background: transparent; }
+      
+      .top-nav { padding: 0 0 2.5rem 0; }
+      
+      /* Split the app into two side-by-side columns */
+      .dashboard-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: flex-start; }
+      
+      /* Strip mobile margins because the Grid handles spacing */
+      .balance-section, .quick-actions, .quick-transfer-container, .loan-widget { margin: 0 0 2rem 0; padding: 0; }
+      .section-title { margin-left: 0; margin-right: 0; }
+      
+      .wealth-card { padding: 2.5rem; border-radius: 2rem; }
+      
+      /* Turn the feed into a floating desktop card instead of a bottom sheet */
+      .feed-container { border-radius: 1.5rem; box-shadow: var(--shadow-soft); border: 1px solid var(--border-light); padding: 2rem; min-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="app-wrapper">
+    
+    <!-- TOP NAV -->
+    <header class="top-nav">
+      <div class="user-greeting">
+        <img src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=facearea&facepad=2&w=100&h=100&q=80" alt="Profile" class="avatar">
+        <div class="greeting-text">
+          <h2>Hi, Kwame</h2>
+          <p>GCP-00456</p>
+        </div>
+      </div>
+      <button class="nav-btn icon-svg" aria-label="Notifications">
+        <svg><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </button>
+    </header>
+
+    <!-- THE CSS BENTO GRID FOR DESKTOP -->
+    <div class="dashboard-grid">
+      
+      <!-- LEFT COLUMN -->
+      <div class="grid-left">
+        
+        <!-- WEALTH CARD -->
+        <section class="balance-section">
+          <div class="wealth-card">
+            
+            <!-- The Pulse Sparkline SVG -->
+            <div class="sparkline-bg">
+              <svg viewBox="0 0 100 50">
+                <path class="sparkline-path" d="M0,40 C20,30 30,45 50,20 C65,5 80,30 100,10"></path>
+              </svg>
+            </div>
+
+            <div class="wealth-header">
+              <span class="wealth-label">Total Net Wealth</span>
+              <button class="toggle-btn icon-svg" id="toggleBalanceBtn">
+                <svg id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+            <div class="total-balance">
+              <span class="currency">GH¢</span>
+              <span id="mainBalance">45,250.00</span>
+            </div>
+            
+            <div class="balance-split">
+              <div class="split-item">
+                <p>Shares Capital</p>
+                <h4><span class="currency" style="font-size:0.85rem;">GH¢</span> <span class="sub-balance">35,000.00</span></h4>
+              </div>
+              <div class="split-item">
+                <p>Savings</p>
+                <h4><span class="currency" style="font-size:0.85rem;">GH¢</span> <span class="sub-balance">10,250.00</span></h4>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUICK ACTIONS -->
+        <section class="quick-actions">
+          <div class="action-item">
+            <div class="action-icon icon-svg"><svg><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></div>
+            <span>Top-Up</span>
+          </div>
+          <div class="action-item">
+            <div class="action-icon icon-svg"><svg><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
+            <span>Transfer</span>
+          </div>
+          <div class="action-item">
+            <div class="action-icon icon-svg" style="color: var(--text-main);"><svg><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+            <span>Get Loan</span>
+          </div>
+          <div class="action-item">
+            <div class="action-icon icon-svg" style="color: var(--text-main); background: var(--border-light);"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+            <span>More</span>
+          </div>
+        </section>
+
+        <!-- ONE-TAP QUICK TRANSFERS -->
+        <section class="quick-transfer-container">
+          <h3 class="section-title">Quick Send</h3>
+          <div class="payee-row">
+            <div class="payee-avatar">
+              <div class="payee-img add-payee icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+              <span class="payee-name" style="color: var(--primary);">New</span>
+            </div>
+            <div class="payee-avatar">
+              <img src="https://images.unsplash.com/photo-1531123897727-8f129e1bf98c?w=100&h=100&fit=crop" class="payee-img">
+              <span class="payee-name">Akosua</span>
+            </div>
+            <div class="payee-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="payee-img">
+              <span class="payee-name">David</span>
+            </div>
+            <div class="payee-avatar">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" class="payee-img">
+              <span class="payee-name">Sarah</span>
+            </div>
+          </div>
+        </section>
+      </div> <!-- END LEFT COLUMN -->
+
+      <!-- RIGHT COLUMN -->
+      <div class="grid-right">
+        
+        <!-- LOAN GAMIFICATION WIDGET -->
+        <h3 class="section-title" style="margin-bottom:1rem;">Active Contracts</h3>
+        <div class="loan-widget">
+          <div class="progress-ring">
+            <svg>
+              <circle class="progress-bg" cx="32" cy="32" r="28"></circle>
+              <circle class="progress-bar" cx="32" cy="32" r="28"></circle> 
+            </svg>
+            <span class="progress-percent">65%</span>
+          </div>
+          <div class="loan-details">
+            <h4>Personal Loan</h4>
+            <p>Next payment: Sept 1</p>
+          </div>
+          <div class="loan-amount">
+            <div style="font-size: 0.7rem; color: var(--text-muted); font-weight:500;">Remaining</div>
+            GH¢ 4,500
+          </div>
+        </div>
+
+        <!-- PLAIN ENGLISH LEDGER -->
+        <section class="feed-container">
+          <div class="feed-header">
+            <h3 class="section-title" style="margin:0;">Recent Activity</h3>
+            <a href="#">See all</a>
+          </div>
+          
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon icon-in icon-svg"><svg><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></div>
+              <div class="txn-info">
+                <h4>MTN Mobile Money</h4>
+                <p>Shares Top-Up • Today, 10:45 AM</p>
+              </div>
+            </div>
+            <div class="txn-amount">
+              <h4 class="amount-in">+ GH¢ 500.00</h4>
+              <p style="font-size: 0.7rem; color: var(--text-muted);">Cleared</p>
+            </div>
+          </div>
+
+          <div class="txn-item">
+            <div class="txn-left">
+              <div class="txn-icon icon-out icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg></div>
+              <div class="txn-info">
+                <h4>Loan Repayment</h4>
+                <p>Auto-Debit • Aug 1, 09:00 AM</p>
+              </div>
+            </div>
+            <div class="txn-amount">
+              <h4 class="amount-out">- GH¢ 1,200.00</h4>
+              <p style="font-size: 0.7rem; color: var(--text-muted);">Cleared</p>
+            </div>
+          </div>
+        </section>
+        
+      </div> <!-- END RIGHT COLUMN -->
+    </div> <!-- END GRID -->
+
+  </main>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleBalanceBtn');
+    const mainBalance = document.getElementById('mainBalance');
+    const subBalances = document.querySelectorAll('.sub-balance');
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    const actualMain = mainBalance.innerText;
+    const actualSubs = Array.from(subBalances).map(el => el.innerText);
+    let isHidden = false;
+
+    toggleBtn.addEventListener('click', () => {
+      isHidden = !isHidden;
+      if (isHidden) {
+        mainBalance.innerText = '••••••';
+        subBalances.forEach(el => el.innerText = '••••');
+        eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+      } else {
+        mainBalance.innerText = actualMain;
+        subBalances.forEach((el, index) => el.innerText = actualSubs[index]);
+        eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+      }
+    });
+  </script>
+</body>
+</html>

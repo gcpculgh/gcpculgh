@@ -1,0 +1,58 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}News & Blog | GCPCUL Admin{% endblock %}
+
+{% block content %}
+<header class="top-header">
+  <div class="page-title">
+    <h1>News & Announcements</h1>
+    <p>Manage public blog posts and member updates.</p>
+  </div>
+  <div class="header-actions">
+    <div class="search-bar" style="width:16rem;">
+      <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" placeholder="Search posts...">
+    </div>
+    <button class="btn-primary">
+      <span class="icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      New Post
+    </button>
+  </div>
+</header>
+
+<div class="panel-card" style="padding:0;">
+  <div style="width: 100%; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 600px;">
+      <thead>
+        <tr>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Title</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Author</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Status</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Date</th>
+          <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase; text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1.25rem; font-weight:500; color: var(--text-main);">2026 Annual Dividend Declaration</td>
+          <td style="padding: 1.25rem; color: var(--text-main);">System Admin</td>
+          <td style="padding: 1.25rem;"><span class="badge badge-success">Published</span></td>
+          <td style="padding: 1.25rem; color: var(--text-main);">Aug 10, 2026</td>
+          <td style="padding: 1.25rem; text-align:right; color:var(--text-muted); cursor:pointer;">
+            <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+          </td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="padding: 1.25rem; font-weight:500; color: var(--text-main);">Notice of Annual General Meeting</td>
+          <td style="padding: 1.25rem; color: var(--text-main);">Board Sec.</td>
+          <td style="padding: 1.25rem;"><span class="badge badge-warning">Draft</span></td>
+          <td style="padding: 1.25rem; color: var(--text-main);">--</td>
+          <td style="padding: 1.25rem; text-align:right; color:var(--text-muted); cursor:pointer;">
+            <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

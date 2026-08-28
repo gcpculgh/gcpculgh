@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* ONLY THE CSS SPECIFIC TO THE INDEX PAGE REMAINS HERE */
+    .tag-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.04em; box-shadow: var(--shadow-sm); }
+    .tag-loan { background: #ECFDF5; color: #064E3B; border: 1.5px solid #34D399; }
+    .tag-business { background: #EEF2FF; color: #312E81; border: 1.5px solid #6366F1; }
+    .tag-savings { background: #FFFBEB; color: #78350F; border: 1.5px solid #F59E0B; }
+    .tag-news { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
+    .tag-guide { background: #F0FDFA; color: #0D9488; border: 1px solid #99F6E4; }
+    .tag-security { background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; }
+
+    .hero { position: relative; padding: clamp(5rem, 8vw, 7.5rem) 0 clamp(6.5rem, 9vw, 8.5rem) 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; overflow: hidden; display: flex; align-items: center; min-height: 34rem; }
+    .hero-bg-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translate(-50%, -50%); object-fit: cover; z-index: 1; pointer-events: none; }
+    .hero-bg-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(7, 62, 36, 0.78) 0%, rgba(15, 23, 42, 0.85) 100%); z-index: 2; }
+    .hero-content-wrapper { position: relative; z-index: 3; width: 100%; }
+    .hero-title { font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.12; letter-spacing: -0.03em; max-width: 52rem; margin-bottom: 1.5rem; }
+    .hero-title span { color: var(--coop-gold); }
+    .hero-desc { font-size: clamp(1.08rem, 1.55vw, 1.28rem); color: #F1F5F9; max-width: 40rem; margin-bottom: 2.75rem; line-height: 1.75; }
+    .hero-cta-bar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .hero .btn-outline:hover { background: #FFFFFF !important; color: #0F172A !important; border-color: #FFFFFF !important; }
+
+    .store-btn { display: inline-flex; align-items: center; gap: 1rem; background: #0F172A; color: #FFFFFF; padding: 0.85rem 1.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.25); transition: all 0.2s ease; }
+    .store-btn:hover { background: #1E293B; transform: translateY(-2px); border-color: var(--coop-gold); }
+    .store-btn img { width: 2rem; height: 2rem; object-fit: contain; }
+    .store-btn-text span { display: block; font-size: 0.75rem; color: #94A3B8; font-weight: 600; text-transform: uppercase; line-height: 1.1; }
+    .store-btn-text strong { display: block; font-size: 1.15rem; font-weight: 800; color: #FFFFFF; line-height: 1.25; }
+
+    .happenings-section { padding: clamp(5rem, 7vw, 7.5rem) 0; background: var(--bg-card); border-bottom: 1px solid var(--border-color); }
+    .happenings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.5rem; }
+    .happening-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .happening-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--primary-green); }
+    .happening-img { width: 100%; height: 15rem; object-fit: cover; display: block; background: var(--slate-800); }
+    .happening-title { padding: 1.5rem 1.75rem; font-size: 1.1rem; font-weight: 800; color: var(--heading-green); text-align: center; line-height: 1.45; }
+
+    .trust-shield-wrapper { position: relative; z-index: 10; background: var(--bg-page); padding: 2.5rem 0; border-bottom: 1px solid var(--border-color); }
+    .trust-shield-bar { background: var(--bg-card); border-radius: var(--radius-lg); padding: 2rem 2.5rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.5rem; align-items: center; }
+    .trust-item { display: flex; align-items: center; gap: 1.25rem; }
+    .trust-logo-box { width: 4rem; height: 4rem; border-radius: var(--radius-sm); background: var(--slate-50); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; padding: 0.5rem; flex-shrink: 0; }
+    .trust-logo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .trust-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem; }
+    .trust-info p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+
+    .stats-section { padding: 6.5rem 0; background: var(--bg-card); border-bottom: 1px solid var(--border-color); }
+    .section-header { text-align: center; max-width: 48rem; margin: 0 auto 4.5rem auto; }
+    .section-header span { color: var(--accent-green); font-size: 0.875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 2.5rem; }
+    .stat-card { background: var(--bg-section-alt); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; display: flex; flex-direction: column; align-items: flex-start; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .stat-icon-badge { width: 3.5rem; height: 3.5rem; border-radius: var(--radius-sm); background: #ECFDF5; color: var(--primary-green); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    .stat-card h3 { font-size: clamp(2.5rem, 4vw, 3.25rem); font-weight: 800; color: var(--heading-green); line-height: 1.1; margin-bottom: 0.5rem; }
+    .stat-card p { font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+
+    .section { padding: clamp(6rem, 8vw, 8.5rem) 0; }
+    .qualify-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(3rem, 6vw, 5rem); align-items: center; background: var(--bg-card); border-radius: var(--radius-lg); padding: clamp(2.5rem, 6vw, 4.5rem); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+    .qualify-copy h3 { font-size: clamp(1.75rem, 3vw, 2.35rem); font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem; line-height: 1.25; }
+    .qualify-copy p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2.5rem; line-height: 1.8; }
+    .qualify-list { list-style: none; display: flex; flex-direction: column; gap: 1.75rem; }
+    .qualify-list li { display: flex; align-items: flex-start; gap: 1.25rem; font-size: 1.05rem; color: var(--text-main); font-weight: 600; line-height: 1.7; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
+    .qualify-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .check-icon-badge { width: 1.85rem; height: 1.85rem; min-width: 1.85rem; min-height: 1.85rem; flex-shrink: 0; background: #ECFDF5; color: #10B981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-top: 0.15rem; }
+    .qualify-photo { border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); height: 100%; min-height: 26rem; background-color: var(--slate-800); }
+    .qualify-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.75rem; }
+    .visual-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .visual-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--accent-green); }
+    .visual-card-thumb { height: 14.5rem; background-size: cover; background-position: center; position: relative; padding: 1.25rem; display: flex; align-items: flex-start; justify-content: flex-start; background-color: var(--slate-800); }
+    .visual-card-body { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+    .visual-card-body h3 { font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem; }
+    .visual-card-body p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2.25rem; line-height: 1.75; }
+    .card-link { font-size: 0.98rem; font-weight: 700; color: var(--heading-green); display: inline-flex; align-items: center; gap: 0.5rem; }
+
+    .calc-box { background: var(--bg-card); border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 4rem); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); max-width: 52rem; margin: 0 auto; }
+    .form-group { margin-bottom: 1.75rem; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-main); }
+    .input-wrapper { position: relative; }
+    .input-wrapper span { position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--text-muted); }
+    .form-control { width: 100%; padding: 1rem 1.25rem 1rem 3.5rem; font-size: 1.05rem; font-weight: 600; border: 1.5px solid var(--border-color); background: var(--bg-page); color: var(--text-main); border-radius: var(--radius-sm); outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .form-control:focus { border-color: var(--primary-green); }
+    select.form-control { padding-left: 1.25rem; }
+    .calc-result-bar { background: var(--bg-section-alt); border: 2px dashed #CBD5E1; border-radius: var(--radius-sm); padding: 1.75rem; margin: 2.5rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .calc-result-bar span { font-size: 1.05rem; font-weight: 600; color: var(--text-main); }
+    .calc-result-bar strong { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--heading-green); font-weight: 800; }
+
+    .testi-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; }
+    .testi-card p { font-size: 1.05rem; color: var(--text-main); font-style: italic; margin-bottom: 2rem; line-height: 1.75; }
+    .testi-author { display: flex; align-items: center; gap: 1rem; }
+    .testi-avatar-img { width: 3.5rem; height: 3.5rem; border-radius: 50%; object-fit: cover; display: block; border: 2px solid var(--primary-green); flex-shrink: 0; }
+
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.75rem; }
+    .blog-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .blog-thumb { height: 14rem; background-size: cover; background-position: center; position: relative; background-color: var(--slate-800); }
+    .blog-body { padding: 2.25rem; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+    .blog-meta-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .blog-date { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+    .blog-body h3 { font-size: 1.32rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.85rem; line-height: 1.35; }
+    .blog-body p { color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem; line-height: 1.7; }
+    .blog-card-footer { border-top: 1px solid var(--border-color); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+    .blog-author { color: var(--text-main); font-size: 0.85rem; font-weight: 700; }
+    .read-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 1rem; border-radius: 50px; border: 1px solid var(--border-color); font-size: 0.8rem; font-weight: 700; color: var(--text-main); transition: all 0.2s ease; }
+    .blog-card:hover .read-btn { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); }
+
+    .banking-section { background: var(--bg-card); padding: clamp(6rem, 8vw, 8.5rem) 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+    .banking-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(3.5rem, 6vw, 5.5rem); align-items: center; }
+    .app-visual-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); background: var(--slate-900); display: flex; flex-direction: column; }
+    .app-visual-card img { width: 100%; height: 28rem; object-fit: cover; display: block; background-color: var(--slate-800); }
+    .app-overlay-tag { position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(12px); padding: 1.25rem 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF; display: flex; align-items: center; justify-content: space-between; }
+
+    .trust-banner { background: linear-gradient(135deg, #064E3B 0%, #0F172A 100%); color: #FFFFFF; padding: clamp(6rem, 8vw, 8rem) 0; border-top: 4px solid var(--coop-gold); border-bottom: 3px solid var(--coop-gold); }
+    .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: clamp(3.5rem, 6vw, 5.5rem); align-items: center; }
+    .trust-text h2 { font-size: clamp(2rem, 3.5vw, 2.85rem); font-weight: 800; margin-bottom: 1.5rem; line-height: 1.2; color: #FFFFFF; }
+    .check-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+    .check-list li { display: flex; align-items: center; gap: 1rem; font-weight: 600; color: #E2E8F0; font-size: 1.08rem; }
+    .check-icon { color: #34D399; background: rgba(16, 185, 129, 0.15); width: 2.2rem; height: 2.2rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .kyc-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: var(--radius-lg); padding: clamp(2.5rem, 5vw, 3.5rem); }
+
+    @media (max-width: 64rem) { .hero-grid, .qualify-grid, .banking-grid { grid-template-columns: 1fr; gap: 3rem; } }
+    @media (max-width: 48rem) {
+      .hero { padding: 4rem 0 5rem 0; min-height: auto; }
+      .hero-cta-bar { flex-direction: column; align-items: flex-start; width: 100%; }
+      .store-btn { width: 100%; justify-content: center; }
+      .qualify-grid { padding: 2rem 1.5rem; }
+      .qualify-list { gap: 1.5rem; }
+      .app-visual-card { height: auto; }
+      .app-visual-card img { height: 20rem; }
+      .app-overlay-tag { position: relative; bottom: auto; left: auto; right: auto; border-radius: 0; border: none; border-top: 1px solid rgba(255, 255, 255, 0.15); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <video autoplay loop muted playsinline class="hero-bg-video" poster="{% static 'assets/images/linda-landing.jpg' %}">
+      <source src="{% static 'assets/videos/hero_vid.mp4' %}" type="video/mp4">
+      <source src="{% static 'assets/videos/hero_vid.mp4' %}" type="video/mp4">
+    </video>
+    <div class="hero-bg-overlay"></div>
+    <div class="container" style="position: relative; z-index: 3;">
+      <div class="hero-content-wrapper">
+        <h2 class="hero-title">Deliberate Wealth Creation & <span>Financial Security</span>.</h2>
+        <p class="hero-desc">Celebrating 38+ years of cooperative excellence. A member-owned financial institution offering competitive share dividends, secure savings, and fast-track loan facilities for Ghana's healthcare community.</p>
+        <div class="hero-cta-bar">
+          <a href="{% url 'login' %}" class="btn btn-gold">
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            Join the Credit Union
+          </a>
+          <a href="{% url 'products' %}" class="btn btn-outline" style="border-color: white; color: white;">
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></span>
+            Explore Loan Rates
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="happenings-section" id="happenings">
+    <div class="container">
+      <div class="section-header" style="margin-bottom: 3.5rem;">
+        <span>Community & Governance</span>
+        <h2>Stay updated on recent happenings</h2>
+      </div>
+      <div class="happenings-grid">
+        <a href="{% url 'news' %}" class="happening-card">
+          <img src="{% static 'assets/images/dr-paul-owusu.jpg' %}" alt="Dr. Paul Owusu Donkor" class="happening-img" onerror="this.src='https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80';">
+          <div class="happening-title">Dr. Paul Owusu Donkor Elected PSGH President</div>
+        </a>
+        <a href="{% url 'news' %}" class="happening-card">
+          <img src="{% static 'assets/images/audit-report-logo.webp' %}" alt="2024 Auditors Report" class="happening-img" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';">
+          <div class="happening-title">2024 Auditors Report</div>
+        </a>
+        <a href="{% url 'news' %}" class="happening-card">
+          <img src="{% static 'assets/images/tema_cua.png' %}" alt="GCPCUL Leadership Drives Credit Union Infrastructure Development" class="happening-img" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&w=800&q=80';">
+          <div class="happening-title">GCPCUL Leadership Drives Credit Union Infrastructure Development</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container trust-shield-wrapper" style="margin-top: 0; padding: 2.5rem 0;">
+    <div class="trust-shield-bar">
+      <div class="trust-item">
+        <div class="trust-logo-box">
+          <img src="{% static 'assets/images/cua-logo.png' %}" alt="Ghana Co-operative Credit Unions Association Logo">
+        </div>
+        <div class="trust-info">
+          <h4>CUA Affiliated Institution</h4>
+          <p>Ghana Credit Unions • Reg No: CO-OP/847</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-logo-box" style="background: #FEF3C7; border-color: #FDE68A;">
+          <span class="icon-svg" style="font-size: 2rem; color: #D97706;"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.2v3.5c0 .7-.6 1.3-1.2 1.3H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7zm0 1.2c-.8 0-1.5.7-1.5 1.3V11h3V9.5c0-.6-.7-1.3-1.5-1.3z"/></svg></span>
+        </div>
+        <div class="trust-info">
+          <h4>Member-Owned Trust</h4>
+          <p>100% CUA Insured Savings & Share Capital</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-logo-box" style="background: #ECFDF5; border-color: #A7F3D0;">
+          <span class="icon-svg" style="font-size: 2rem; color: var(--primary-green);"><svg viewBox="0 0 24 24"><path d="M12 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 1c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2H6zm0 16V3h12v14H6z"/></svg></span>
+        </div>
+        <div class="trust-info">
+          <h4>Instant USSD Banking</h4>
+          <div class="number-pill" style="margin-top: 0.35rem;">
+            <span>*899*334#</span>
+            <button class="copy-btn" onclick="copyText('*899*334#', this)" aria-label="Copy USSD Code">
+              <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="stats-section">
+    <div class="container">
+      <div class="section-header">
+        <span>Guaranteed Accountability</span>
+        <h2>We Deliver Proven Results</h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon-badge">
+            <span class="icon-svg" style="font-size: 1.85rem;"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></span>
+          </div>
+          <h3>385</h3>
+          <p>Founding Members in the Year 2000</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-badge">
+            <span class="icon-svg" style="font-size: 1.85rem;"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></span>
+          </div>
+          <h3>3,690+</h3>
+          <p>Active Registered Healthcare Members Today</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon-badge">
+            <span class="icon-svg" style="font-size: 1.85rem;"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></span>
+          </div>
+          <h3>100%</h3>
+          <p>CUA Protected Savings & Share Capital</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="membership">
+    <div class="container">
+      <div class="section-header">
+        <span>Democratic Governance</span>
+        <h2>Who Qualifies to be a Member?</h2>
+      </div>
+      <div class="qualify-grid">
+        <div class="qualify-copy">
+          <h3>Open to Ghana's Pharmaceutical & Healthcare Community</h3>
+          <p>All registered Pharmacists in Ghana, non-Pharmacists working with pharmacy-related institutions, and others who have been pre-qualified can join GCPCUL under our democratic cooperative structure.</p>
+          <ul class="qualify-list">
+            <li>
+              <span class="check-icon-badge"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>
+              <span><strong>Three (3) Months Rule:</strong> After joining the Credit Union, a member qualifies for their first loan after 3 months of consistent savings.</span>
+            </li>
+            <li>
+              <span class="check-icon-badge"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>
+              <span><strong>Elected Member Governance:</strong> Guided by an elected Board of Directors, Supervisory Committee, Loans Committee, and Education & Editorial Committee.</span>
+            </li>
+            <li>
+              <span class="check-icon-badge"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>
+              <span><strong>Transparent Appraisal:</strong> Applications are appraised by the elected Loans Committee under strict CUA risk management guidelines.</span>
+            </li>
+          </ul>
+          <a href="{% url 'login' %}" class="btn btn-primary" style="margin-top: 2.5rem;">
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
+            Start Membership Enrollment
+          </a>
+        </div>
+        <div class="qualify-photo">
+          <img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Smiling African Pharmacists & Healthcare Team">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background: var(--bg-section-alt);" id="products">
+    <div class="container">
+      <div class="section-header">
+        <span>Official Financial Spectrum</span>
+        <h2>Our Cooperative Products & Services</h2>
+      </div>
+      <div class="grid-3">
+        <div class="visual-card">
+          <div class="visual-card-thumb" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80');"><span class="tag-badge tag-loan">Fast-Track Loan</span></div>
+          <div class="visual-card-body">
+            <div>
+              <h3>Personal & Emergency Loans</h3>
+              <p>Borrow up to 3x your savings plus shares (up to GH¢15,000.00, or 2x above) with an individual risk exposure limit up to GH¢100,000.00.</p>
+            </div>
+            <a href="{% url 'products' %}#personal-loan" class="card-link">View Requirements</a>
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-card-thumb" style="background-image: url('https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=600&q=80');"><span class="tag-badge tag-business">Commercial Credit</span></div>
+          <div class="visual-card-body">
+            <div>
+              <h3>Import Support Loans (ISL)</h3>
+              <p>Financing up to GH¢50,000.00 for premium active savers in good standing registered under the Companies Code of 1963, Act 179.</p>
+            </div>
+            <a href="{% url 'products' %}#isl-loan" class="card-link">View Requirements</a>
+          </div>
+        </div>
+        <div class="visual-card">
+          <div class="visual-card-thumb" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80');"><span class="tag-badge tag-savings">CUA Protected</span></div>
+          <div class="visual-card-body">
+            <div>
+              <h3>Share Capital & Savings</h3>
+              <p>Minimum Share capital of GH¢500.00 and Savings balance of GH¢100.00. Includes free CUA Life Savings Insurance up to GH¢10,000.00 per member.</p>
+            </div>
+            <a href="{% url 'products' %}#shares-savings" class="card-link">Start Saving</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="calculator">
+    <div class="container">
+      <div class="section-header">
+        <span>Self-Service Estimator</span>
+        <h2>Calculate Monthly Installments</h2>
+      </div>
+      <div class="calc-box">
+        <div class="form-group">
+          <label for="loanCategory">Select Loan Product Category</label>
+          <select class="form-control" id="loanCategory">
+            <option>Personal & Emergency Loan (up to GH¢100,000 limit)</option>
+            <option>Import Support Loan (ISL up to GH¢50,000)</option>
+            <option>Housing, Building & Rent Advance Loan</option>
+            <option>Vehicle / Transport Procurement Loan</option>
+            <option>School Fees & Education Loan</option>
+            <option>Medical & Healthcare Facility Loan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="loanAmount">Amount Required (GH¢)</label>
+          <div class="input-wrapper">
+            <span>GH¢</span>
+            <input type="number" class="form-control" id="loanAmount" value="15000" min="500" step="500">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="loanMonths">Repayment Duration</label>
+          <select class="form-control" id="loanMonths">
+            <option value="12">12 Months</option>
+            <option value="24" selected>24 Months</option>
+            <option value="36">36 Months</option>
+          </select>
+        </div>
+        <div class="calc-result-bar">
+          <span>Estimated Monthly Installment:</span>
+          <strong id="monthlyDisplay">GH¢ 1,385.40 / mo</strong>
+        </div>
+        <a href="{% url 'login' %}" class="btn btn-primary" style="width: 100%; justify-content: center;">Proceed to Digital Application</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background: var(--bg-section-alt);" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span>Trusted Member Voices</span>
+        <h2>Why Pharmacists Choose GCPCUL</h2>
+      </div>
+      <div class="grid-3">
+        <div class="testi-card">
+          <p>"The fast-track emergency loan allowed my retail pharmacy to clear urgent pharmaceutical inventory customs within 48 hours. No commercial bank in Accra moved that fast."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=200&q=80" alt="Dr. Paul Owusu" class="testi-avatar-img">
+            <div>
+              <strong style="display: block; font-size: 1rem; color: var(--text-main);">Pharm. Paul Owusu</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Community Pharmacy Owner • Member since 2018</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <p>"Knowing that all our share capital and regular savings are 100% insured under the CUA Risk Management programme gives our family true peace of mind."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1594824813571-6d0c644d6204?auto=format&fit=crop&w=200&q=80" alt="Dr. Brenda Opong" class="testi-avatar-img">
+            <div>
+              <strong style="display: block; font-size: 1rem; color: var(--text-main);">Dr. Brenda Opong</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Hospital Chief Pharmacist • Member since 2015</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <p>"The borderless mobile app and USSD shortcode make checking my share dividends and loan repayments effortless even when I'm on hospital shift."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=200&q=80" alt="Pharm. Samuel Quayson" class="testi-avatar-img">
+            <div>
+              <strong style="display: block; font-size: 1rem; color: var(--text-main);">Pharm. Samuel Quayson</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Clinical Pharmacist • Member since 2021</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="blog">
+    <div class="container">
+      <div class="section-header">
+        <span>Cooperative Insights</span>
+        <h2>Latest News & Financial Guidance</h2>
+      </div>
+      <div class="blog-grid">
+        <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
+          <div class="blog-thumb" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="blog-body">
+            <div class="blog-meta-top"><span class="tag-badge tag-news">Dividends</span><span class="blog-date">Aug 2, 2026 • 4 min read</span></div>
+            <h3>Understanding Your 2026 Share Capital Dividend Payouts</h3>
+            <p>How our cooperative surplus distribution works and why maintaining minimum share capital strengthens your borrowing capacity.</p>
+            <div class="blog-card-footer"><span class="blog-author">Finance Committee</span><span class="read-btn">Read →</span></div>
+          </div>
+        </a>
+        <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
+          <div class="blog-thumb" style="background-image: url('https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="blog-body">
+            <div class="blog-meta-top"><span class="tag-badge tag-guide">Import Guide</span><span class="blog-date">July 18, 2026 • 6 min read</span></div>
+            <h3>Managing Retail Pharmacy Import Loans Effectively</h3>
+            <p>A step-by-step guide for pharmacists using GCPCUL commercial credit to import pharmaceuticals and upgrade retail infrastructure.</p>
+            <div class="blog-card-footer"><span class="blog-author">Loans Committee</span><span class="read-btn">Read →</span></div>
+          </div>
+        </a>
+        <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
+          <div class="blog-thumb" style="background-image: url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80');"></div>
+          <div class="blog-body">
+            <div class="blog-meta-top"><span class="tag-badge tag-security">Digital Safety</span><span class="blog-date">June 29, 2026 • 3 min read</span></div>
+            <h3>How Our Zero-Trust Portal Protects Your Identity & PINs</h3>
+            <p>Why GCPCUL never stores payment credentials on web servers and how maker-checker workflows keep your savings secure.</p>
+            <div class="blog-card-footer"><span class="blog-author">IT Security Team</span><span class="read-btn">Read →</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="banking-section">
+    <div class="container banking-grid">
+      <div>
+        <span style="color: var(--accent-green); font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.08em;">Digital Banking Platform</span>
+        <h2 style="font-size: clamp(2rem, 3.5vw, 2.85rem); font-weight: 800; color: var(--heading-green); margin: 0.75rem 0 1rem 0; line-height: 1.2;">Access your GCPCUL account anywhere, anytime.</h2>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem;">Request your 4-digit USSD PIN to check balances, make contributions, and apply for quick loans on any mobile phone across all networks.</p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 2.25rem;">
+          <div class="number-pill">
+            <span>USSD: *899*334#</span>
+            <button class="copy-btn" onclick="copyText('*899*334#', this)" aria-label="Copy USSD Code">
+              <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span>
+            </button>
+          </div>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="{% url 'downloads' %}" class="store-btn">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/019/136/337/small/apple-logo-apple-icon-free-free-vector.jpg" alt="Apple Logo">
+            <div class="store-btn-text"><span>Download on the</span><strong>App Store</strong></div>
+          </a>
+          <a href="{% url 'downloads' %}" class="store-btn">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/022/484/501/small/google-play-store-icon-logo-symbol-free-png.png" alt="Google Play Logo">
+            <div class="store-btn-text"><span>Get it on</span><strong>Google Play</strong></div>
+          </a>
+        </div>
+      </div>
+      <div class="app-visual-card">
+        <img src="https://gcpculgh.com/wp-content/uploads/2024/01/gcpucl-pic-12app--600x714.jpg" alt="GCPCUL Official Borderless Mobile Banking App">
+        <div class="app-overlay-tag">
+          <div>
+            <h4 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.2rem;">GCPCUL Borderless App</h4>
+            <p style="font-size: 0.85rem; color: #CBD5E1; margin: 0;">Direct iOS & Android Account Monitoring</p>
+          </div>
+          <a href="{% url 'login' %}" class="btn btn-gold" style="padding: 0.65rem 1.25rem; font-size: 0.85rem;">Member Portal</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust-banner">
+    <div class="container trust-grid">
+      <div class="trust-text">
+        <h2>Bank-Grade Digital Protection for Your Money.</h2>
+        <p style="color: #94A3B8; font-size: 1.08rem;">We've upgraded from static website forms to a zero-trust financial portal designed to protect your identity, medical privacy, and share capital.</p>
+        <ul class="check-list">
+          <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>End-to-end encrypted Ghana Card identity verification</li>
+          <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>Maker-Checker sign-off controls for disbursements over GH¢100,000</li>
+          <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span></span>Full CUA Loan Protection Plan (LPP) health declaration privacy</li>
+        </ul>
+      </div>
+      <div class="kyc-card">
+        <span class="tag-badge tag-loan" style="margin-bottom: 1.25rem;">SMILE IDENTITY INTEGRATED</span>
+        <h4 style="font-size: 1.35rem; color: #FFFFFF; margin-bottom: 0.75rem; font-weight: 800;">Automated KYC & Biometric Sign-Off</h4>
+        <p style="color: #CBD5E1; font-size: 0.98rem; margin-bottom: 1.75rem;">GCPCUL never stores your payment credentials on web servers. All ID documents are stored in encrypted vaults and verified in real-time against national registries.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0, 0, 0, 0.4); padding: 1rem 1.25rem; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.08);">
+          <span style="font-family: monospace; color: var(--coop-gold); font-size: 0.95rem; font-weight: 700;">USSD: *899*334#</span>
+          <button class="copy-btn" onclick="copyText('*899*334#', this)" style="background: rgba(255,255,255,0.1); color: #FFFFFF; border-color: rgba(255,255,255,0.2);" aria-label="Copy USSD">
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
