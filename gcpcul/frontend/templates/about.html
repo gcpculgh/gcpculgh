@@ -6,9 +6,9 @@
 {% block extra_css %}
 <style>
     .page-header { padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; position: relative; overflow: hidden; }
-    .page-header::after { content: ''; position: absolute; right: -6rem; top: -6rem; width: 22rem; height: 22rem; border-radius: 50%; background: radial-gradient(circle, rgba(235,170,20,0.18) 0%, transparent 70%); }
     
-    .page-header-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; position: relative; z-index: 3; }
+    .page-header-grid { display: grid; grid-template-columns: 1fr; position: relative; z-index: 3; }
+    .hero-content-wrapper { max-width: 44rem; }
     .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #A7F3D0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
     .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; max-width: 40rem; line-height: 1.2; margin-bottom: 1.25rem; }
     .page-header p { font-size: 1.15rem; color: #E2E8F0; max-width: 42rem; line-height: 1.75; }
@@ -19,23 +19,32 @@
     .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
 
     /* HISTORY TIMELINE */
-    .history-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: clamp(2rem, 5vw, 4rem); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem; position: relative; overflow: hidden; }
-    .history-card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--primary-green); }
-    .history-text-block { font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; }
-    .history-text-block p { margin-bottom: 1.5rem; }
-    .history-text-block p:last-child { margin-bottom: 0; }
+    .history-timeline { display: flex; flex-direction: column; gap: 0; margin-bottom: 4rem; }
+    .timeline-item { display: grid; grid-template-columns: 8rem 1px 1fr; gap: 2rem; position: relative; }
+    .timeline-year-col { text-align: right; padding-top: 0.15rem; }
+    .timeline-year { font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem; color: var(--primary-green); }
+    .timeline-line-col { position: relative; }
+    .timeline-line-col::before { content: ''; position: absolute; top: 0.5rem; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; background: var(--coop-gold); border: 3px solid var(--bg-page); box-shadow: 0 0 0 1.5px var(--border-color); z-index: 2; }
+    .timeline-line-col::after { content: ''; position: absolute; top: 1.4rem; left: 50%; transform: translateX(-50%); width: 2px; bottom: -2rem; background: var(--border-color); }
+    .timeline-item:last-child .timeline-line-col::after { display: none; }
+    .timeline-content { padding-bottom: 2.5rem; font-size: 1.05rem; color: var(--text-muted); line-height: 1.75; }
+    .timeline-content strong { color: var(--text-main); }
+    @media (max-width: 40rem) {
+      .timeline-item { grid-template-columns: 3.5rem 1px 1fr; gap: 1rem; }
+      .timeline-year { font-size: 0.92rem; }
+    }
 
     /* FOUNDERS GRID */
-    .founders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.5rem; }
+    .founders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); gap: 1.5rem; }
     .founder-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem; border-radius: 16px; background: var(--bg-section-alt); border: 1px solid var(--border-color); transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .founder-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
-    .founder-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
+    .founder-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-light); color: var(--heading-green); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
     .founder-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.15rem; }
     .founder-info p { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
     /* LEADERSHIP TEAM GRID */
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 2.5rem; margin-top: 2rem; }
-    .team-card { text-align: center; group: relative; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 2.5rem; margin-top: 2rem; }
+    .team-card { text-align: center; position: relative; }
     .team-photo-wrap { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
     .team-photo-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; display: block; }
     .team-card:hover .team-photo-wrap img { transform: scale(1.05); }
@@ -46,15 +55,15 @@
     .team-info h4 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem; }
     .team-info p { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
 
-    .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.5rem; }
+    .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 2.5rem; }
     .mission-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2.5rem; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .mission-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
-    .mission-card .icon-svg { width: 4rem; height: 4rem; background: #ECFDF5; color: var(--primary-green); border-radius: 12px; margin-bottom: 1.5rem; font-size: 1.5rem; }
+    .mission-card .icon-svg { width: 4rem; height: 4rem; background: var(--primary-light); color: var(--heading-green); border-radius: 12px; margin-bottom: 1.5rem; font-size: 1.5rem; }
     .mission-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem; }
     .mission-card p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.75; }
 
     .organogram-wrapper { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: clamp(2rem, 4vw, 4rem); box-shadow: var(--shadow-sm); text-align: center; }
-    .organogram-wrapper img { max-width: 100%; height: auto; display: inline-block; margin: 0 auto; border-radius: var(--radius-md); }
+    .organogram-wrapper img { max-width: 100%; height: auto; display: inline-block; margin: 0 auto; border-radius: var(--radius-md); background: var(--bg-section-alt); min-height: 12rem; }
 
     .faq-list { max-width: 52rem; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
     .faq-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
@@ -67,7 +76,6 @@
 
     @media (max-width: 48rem) {
       .page-header { padding: 4rem 0 4rem 0; }
-      .page-header-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -77,7 +85,7 @@
     <div class="container page-header-grid">
       <div class="hero-content-wrapper">
         <div class="breadcrumb">
-          <span class="icon-svg"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/></svg></span>
+          <span class="icon-svg"><span class="material-symbols-outlined" style="font-size:1.1rem;">corporate_fare</span></span>
           Who We Are
         </div>
         <h2 class="hero-title">Empowering the Healthcare Community through Cooperative Wealth.</h2>
@@ -94,11 +102,21 @@
         <h2>Our Cooperative Journey</h2>
       </div>
       
-      <div class="history-card">
-        <div class="history-text-block">
-          <p>The journey of GCPCUL commenced in 1983 when the idea of embracing the credit union concept was first conceived. By <strong>May 29, 1985</strong>, this vision became a reality as we were officially registered as the <em>Ghana Co-operative Pharmaceuticals Credit Union Ltd.</em> At that time, our association was limited exclusively to Pharmacists who were members of the Ghana Co-operative Pharmaceuticals Ltd.</p>
-          <p>Fast forward to 1997, we achieved autonomy from our parent organization, GCPL. In 1998, during our Annual General Meeting, we officially adopted the name <em>Ghana Co-operative Pharmacists’ Credit Union Limited.</em> This milestone marked the expansion of our common bond to encompass all registered Pharmacists in the country.</p>
-          <p>We further broadened our common bond at our 23rd Annual General Meeting on <strong>Thursday, March 12, 2009</strong>, held at the GNAT Hall in Accra. It now includes non-Pharmacists working with pharmacy-related institutions and others who meet our pre-qualification criteria.</p>
+      <div class="history-timeline">
+        <div class="timeline-item">
+          <div class="timeline-year-col"><span class="timeline-year">1985</span></div>
+          <div class="timeline-line-col"></div>
+          <div class="timeline-content">The journey of GCPCUL commenced in 1983 when the idea of embracing the credit union concept was first conceived. By <strong>May 29, 1985</strong>, this vision became a reality as we were officially registered as the <em>Ghana Co-operative Pharmaceuticals Credit Union Ltd.</em> At that time, our association was limited exclusively to Pharmacists who were members of the Ghana Co-operative Pharmaceuticals Ltd.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year-col"><span class="timeline-year">1998</span></div>
+          <div class="timeline-line-col"></div>
+          <div class="timeline-content">In 1997, we achieved autonomy from our parent organization, GCPL. In 1998, during our Annual General Meeting, we officially adopted the name <em>Ghana Co-operative Pharmacists' Credit Union Limited.</em> This milestone marked the expansion of our common bond to encompass all registered Pharmacists in the country.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year-col"><span class="timeline-year">2009</span></div>
+          <div class="timeline-line-col"></div>
+          <div class="timeline-content">We further broadened our common bond at our 23rd Annual General Meeting on <strong>Thursday, March 12, 2009</strong>, held at the GNAT Hall in Accra. It now includes non-Pharmacists working with pharmacy-related institutions and others who meet our pre-qualification criteria.</div>
         </div>
       </div>
 
@@ -161,7 +179,7 @@
         
         <div class="team-card">
           <div class="team-photo-wrap">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Dr. Richard K. Awuah">
+            <img src="{% static 'assets/images/dr-paul-owusu.jpg' %}" alt="Dr. Richard K. Awuah" >
             <div class="team-overlay">
               <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
             </div>
@@ -174,7 +192,7 @@
 
         <div class="team-card">
           <div class="team-photo-wrap">
-            <img src="{% static 'assets/images/enoch-apratum-landing.png' %}" alt="Michael Owusu" onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80';">
+            <img src="{% static 'assets/images/enoch-apratum-landing.png' %}" alt="Michael Owusu" >
             <div class="team-overlay">
               <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
             </div>
@@ -187,7 +205,7 @@
 
         <div class="team-card">
           <div class="team-photo-wrap">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Pharm. Sarah Asiamah">
+            <img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Pharm. Sarah Asiamah">
             <div class="team-overlay">
               <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
             </div>
@@ -211,17 +229,17 @@
       </div>
       <div class="mission-grid">
         <div class="mission-card">
-          <div class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 16h2v2h-2zm0-6h2v4h-2z"/></svg></div>
+          <div class="icon-svg"><span class="material-symbols-outlined">flag</span></div>
           <h3>Our Mission</h3>
           <p>To cultivate a robust savings culture and provide timely, affordable credit facilities that drive the socioeconomic advancement of all our members.</p>
         </div>
         <div class="mission-card">
-          <div class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+          <div class="icon-svg"><span class="material-symbols-outlined">visibility</span></div>
           <h3>Our Vision</h3>
           <p>To be the premier, most trusted co-operative financial institution delivering unparalleled economic empowerment to healthcare professionals in Ghana.</p>
         </div>
         <div class="mission-card">
-          <div class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div>
+          <div class="icon-svg"><span class="material-symbols-outlined">verified</span></div>
           <h3>Core Values</h3>
           <p>Integrity, Transparency, Member-Centricity, and Absolute Confidentiality. We manage your wealth with zero administrative traps and total accountability.</p>
         </div>
@@ -237,7 +255,7 @@
         <h2>Governance Organogram</h2>
       </div>
       <div class="organogram-wrapper">
-        <img src="{% static 'assets/images/organogram.png' %}" alt="GCPCUL Governance Organogram">
+        <img src="{% static 'assets/images/organogram.png' %}" alt="GCPCUL Governance Organogram" onerror="this.alt='Organogram image unavailable — contact the office for the current governance chart.'; this.style.display='block';">
       </div>
     </div>
   </section>
@@ -254,7 +272,7 @@
         <details class="faq-item" id="privacy-policy">
           <summary>
             <span>Privacy & Data Protection Policy</span>
-            <span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+            <span class="icon-svg"><span class="material-symbols-outlined">expand_more</span></span>
           </summary>
           <div class="faq-answer">
             <h4>Data Collection & Usage</h4>
@@ -267,7 +285,7 @@
         <details class="faq-item" id="terms-of-service">
           <summary>
             <span>Terms of Service & Cooperative Rules</span>
-            <span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+            <span class="icon-svg"><span class="material-symbols-outlined">expand_more</span></span>
           </summary>
           <div class="faq-answer">
             <h4>Membership Obligations</h4>
@@ -280,7 +298,7 @@
         <details class="faq-item" id="cua-affiliation">
           <summary>
             <span>CUA Affiliation & LPP Insurance</span>
-            <span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></span>
+            <span class="icon-svg"><span class="material-symbols-outlined">expand_more</span></span>
           </summary>
           <div class="faq-answer">
             <p>The Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL) is a fully registered and compliant affiliate of the Ghana Co-operative Credit Unions Association (CUA). Reg No: CO-OP/847.</p>

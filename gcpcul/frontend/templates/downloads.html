@@ -5,644 +5,327 @@
 
 {% block extra_css %}
 <style>
-  .page-header {
-    padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0;
-    background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%);
-    color: #FFFFFF;
-    position: relative;
-    overflow: hidden;
-  }
+    /* ==========================================
+       DOWNLOADS PAGE SPECIFIC STYLES
+       ========================================== */
+       
+    .page-header { padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; position: relative; overflow: hidden; }
+    
+    .page-header-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; position: relative; z-index: 3; }
+    .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #A7F3D0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+    .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; max-width: 40rem; line-height: 1.2; margin-bottom: 1.25rem; }
+    .page-header p { font-size: 1.15rem; color: #E2E8F0; max-width: 42rem; line-height: 1.75; }
 
-  .page-header-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: clamp(2rem, 5vw, 4rem);
-    align-items: center;
-    position: relative;
-    z-index: 3;
-  }
+    .store-badge-row { display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
+    .store-badge-link { display: inline-block; line-height: 0; }
+    .store-badge-img { height: 3.5rem; width: auto; display: block; }
+    /* Fallback button, used only if the official badge SVGs haven't been added yet */
+    .store-btn { display: inline-flex; align-items: center; gap: 1.25rem; background: #10241A; color: #FFFFFF; padding: 0.85rem 1.85rem; border-radius: var(--radius-md); border: 1.5px solid rgba(255,255,255,0.25); }
+    .store-btn svg { width: 2.5rem; height: 2.5rem; flex-shrink: 0; }
+    .store-btn-text { text-align: left; }
+    .store-btn-text span { display: block; font-size: 0.75rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.1rem; }
+    .store-btn-text strong { display: block; font-size: 1.35rem; font-weight: 800; color: #FFFFFF; line-height: 1.1; }
 
-  .breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: #A7F3D0;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 1.25rem;
-  }
+    .hero-mockup-wrapper { perspective: 1000px; display: flex; justify-content: flex-end; align-items: center; }
+    .mockup-img { max-width: 85%; height: auto; border-radius: 1.25rem; box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6); transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 6px solid #10241A; }
+    .hero-mockup-wrapper:hover .mockup-img { transform: rotateY(-5deg) rotateX(4deg) rotateZ(-1deg) scale(1.03); }
 
-  .page-header h2 {
-    font-size: clamp(2.25rem, 4vw, 3.25rem);
-    font-weight: 800;
-    max-width: 40rem;
-    line-height: 1.2;
-    margin-bottom: 1.25rem;
-  }
-
-  .page-header p {
-    font-size: 1.15rem;
-    color: #E2E8F0;
-    max-width: 42rem;
-    line-height: 1.75;
-  }
-
-  .store-badge-row {
-    display: flex;
-    gap: 1.25rem;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-top: 1.5rem;
-  }
-
-  .store-badge-link {
-    display: inline-block;
-    line-height: 0;
-  }
-
-  .store-badge-img {
-    height: 3.5rem;
-    width: auto;
-    display: block;
-  }
-
-  /* Fallback button, used only if the official badge SVGs haven't been added yet */
-  .store-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 1.25rem;
-    background: #10241A;
-    color: #FFFFFF;
-    padding: 0.85rem 1.85rem;
-    border-radius: var(--radius-md);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-  }
-
-  .store-btn svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    flex-shrink: 0;
-  }
-
-  .store-btn-text {
-    text-align: left;
-  }
-
-  .store-btn-text span {
-    display: block;
-    font-size: 0.75rem;
-    color: #94A3B8;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.1rem;
-  }
-
-  .store-btn-text strong {
-    display: block;
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    line-height: 1.1;
-  }
-
-  .hero-mockup-wrapper {
-    perspective: 1000px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .mockup-img {
-    max-width: 85%;
-    height: auto;
-    border-radius: 1.25rem;
-    box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6);
-    transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg);
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 6px solid #10241A;
-  }
-
-  .hero-mockup-wrapper:hover .mockup-img {
-    transform: rotateY(-5deg) rotateX(4deg) rotateZ(-1deg) scale(1.03);
-  }
-
-  .filter-bar-wrapper {
-    position: sticky;
-    top: 4.85rem;
-    z-index: 900;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-    padding: 1rem 0;
-  }
-
-  .filter-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .filter-tabs {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-tab-btn {
-    background: transparent;
-    border: 1.5px solid var(--border-color);
-    color: var(--text-muted);
-    padding: 0.6rem 1.35rem;
-    border-radius: 50px;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
-  }
-
-  .filter-tab-btn:hover,
-  .filter-tab-btn.active {
-    background: var(--primary-green);
-    color: #FFFFFF;
-    border-color: var(--primary-green);
-    box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2);
-  }
-
-  .section {
-    padding: clamp(4.5rem, 6vw, 6rem) 0;
-  }
-
-  .section-header {
-    text-align: center;
-    max-width: 48rem;
-    margin: 0 auto 3.5rem auto;
-  }
-
-  .section-header span {
-    color: var(--accent-green);
-    font-size: 0.875rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .section-header h2 {
-    font-size: clamp(2rem, 3.5vw, 2.75rem);
-    font-weight: 800;
-    margin-top: 0.5rem;
-    color: var(--text-main);
-  }
-
-  .digital-advantage-banner {
-    background: var(--bg-card);
-    border: 1px solid var(--primary-green);
-    border-radius: var(--radius-lg);
-    padding: clamp(2rem, 4vw, 3rem);
-    margin-bottom: 3.5rem;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .digital-advantage-banner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 6px;
-    height: 100%;
-    background: var(--primary-green);
-  }
-
-  [data-theme="dark"] .digital-advantage-banner {
-    background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%);
-  }
-
-  .digital-advantage-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .digital-advantage-header .icon-svg {
-    width: 3rem;
-    height: 3rem;
-    background: var(--primary-light);
-    color: var(--heading-green);
-    border-radius: 50%;
-    font-size: 1.25rem;
-  }
-
-  .digital-advantage-banner h3 {
-    font-size: 1.65rem;
-    font-weight: 800;
-    color: var(--text-main);
-    line-height: 1.2;
-  }
-
-  .digital-advantage-banner p {
-    font-size: 1.05rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 48rem;
-  }
-
-  .benefits-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 700;
-    color: var(--text-main);
-    font-size: 0.95rem;
-  }
-
-  .benefit-item .icon-svg {
-    color: var(--coop-gold);
-  }
-
-  .doc-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
-    gap: 1.75rem;
-  }
-
-  .doc-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 1.75rem;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    gap: 1.25rem;
-    align-items: flex-start;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .doc-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-color);
-  }
-
-  .doc-icon {
-    width: 3rem;
-    height: 3rem;
-    border-radius: var(--radius-sm);
-    background: var(--bg-section-alt);
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .doc-info {
-    width: 100%;
-  }
-
-  .doc-info h4 {
-    font-size: 1.05rem;
-    font-weight: 800;
-    margin-bottom: 0.35rem;
-    color: var(--text-main);
-    line-height: 1.3;
-  }
-
-  .doc-info p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-  }
-
-  .doc-meta {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    margin-bottom: 0.75rem;
-    display: block;
-  }
-
-  .doc-size {
-    font-weight: 800;
-    color: var(--text-main);
-  }
-
-  .doc-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: auto;
-  }
-
-  .empty-state-box {
-    text-align: center;
-    padding: 4rem 1rem;
-    color: var(--text-muted);
-    display: none;
-    width: 100%;
-  }
-
-  .empty-state-box.active {
-    display: block;
-  }
-
-  .empty-state-box .icon-svg {
-    font-size: 3rem;
-    color: var(--border-color);
-    margin-bottom: 1rem;
-  }
-
-  .empty-state-box h3 {
-    font-size: 1.25rem;
-    color: var(--text-main);
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
-
-  @media (max-width: 48rem) {
-    .page-header-grid {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
+    .filter-bar-wrapper { position: sticky; top: 4.85rem; z-index: 900; background: var(--bg-card); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 1rem 0; }
+    .filter-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: nowrap; /* Forces a single line */
+      overflow-x: auto; /* Enables horizontal swiping */
+      -webkit-overflow-scrolling: touch; /* Momentum scrolling for iOS */
+      scrollbar-width: none; /* Hides scrollbar in Firefox */
+      -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
+      padding-bottom: 4px; /* Prevents shadow clipping */
     }
-
-    .hero-mockup-wrapper {
-      justify-content: center;
+    .filter-tabs::-webkit-scrollbar {
+      display: none; /* Hides scrollbar in Chrome/Safari/Brave */
     }
+    .filter-tab-btn { background: transparent; border: 1.5px solid var(--border-color); color: var(--text-muted); padding: 0.6rem 1.35rem; border-radius: 50px; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; font-family: inherit; flex-shrink: 0; white-space: nowrap; }
+    .filter-tab-btn:hover, .filter-tab-btn.active { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
 
-    .mockup-img {
-      max-width: 65%;
-      transform: none;
-    }
-
-    .hero-mockup-wrapper:hover .mockup-img {
-      transform: translateY(-5px);
-    }
-
-    .store-btn {
-      width: 100%;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .store-btn-text {
-      text-align: center;
-    }
+    .section { padding: clamp(4.5rem, 6vw, 6rem) 0; }
+    .section-header { text-align: center; max-width: 48rem; margin: 0 auto 3.5rem auto; }
+    .section-header span { color: var(--accent-green); font-size: 0.875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
 
     .digital-advantage-banner {
-      padding: 1.5rem;
-    }
-
-    .benefits-grid {
+      background: var(--bg-card);
+      border: 1px solid var(--primary-green);
+      border-radius: var(--radius-lg);
+      padding: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 3.5rem;
+      box-shadow: var(--shadow-md);
+      display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+      position: relative;
+      overflow: hidden;
     }
-  }
+    
+    .digital-advantage-banner::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--primary-green);
+    }
+    
+    [data-theme="dark"] .digital-advantage-banner { background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%); }
+
+    .digital-advantage-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .digital-advantage-header .icon-svg { width: 3rem; height: 3rem; background: var(--primary-light); color: var(--heading-green); border-radius: 50%; font-size: 1.25rem; }
+    
+    .digital-advantage-banner h3 { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
+    .digital-advantage-banner p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; max-width: 48rem; }
+
+    .benefits-grid { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1rem; margin-bottom: 1.5rem; }
+    .benefit-item { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+    .benefit-item .icon-svg { color: var(--coop-gold); }
+
+    .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: 1.75rem; }
+    .doc-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.75rem; box-shadow: var(--shadow-sm); display: flex; gap: 1.25rem; align-items: flex-start; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .doc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-color); }
+    .doc-icon { width: 3rem; height: 3rem; border-radius: var(--radius-sm); background: var(--bg-section-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    
+    .doc-info { width: 100%; }
+    .doc-info h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--text-main); line-height: 1.3; }
+    .doc-info p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; }
+    .doc-meta { font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.75rem; display: block; }
+    .doc-size { font-weight: 800; color: var(--text-main); }
+    
+    .doc-actions { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; }
+
+    .empty-state-box { text-align: center; padding: 4rem 1rem; color: var(--text-muted); display: none; width: 100%; }
+    .empty-state-box.active { display: block; }
+    .empty-state-box .icon-svg { font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; }
+    .empty-state-box h3 { font-size: 1.25rem; color: var(--text-main); font-weight: 800; margin-bottom: 0.5rem; }
+
+    @media (max-width: 48rem) {
+      .page-header-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-mockup-wrapper { justify-content: center; }
+      .mockup-img { max-width: 65%; transform: none; }
+      .hero-mockup-wrapper:hover .mockup-img { transform: translateY(-5px); }
+      .store-btn { width: 100%; justify-content: center; text-align: center; }
+      .store-btn-text { text-align: center; }
+      .digital-advantage-banner { padding: 1.5rem; }
+      .benefits-grid { flex-direction: column; gap: 1rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="page-header">
-  <div class="container page-header-grid">
-    <div class="hero-content-wrapper">
-      <div class="breadcrumb">
-        <span class="icon-svg"><span class="material-symbols-outlined"
-            style="font-size:1.1rem;">download_for_offline</span></span>
-        Member Download Center
-      </div>
-      <h2 class="hero-title">The app, and every form you need — in one place.</h2>
-      <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans,
-        membership, and dividend claims.</p>
-
-      <div class="store-badge-row">
-        <a href="#" class="store-badge-link">
-          <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store"
-            class="store-badge-img" onerror="window.fallbackStoreBadge(this,'apple')">
-        </a>
-        <a href="#" class="store-badge-link">
-          <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play"
-            class="store-badge-img" onerror="window.fallbackStoreBadge(this,'play')">
-        </a>
-      </div>
-    </div>
-    <div class="hero-mockup-wrapper">
-      <img src="{% static 'assets/images/app-boarderless.jpg' %}" alt="GCPCUL Borderless App" class="mockup-img">
-    </div>
-  </div>
-</section>
-
-<div class="filter-bar-wrapper">
-  <div class="container filter-container">
-    <div class="filter-tabs" id="docFilterBar">
-      <button class="filter-tab-btn active" data-filter="all">All Documents</button>
-      <button class="filter-tab-btn" data-filter="form">Application Forms</button>
-      <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
-      <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
-    </div>
-  </div>
-</div>
-
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <span>Document Vault</span>
-      <h2>Official Forms & Member Documents</h2>
-    </div>
-
-    <div class="digital-advantage-banner">
-      <div class="digital-advantage-header">
-        <div class="icon-svg"><span class="material-symbols-outlined">rocket_launch</span></div>
-        <h3>Skip the Paperwork. Apply Online.</h3>
-      </div>
-      <p>You can still download our traditional PDF forms below, but logging into the Member Portal offers a vastly
-        superior experience. Applying for loans and benefits digitally unlocks automated advantages:</p>
-
-      <div class="benefits-grid">
-        <div class="benefit-item">
-          <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
-          Instant Loan Pre-Approval
+  <section class="page-header">
+    <div class="container page-header-grid">
+      <div class="hero-content-wrapper">
+        <div class="breadcrumb">
+          <span class="icon-svg"><span class="material-symbols-outlined" style="font-size:1.1rem;">download_for_offline</span></span>
+          Member Download Center
         </div>
-        <div class="benefit-item">
-          <span class="icon-svg"><span class="material-symbols-outlined">auto_awesome</span></span>
-          Zero Manual Data Entry (Auto-filled)
-        </div>
-        <div class="benefit-item">
-          <span class="icon-svg"><span class="material-symbols-outlined">schedule</span></span>
-          Live Application Tracking
+        <h2 class="hero-title">The app, and every form you need — in one place.</h2>
+        <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
+        
+        <div class="store-badge-row">
+          <a href="#" class="store-badge-link">
+            <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'apple')">
+          </a>
+          <a href="#" class="store-badge-link">
+            <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'play')">
+          </a>
         </div>
       </div>
-
-      <div>
-        <a href="{% url 'login' %}" class="btn btn-gold">Go to Member Portal →</a>
+      <div class="hero-mockup-wrapper">
+        <img src="{% static 'assets/images/app-boarderless.jpg' %}" alt="GCPCUL Borderless App" class="mockup-img" onerror="this.src='https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=600&q=80';">
       </div>
     </div>
+  </section>
 
-    <div class="empty-state-box" id="docEmptyState">
-      <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
-      <h3>No Documents Found</h3>
-      <p>There are currently no documents available in this category.</p>
-    </div>
-
-    <div class="doc-grid" id="docGrid">
-
-      <div class="doc-card" data-category="form" id="loan-application">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">description</span></span>
-        </div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · 2 pages · <span class="doc-size">450 KB</span></span>
-          <h4>Standard Loan Application</h4>
-          <p>Required for all manual Personal, Business, Housing, and Medical loan requests.</p>
-          <div class="doc-actions">
-            <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="doc-card" data-category="form" id="membership-form">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">person_add</span></span>
-        </div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · 1 page · <span class="doc-size">210 KB</span></span>
-          <h4>Membership Enrollment Form</h4>
-          <p>New-member registration, including next-of-kin and share capital details.</p>
-          <div class="doc-actions">
-            <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="doc-card" data-category="form">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">group_add</span></span>
-        </div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · 1 page · <span class="doc-size">185 KB</span></span>
-          <h4>Guarantor Consent Form</h4>
-          <p>Signed by a guarantor backing a committee-reviewed loan above the threshold.</p>
-          <div class="doc-actions">
-            <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- DYNAMIC PORTAL ONLY: Dividend Statement -->
-      <div class="doc-card" data-category="report">
-        <div class="doc-icon" style="color: var(--heading-green); background: var(--primary-light);"><span
-            class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--accent-green);">Dynamic
-              Generation</span></span>
-          <h4>Dividend & Share Statement</h4>
-          <p>Your personalized annual statement of share capital, dividends, and savings growth.</p>
-          <div class="doc-actions">
-            <a href="{% url 'login' %}" class="btn btn-gold btn-sm">
-              Access in Portal
-              <span class="icon-svg" style="margin-left: 0.25rem; font-size: 1.1em;"><span
-                  class="material-symbols-outlined">login</span></span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="doc-card" data-category="form">
-        <div class="doc-icon"><span class="icon-svg"><span
-              class="material-symbols-outlined">health_and_safety</span></span></div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · 2 pages · <span class="doc-size">310 KB</span></span>
-          <h4>LPP Declaration Form</h4>
-          <p>Health declaration required to manually activate CUA group loan insurance coverage.</p>
-          <div class="doc-actions">
-            <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="doc-card" data-category="legal">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">gavel</span></span></div>
-        <div class="doc-info">
-          <span class="doc-meta">PDF · Public · <span class="doc-size">1.2 MB</span></span>
-          <h4>By-Laws & Constitution</h4>
-          <p>The Union's governing rules as approved by the Registrar of Co-operatives.</p>
-          <div class="doc-actions">
-            <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
-          </div>
-        </div>
+  <div class="filter-bar-wrapper">
+    <div class="container filter-container">
+      <div class="filter-tabs" id="docFilterBar">
+        <button class="filter-tab-btn active" data-filter="all">All Documents</button>
+        <button class="filter-tab-btn" data-filter="form">Application Forms</button>
+        <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
+        <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
       </div>
     </div>
   </div>
-</section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span>Document Vault</span>
+        <h2>Official Forms & Member Documents</h2>
+      </div>
+
+      <div class="digital-advantage-banner">
+        <div class="digital-advantage-header">
+          <div class="icon-svg"><span class="material-symbols-outlined">rocket_launch</span></div>
+          <h3>Skip the Paperwork. Apply Online.</h3>
+        </div>
+        <p>You can still download our traditional PDF forms below, but logging into the Member Portal offers a vastly superior experience. Applying for loans and benefits digitally unlocks automated advantages:</p>
+        
+        <div class="benefits-grid">
+          <div class="benefit-item">
+            <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
+            Instant Loan Pre-Approval
+          </div>
+          <div class="benefit-item">
+            <span class="icon-svg"><span class="material-symbols-outlined">auto_awesome</span></span>
+            Zero Manual Data Entry (Auto-filled)
+          </div>
+          <div class="benefit-item">
+            <span class="icon-svg"><span class="material-symbols-outlined">schedule</span></span>
+            Live Application Tracking
+          </div>
+        </div>
+        
+        <div>
+          <a href="{% url 'login' %}" class="btn btn-gold">Go to Member Portal →</a>
+        </div>
+      </div>
+
+      <div class="empty-state-box" id="docEmptyState">
+        <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
+        <h3>No Documents Found</h3>
+        <p>There are currently no documents available in this category.</p>
+      </div>
+
+      <div class="doc-grid" id="docGrid">
+        
+        <div class="doc-card" data-category="form" id="loan-application">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">description</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2 pages · <span class="doc-size">450 KB</span></span>
+            <h4>Standard Loan Application</h4>
+            <p>Required for all manual Personal, Business, Housing, and Medical loan requests.</p>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="doc-card" data-category="form" id="membership-form">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">person_add</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 1 page · <span class="doc-size">210 KB</span></span>
+            <h4>Membership Enrollment Form</h4>
+            <p>New-member registration, including next-of-kin and share capital details.</p>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="form">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">group_add</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 1 page · <span class="doc-size">185 KB</span></span>
+            <h4>Guarantor Consent Form</h4>
+            <p>Signed by a guarantor backing a committee-reviewed loan above the threshold.</p>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC PORTAL ONLY: Dividend Statement -->
+        <div class="doc-card" data-category="report">
+          <div class="doc-icon" style="color: var(--heading-green); background: var(--primary-light);"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--accent-green);">Dynamic Generation</span></span>
+            <h4>Dividend & Share Statement</h4>
+            <p>Your personalized annual statement of share capital, dividends, and savings growth.</p>
+            <div class="doc-actions">
+              <a href="{% url 'login' %}" class="btn btn-gold btn-sm">
+                Access in Portal 
+                <span class="icon-svg" style="margin-left: 0.25rem; font-size: 1.1em;"><span class="material-symbols-outlined">login</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="form">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">health_and_safety</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2 pages · <span class="doc-size">310 KB</span></span>
+            <h4>LPP Declaration Form</h4>
+            <p>Health declaration required to manually activate CUA group loan insurance coverage.</p>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="legal">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">gavel</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · Public · <span class="doc-size">1.2 MB</span></span>
+            <h4>By-Laws & Constitution</h4>
+            <p>The Union's governing rules as approved by the Registrar of Co-operatives.</p>
+            <div class="doc-actions">
+              <a href="#" class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-
-  window.fallbackStoreBadge = function (imgEl, kind) {
-    const icons = {
-      apple: '<svg viewBox="0 0 384 512" fill="#FFFFFF"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>',
-      play: '<svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M4.2 2.4c-.4.4-.6.9-.6 1.6v16c0 .7.2 1.2.6 1.6l.1.1L13.5 12v-.1L4.3 2.3l-.1.1z"/><path d="M16.6 15.1l-3.1-3.1v-.1l3.1-3.1 3.6 2.1c1 .6 1 1.6 0 2.2l-3.6 2z" opacity="0.85"/><path d="M13.5 12L4.3 21.7c.4.4 1 .4 1.7.1l10.4-6-2.9-3.8z" opacity="0.7"/><path d="M13.5 12l2.9-3.8-10.4-6c-.7-.4-1.3-.3-1.7.1L13.5 12z" opacity="0.7"/></svg>'
+    // Fallback if the official App Store / Google Play badge SVGs haven't been
+    // uploaded to assets/images/ yet — swaps the broken <img> for a built-in
+    // vector button so the page never shows a broken-image icon in the meantime.
+    window.fallbackStoreBadge = function(imgEl, kind) {
+      const icons = {
+        apple: '<svg viewBox="0 0 384 512" fill="#FFFFFF"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>',
+        play: '<svg viewBox="0 0 24 24" fill="#FFFFFF"><path d="M4.2 2.4c-.4.4-.6.9-.6 1.6v16c0 .7.2 1.2.6 1.6l.1.1L13.5 12v-.1L4.3 2.3l-.1.1z"/><path d="M16.6 15.1l-3.1-3.1v-.1l3.1-3.1 3.6 2.1c1 .6 1 1.6 0 2.2l-3.6 2z" opacity="0.85"/><path d="M13.5 12L4.3 21.7c.4.4 1 .4 1.7.1l10.4-6-2.9-3.8z" opacity="0.7"/><path d="M13.5 12l2.9-3.8-10.4-6c-.7-.4-1.3-.3-1.7.1L13.5 12z" opacity="0.7"/></svg>'
+      };
+      const labels = {
+        apple: ['Download on the', 'App Store'],
+        play: ['Get it on', 'Google Play']
+      };
+      const [line1, line2] = labels[kind];
+      const wrapper = document.createElement('span');
+      wrapper.className = 'store-btn';
+      wrapper.innerHTML = icons[kind] + '<div class="store-btn-text"><span>' + line1 + '</span><strong>' + line2 + '</strong></div>';
+      imgEl.replaceWith(wrapper);
     };
-    const labels = {
-      apple: ['Download on the', 'App Store'],
-      play: ['Get it on', 'Google Play']
-    };
-    const [line1, line2] = labels[kind];
-    const wrapper = document.createElement('span');
-    wrapper.className = 'store-btn';
-    wrapper.innerHTML = icons[kind] + '<div class="store-btn-text"><span>' + line1 + '</span><strong>' + line2 + '</strong></div>';
-    imgEl.replaceWith(wrapper);
-  };
 
 
-  const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
-  const docCards = document.querySelectorAll('.doc-card');
-  const docEmptyState = document.getElementById('docEmptyState');
+    const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
+    const docCards = document.querySelectorAll('.doc-card');
+    const docEmptyState = document.getElementById('docEmptyState');
 
-  if (filterBtns) {
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    if (filterBtns) {
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
 
-        const category = btn.getAttribute('data-filter');
-        let visibleCount = 0;
+          const category = btn.getAttribute('data-filter');
+          let visibleCount = 0;
 
-        docCards.forEach(card => {
-          const cardCat = card.getAttribute('data-category');
-          if (category === 'all' || cardCat === category) {
-            card.style.display = 'flex';
-            visibleCount++;
+          docCards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            if (category === 'all' || cardCat === category) {
+              card.style.display = 'flex';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          if (visibleCount === 0) {
+            docEmptyState.classList.add('active');
           } else {
-            card.style.display = 'none';
+            docEmptyState.classList.remove('active');
           }
         });
-
-        if (visibleCount === 0) {
-          docEmptyState.classList.add('active');
-        } else {
-          docEmptyState.classList.remove('active');
-        }
       });
-    });
-  }
+    }
 </script>
 {% endblock %}
