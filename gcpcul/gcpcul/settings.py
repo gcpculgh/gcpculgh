@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-nik#-^m9%f$l+@-70v9$qu04*uexuv!z3)9$&%j4b^%i+uo$t+'
 
-DEBUG = True
+DEBUG = False
 
-# ALLOWED_HOSTS = ['gcpculgh.com', 'www.gcpculgh.com', '.vercel.app']
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['gcpculgh.com', 'www.gcpculgh.com', '.vercel.app']
+# ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
