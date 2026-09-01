@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OG Image Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;800&display=swap" rel="stylesheet">
+  <style>
+    /* Dark background so you can clearly see the edges to screenshot */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #111827; 
+    }
+    
+    /* EXACT 1200x630 OpenGraph dimensions */
+    .og-card {
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(135deg, #073E24 0%, #0A5C36 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      box-sizing: border-box;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Faint background grid for premium texture */
+    .og-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+      background-size: 24px 24px;
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      width: 160px;
+      height: 160px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      margin-bottom: 45px;
+      object-fit: contain;
+    }
+
+    h1 {
+      font-size: 64px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 20px 0;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      font-size: 32px;
+      font-weight: 500;
+      color: #A7F3D0; /* Light mint green */
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="og-card">
+    <div class="content">
+      <img src="logo.jpg" alt="GCPCUL Logo" class="logo">
+      
+      <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
+      <p>Securely manage your share capital and build wealth.</p>
+    </div>
+  </div>
+
+</body>
+</html>
