@@ -1939,17 +1939,17 @@
 
     if (isHealthcare === 'yes' && savingsHistory === 'yes') {
       preQualBadge.style.color = '#34D399';
-      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">verified</span><span>Verified Eligible Member</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">verified</span><span>Verified Eligible Member</span></span><img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
       preQualTitle.textContent = 'GH¢ 100,000.00 Fast-Track Access';
       preQualDesc.textContent = 'You qualify to borrow up to 3x your savings plus share capital immediately without committee delay or external guarantors.';
     } else if (isHealthcare === 'yes' && savingsHistory === 'new') {
       preQualBadge.style.color = '#FBBF24';
-      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">schedule</span><span>New Member Fast-Track</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">schedule</span><span>New Member Fast-Track</span></span><img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
       preQualTitle.textContent = '90-Day Credit Acceleration Pathway';
       preQualDesc.textContent = 'Start saving GH¢100/month today. You unlock full 3x Fast-Track borrowing eligibility after your first 3 months of consistent savings.';
     } else {
       preQualBadge.style.color = '#38BDF8';
-      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">hourglass_top</span><span>Pre-Qualification Review</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+      preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">hourglass_top</span><span>Pre-Qualification Review</span></span><img src="{% static 'assets/images/linda-landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
       preQualTitle.textContent = 'Custom Institutional Assessment';
       preQualDesc.textContent = 'Non-pharmacist healthcare institutions and associated workers can qualify through committee review under CUA stabilization guidelines.';
     }
