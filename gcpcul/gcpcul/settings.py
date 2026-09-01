@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-nik#-^m9%f$l+@-70v9$qu04*uexuv!z3)9$&%j4b^%i+uo$t+
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['gcpculgh.com', 'www.gcpculgh.com', '.vercel.app']
-# ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ['gcpculgh.com', 'www.gcpculgh.com', '.vercel.app']
+ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [

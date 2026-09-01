@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,69 +7,67 @@
   <title>Secure Member Login | GCPCUL Portal</title>
   <meta name="description" content="Securely log in to the Ghana Co-operative Pharmacists' Credit Union member portal.">
   
-  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicon/favicon-32x32.png' %}">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     /* ==========================================
-       1. ADAPTIVE FLUID DESIGN SYSTEM (SHADCN VIBE)
+       GLOBAL VARIABLES
        ========================================== */
     :root {
       --primary-green: #0A5C36;
       --heading-green: #0A5C36;
       --accent-green: #148F5B;
-      --coop-gold: #EBAA14;
+      --coop-gold: #B8862E;
+      --gold-bright: #EBAA14;
       
-      /* Shadcn Light Theme */
-      --bg-page: #F8FAFC;
+      --bg-page: #FAF7F0;
       --bg-card: #FFFFFF;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --border-color: #E2E8F0;
-      --input-bg: #FFFFFF;
-      --ring-color: rgba(10, 92, 54, 0.2);
+      --text-main: #10241A;
+      --text-muted: #6B6456;
+      --border-color: #E4DFD1;
       
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      --shadow-sm: 0 1px 3px rgba(16, 36, 26, 0.06);
+      --shadow-card: 0 10px 25px -5px rgba(16, 36, 26, 0.10);
+      --shadow-lg: 0 20px 40px -12px rgba(16, 36, 26, 0.18);
       
-      --radius-sm: 0.375rem;
-      --radius-md: 0.5rem;
-      --radius-lg: 0.75rem;
+      --radius-sm: 0.625rem;
+      --radius-md: 1rem;
+      --radius-lg: 1.5rem;
+
+      --font-display: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
     [data-theme="dark"] {
       --heading-green: #34D399;
-      --primary-green: #10B981;
-      --accent-green: #34D399;
+      --primary-green: #0A5C36;
+      --accent-green: #10B981;
       
-      /* Shadcn Dark Theme */
-      --bg-page: #020617;
-      --bg-card: #0F172A;
+      --bg-page: #0B1120;
+      --bg-card: #111827;
       --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
+      --text-muted: #CBD5E1;
       --border-color: #1E293B;
-      --input-bg: #020617;
-      --ring-color: rgba(16, 185, 129, 0.3);
-      
-      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* THE FIX: Allow natural scrolling on the body, let flexbox handle the rest */
-    html, body { width: 100%; min-height: 100vh; }
+    /* SCROLL LOCK FIX: Locks the main body, enables panel scrolling */
+    html, body { 
+      width: 100%; 
+      height: 100vh; 
+      overflow: hidden; 
+    }
+
     body { 
-      font-family: 'Plus Jakarta Sans', sans-serif; 
+      font-family: var(--font-display); 
       background-color: var(--bg-page); 
       color: var(--text-main); 
       line-height: 1.5; 
-      display: flex; 
-      flex-direction: column;
       transition: background-color 0.3s ease, color 0.3s ease; 
     }
     
@@ -76,194 +75,143 @@
     img { max-width: 100%; height: auto; display: block; }
     
     .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-svg svg { width: 1.25em; height: 1.25em; fill: currentColor; }
+    .icon-svg svg { width: 1.25em; height: 1.25em; }
+    .mono { font-family: var(--font-mono); }
 
     /* ==========================================
-       2. STICKY LEFT / FLUID RIGHT ARCHITECTURE
+       SPLIT LAYOUT ARCHITECTURE
        ========================================== */
     .auth-layout { 
       display: flex; 
       width: 100%; 
-      min-height: 100vh; 
+      height: 100vh; 
+      overflow: hidden; 
     }
 
-    /* THE UPGRADE: Locked Sticky Left Panel */
+    /* LEFT PANEL: LOCKED & STATIC */
     .auth-visual {
       flex: 1.1;
-      position: sticky;
-      top: 0;
-      height: 100vh; /* Will never scroll or grow */
+      height: 100%; 
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: clamp(2rem, 4vw, 3rem);
-      background-color: #0F172A;
-      overflow: hidden;
+      padding: clamp(2.5rem, 5vw, 4rem);
+      background: linear-gradient(160deg, #063421 0%, var(--primary-green) 100%);
+      position: relative;
     }
 
-    .auth-bg-img {
+    .auth-visual::before {
+      content: '';
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: cover;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+      background-size: 22px 22px;
+      opacity: .6;
       z-index: 1;
-      filter: brightness(0.6) grayscale(0.1);
     }
 
-    .auth-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10, 92, 54, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%); z-index: 2; }
     .auth-visual-content { position: relative; z-index: 3; display: flex; flex-direction: column; height: 100%; }
 
     .auth-logo { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-    .auth-logo img { height: 3.5rem; width: 3.5rem; border-radius: var(--radius-md); background: #FFFFFF; padding: 0.15rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .auth-logo img { height: 3.5rem; width: 3.5rem; border-radius: 0.65rem; background: #FFFFFF; padding: 0.15rem; box-shadow: var(--shadow-sm); }
     .auth-logo h1 { font-size: 1.1rem; font-weight: 800; color: #FFFFFF; line-height: 1.2; }
 
-    .glass-promo-card {
+    /* CSS TRUST WIDGET */
+    .css-trust-widget {
       margin: auto 0;
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: var(--radius-lg);
-      padding: clamp(2rem, 3vw, 2.5rem);
+      padding: clamp(2rem, 4vw, 3rem);
       color: #FFFFFF;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-      max-width: 36rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+      max-width: 32rem;
     }
+    
+    .trust-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: #D9C89A; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; }
+    .trust-eyebrow::before { content: ''; width: 1.6rem; height: 1px; background: #D9C89A; }
 
-    .promo-tag {
-      display: inline-block;
-      background: var(--coop-gold);
-      color: #0F172A;
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.35rem 0.85rem;
-      border-radius: 50px;
-      margin-bottom: 1.25rem;
-    }
+    .css-trust-widget h2 { font-size: clamp(2rem, 3.5vw, 2.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+    .css-trust-widget h2 span { color: var(--gold-bright); }
+    .css-trust-widget p { font-size: 1.05rem; color: #E4EBE6; line-height: 1.6; margin-bottom: 2.5rem; }
 
-    .glass-promo-card h2 { font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; letter-spacing: -0.02em; }
-    .glass-promo-card p { font-size: 1.05rem; color: #CBD5E1; line-height: 1.6; margin-bottom: 2rem; }
+    .security-badges { display: flex; gap: 1.5rem; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 1.5rem; }
+    .badge-item { display: flex; align-items: center; gap: 0.75rem; }
+    .badge-icon { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: rgba(235, 170, 20, 0.15); color: var(--gold-bright); display: flex; align-items: center; justify-content: center; }
+    .badge-item span { font-weight: 700; font-size: 0.9rem; color: #FFFFFF; }
 
-    .promo-stats { display: flex; gap: 2rem; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; }
-    .stat-item strong { display: block; font-size: 1.4rem; font-weight: 800; color: #34D399; font-family: monospace; line-height: 1.1; }
-    .stat-item span { font-size: 0.8rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-
-    /* ==========================================
-       RIGHT PANEL: FLUID SHADCN ARCHITECTURE
-       ========================================== */
+    /* RIGHT PANEL: INDEPENDENTLY SCROLLABLE */
     .auth-panel {
       flex: 1;
+      height: 100%;
+      background: var(--bg-page);
+      overflow-y: auto; /* Scroll isolated to this side */
       display: flex;
       flex-direction: column;
-      background: var(--bg-page);
-      min-height: 100vh;
-      overflow-y: auto; /* Natural scrolling if screen is too short */
-      padding: 2.5rem;
+      padding: clamp(2rem, 4vw, 3rem);
     }
 
-    .auth-panel-header {
-      width: 100%;
-      margin-bottom: 2rem;
-    }
+    .auth-panel-header { width: 100%; margin-bottom: 2rem; display: flex; justify-content: flex-end; flex-shrink: 0; }
+    .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); transition: color 0.2s ease; }
+    .back-btn:hover { color: var(--heading-green); }
 
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      transition: color 0.2s ease;
-    }
-    .back-btn:hover { color: var(--text-main); }
+    .form-container { width: 100%; max-width: 28rem; margin: auto; flex-shrink: 0; }
 
-    /* Centered vertically in available space using auto margins */
-    .form-container {
-      width: 100%;
-      max-width: 28rem;
-      margin: auto;
-      padding: 2rem 0;
-    }
-
-    /* THE SHADCN CARD */
-    .shadcn-card {
+    .auth-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
-      padding: 3rem 2.5rem; 
+      padding: clamp(2rem, 4vw, 3rem); 
       display: flex;
       flex-direction: column;
     }
 
-    /* THE UPGRADE: Contextual Security Icon (No Double Logo on Desktop) */
-    .form-header { margin-bottom: 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    
-    .desktop-lock-icon {
-      width: 3.5rem; height: 3.5rem; border-radius: 50%; background: #ECFDF5; color: var(--primary-green);
-      display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem;
-    }
-    [data-theme="dark"] .desktop-lock-icon { background: rgba(16, 185, 129, 0.15); color: #34D399; }
-    
-    .mobile-logo-icon { display: none; } /* Hidden entirely on desktop */
+    .form-header { margin-bottom: 2.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .desktop-lock-icon { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--primary-light); color: var(--primary-green); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; border: 1px solid rgba(10, 92, 54, 0.1); }
+    .desktop-lock-icon svg { width: 1.65rem; height: 1.65rem; }
+    .mobile-logo-icon { display: none; } 
 
-    .form-header h2 { font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.4rem; letter-spacing: -0.01em; }
+    .form-header h2 { font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.4rem; letter-spacing: -0.01em; }
     .form-header p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
 
-    /* FORM ELEMENTS WITH EXPANSIVE NEGATIVE SPACE */
-    .form-group { margin-bottom: 1.25rem; position: relative; text-align: left; }
-    .form-group label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.6rem; }
+    .form-group { margin-bottom: 1.5rem; position: relative; text-align: left; }
+    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.6rem; }
     
     .input-wrapper { position: relative; display: flex; align-items: center; }
     .input-icon { position: absolute; left: 1.15rem; color: var(--text-muted); pointer-events: none; transition: color 0.2s ease; width: 1.25rem; height: 1.25rem; }
     
-    .form-control {
-      width: 100%; 
-      height: 3.25rem; 
-      padding: 0.5rem 1rem 0.5rem 3rem; 
-      font-size: 1.05rem; 
-      border: 1px solid var(--border-color); 
-      background: transparent; 
-      color: var(--text-main);
-      border-radius: var(--radius-md); 
-      outline: none; 
-      font-family: inherit; 
-      transition: all 0.2s ease;
-    }
-    .form-control:focus { border-color: var(--primary-green); box-shadow: 0 0 0 2px var(--bg-page), 0 0 0 4px var(--ring-color); }
+    .form-control { width: 100%; height: 3.25rem; padding: 0.5rem 1rem 0.5rem 3.2rem; font-size: 1.05rem; font-weight: 600; border: 1.5px solid var(--border-color); background: transparent; color: var(--text-main); border-radius: var(--radius-sm); outline: none; font-family: inherit; transition: all 0.2s ease; }
+    .form-control:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(10, 92, 54, 0.1); }
     .form-control:focus + .input-icon, .input-wrapper:focus-within .input-icon { color: var(--primary-green); }
 
     .password-toggle { position: absolute; right: 1.15rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; width: 1.25rem; height: 1.25rem; }
     .password-toggle:hover { color: var(--text-main); }
 
-    .caps-warning { display: none; color: #E11D48; font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; align-items: center; gap: 0.3rem; animation: fadeIn 0.2s ease; }
+    .caps-warning { display: none; color: #DC2626; font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; align-items: center; gap: 0.4rem; animation: fadeIn 0.2s ease; }
     .caps-warning.active { display: flex; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-    .form-options { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 2rem; font-size: 0.9rem; font-weight: 500; }
+    .form-options { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 2.2rem; font-size: 0.9rem; font-weight: 600; }
     .checkbox-wrap { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); }
-    .checkbox-wrap input { accent-color: var(--primary-green); width: 1.1rem; height: 1.1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); cursor: pointer; }
+    .checkbox-wrap input { accent-color: var(--primary-green); width: 1.1rem; height: 1.1rem; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; }
     
-    .forgot-link { color: var(--text-main); font-weight: 500; transition: color 0.2s ease; }
-    .forgot-link:hover { color: var(--primary-green); text-decoration: underline; }
+    .forgot-link { color: var(--text-muted); transition: color 0.2s ease; }
+    .forgot-link:hover { color: var(--heading-green); text-decoration: underline; }
 
     /* BUTTONS */
     .auth-button-stack { display: flex; flex-direction: column; gap: 1rem; }
 
-    .btn-submit {
-      width: 100%; height: 3.25rem; background: var(--primary-green); color: #FFFFFF; font-size: 1.05rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease; box-shadow: var(--shadow-sm);
-    }
-    .btn-submit:hover { background: var(--accent-green); }
+    .btn-submit { width: 100%; height: 3.5rem; background: var(--primary-green); color: #FFFFFF; font-size: 1.05rem; font-weight: 700; border-radius: var(--radius-sm); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease, transform 0.1s ease; box-shadow: var(--shadow-sm); }
+    .btn-submit:hover { background: var(--accent-green); transform: translateY(-1px); }
 
-    .btn-alt-login {
-      width: 100%; height: 3.25rem; background: transparent; color: var(--text-main); font-size: 1.05rem; font-weight: 500; border-radius: var(--radius-md); border: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease; font-family: inherit; box-shadow: var(--shadow-sm);
-    }
-    .btn-alt-login:hover { background: var(--border-color); }
-
-    .enroll-link { text-align: center; margin-top: 2rem; font-size: 0.875rem; color: var(--text-muted); }
-    .enroll-link a { color: var(--text-main); font-weight: 600; transition: color 0.2s ease; }
-    .enroll-link a:hover { color: var(--primary-green); text-decoration: underline; }
+    .btn-ghana-card { width: 100%; height: 3.5rem; background: transparent; color: var(--text-main); font-size: 1.02rem; font-weight: 700; border-radius: var(--radius-sm); border: 1.5px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; transition: all 0.2s ease; font-family: inherit; }
+    .btn-ghana-card:hover { border-color: var(--primary-green); color: var(--heading-green); background: rgba(10, 92, 54, 0.02); }
+    
+    .enroll-link { text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .enroll-link a { color: var(--heading-green); font-weight: 800; transition: opacity 0.2s ease; }
+    .enroll-link a:hover { opacity: 0.8; text-decoration: underline; }
 
     /* IN-FLOW BOTTOM FOOTER */
     .auth-footer-simple {
@@ -272,60 +220,46 @@
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.8rem;
+      gap: 1.25rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-top: 2rem;
+      margin-top: auto; /* Pushes to bottom */
+      padding-top: 3rem;
     }
-    .auth-footer-simple a { color: var(--text-main); font-weight: 500; transition: color 0.2s ease; }
-    .auth-footer-simple a:hover { color: var(--primary-green); }
-    .footer-divider { display: inline-block; width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; opacity: 0.5; }
+    .auth-footer-simple a { color: var(--text-main); font-weight: 600; transition: color 0.2s ease; }
+    .auth-footer-simple a:hover { color: var(--heading-green); }
+    .footer-divider { display: inline-block; width: 4px; height: 4px; background: var(--border-color); border-radius: 50%; }
 
     /* FLOATING THEME TOGGLE */
-    .float-theme-btn { position: fixed; bottom: 1.5rem; left: 1.5rem; width: 3rem; height: 3rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-card); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9990; transition: all 0.2s ease; }
-    .float-theme-btn:hover { background: var(--border-color); }
+    .float-theme-btn { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9990; transition: all 0.2s ease; }
+    .float-theme-btn:hover { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); transform: scale(1.08); }
 
-    .toast-notification { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-150%); background: var(--text-main); color: var(--bg-page); padding: 1rem 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 11000; display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; opacity: 0; pointer-events: none; }
+    .toast-notification { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-150%); background: #10241A; color: #FFFFFF; padding: 1rem 1.5rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 11000; display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 0.9rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; opacity: 0; pointer-events: none; }
     .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast-icon { display: inline-flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; color: var(--primary-green); }
+    .toast-icon { display: inline-flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; color: #34D399; }
 
     /* ==========================================
-       4. MOBILE RESPONSIVE
+       MOBILE RESPONSIVE
        ========================================== */
     @media (max-width: 64rem) {
-      .auth-layout { flex-direction: column; align-items: center; min-height: 100vh; }
+      /* Unlock body scroll for mobile stacking */
+      html, body { height: auto; overflow: auto; }
+      
+      .auth-layout { flex-direction: column; align-items: center; height: auto; overflow: visible; }
       .auth-visual { display: none; }
+      .auth-panel { width: 100%; height: auto; overflow-y: visible; padding: 2rem 1.5rem 5rem 1.5rem; justify-content: flex-start; }
       
-      .auth-panel { 
-        width: 100%;
-        padding: 3rem 1.5rem 5rem 1.5rem; 
-        justify-content: flex-start;
-      }
+      .auth-panel-header { justify-content: center; margin-bottom: 1.5rem; }
+      .form-container { max-width: 100%; padding: 0; }
+      .auth-card { padding: 2rem 1.5rem; border: none; box-shadow: none; background: transparent; }
 
-      .auth-panel-header { margin-bottom: 2rem; }
-      
-      .form-container { max-width: 28rem; padding: 0; margin: 0 auto; }
-      
-      .shadcn-card { padding: 2rem 1.5rem; }
-
-      /* THE SWAP: Kill the lock, show the logo on mobile */
       .desktop-lock-icon { display: none !important; }
-      .mobile-logo-icon { 
-        display: block !important; 
-        width: 4rem; 
-        height: 4rem; 
-        border-radius: var(--radius-md); 
-        box-shadow: var(--shadow-sm); 
-        border: 1px solid var(--border-color); 
-        margin-bottom: 1.5rem; 
-        background: #FFFFFF; 
-        padding: 0.15rem; 
-      }
+      .mobile-logo-icon { display: block !important; width: 4.5rem; height: 4.5rem; border-radius: 0.65rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 1.5rem; background: #FFFFFF; padding: 0.2rem; margin-left: auto; margin-right: auto; }
       
-      .auth-footer-simple { flex-direction: column; gap: 0.5rem; margin-top: 3rem; }
+      .auth-footer-simple { flex-direction: column; gap: 0.65rem; margin-top: 3rem; text-align: center; }
       .footer-divider { display: none; }
-      
-      .float-theme-btn { bottom: 1.5rem; left: 1.5rem; width: 2.75rem; height: 2.75rem; }
+
+      .float-theme-btn { bottom: 1.5rem; left: 1.5rem; width: 3rem; height: 3rem; }
     }
   </style>
 </head>
@@ -335,61 +269,62 @@
 
   <main class="auth-layout">
     
-    <!-- LEFT SIDE: STATIC CINEMATIC BRANDING -->
+    <!-- LEFT SIDE: CSS TRUST WIDGET (STATIC) -->
     <section class="auth-visual">
-      <img src="https://images.pexels.com/photos/3738339/pexels-photo-3738339.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Pharmacist Background" class="auth-bg-img">
-      <div class="auth-overlay"></div>
-      
       <div class="auth-visual-content">
         <a href="{% url 'home' %}" class="auth-logo">
-          <img src="assets/images/logo.jpg" alt="GCPCUL Logo">
+          <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo">
           <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
         </a>
 
-        <div class="glass-promo-card">
-          <span class="promo-tag">Member Update</span>
-          <h2>Record 18% Dividend Yield Declared.</h2>
-          <p>The 2026 Board resolution is active. Log in to your portal to view your compounded share capital balance and claim your cooperative returns today.</p>
+        <div class="css-trust-widget">
+          <div class="trust-eyebrow">Zero-Trust Security Portal</div>
+          <h2>Bank-grade protection for your <span>share capital.</span></h2>
+          <p>End-to-end encrypted identity verification. Maker-Checker sign-off controls for all disbursements. Full CUA Loan Protection Plan (LPP) privacy guaranteed.</p>
           
-          <div class="promo-stats">
-            <div class="stat-item">
-              <strong>GH¢ 100k</strong>
-              <span>Fast-Track Limit</span>
+          <div class="security-badges">
+            <div class="badge-item">
+              <div class="badge-icon">
+                <!-- Premium Outline Shield Check -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+              </div>
+              <span>100% CUA Insured</span>
             </div>
-            <div class="stat-item">
-              <strong>100%</strong>
-              <span>CUA Insured</span>
+            <div class="badge-item">
+              <div class="badge-icon">
+                <!-- Premium Outline Biometric Fingerprint -->
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" /></svg>
+              </div>
+              <span>Biometric Sign-Off</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- RIGHT SIDE: FLUID SHADCN CARD LAYOUT -->
+    <!-- RIGHT SIDE: FORM PORTAL (SCROLLABLE) -->
     <section class="auth-panel">
       
       <div class="auth-panel-header">
         <a href="{% url 'home' %}" class="back-btn">
-          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></span>
-          Back to Website
+          Back to Main Site
+          <!-- Premium Outline Arrow Right -->
+          <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" /></svg></span>
         </a>
       </div>
 
-      <!-- CENTERED FORM CONTAINER -->
       <div class="form-container">
         
-        <!-- SHADCN CARD -->
-        <div class="shadcn-card">
-          
+        <div class="auth-card">
           <div class="form-header">
-            <!-- Sleek lock for Desktop, Logo for Mobile -->
             <div class="desktop-lock-icon">
-              <svg viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <!-- Premium Outline Lock -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
             </div>
-            <img src="assets/images/logo.jpg" alt="GCPCUL Logo" class="mobile-logo-icon" onerror="this.src='https://via.placeholder.com/50';">
+            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="mobile-logo-icon">
             
-            <h2>Member Portal</h2>
-            <p>Enter your credentials to continue</p>
+            <h2>Member Login</h2>
+            <p>Access your financial dashboard</p>
           </div>
 
           <form id="loginForm" onsubmit="handleLogin(event)">
@@ -397,22 +332,26 @@
             <div class="form-group">
               <label for="memberId">Member ID or Phone Number</label>
               <div class="input-wrapper">
-                <span class="icon-svg input-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></span>
-                <input type="text" id="memberId" class="form-control" placeholder="Your member ID" required autocomplete="username">
+                <!-- Premium Outline User -->
+                <span class="icon-svg input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg></span>
+                <input type="text" id="memberId" class="form-control" placeholder="e.g. GCP-1045" required autocomplete="username">
               </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 0;">
               <label for="password">Secure PIN / Password</label>
               <div class="input-wrapper">
-                <span class="icon-svg input-icon"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></span>
-                <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+                <!-- Premium Outline Lock -->
+                <span class="icon-svg input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>
+                <input type="password" id="password" class="form-control mono" placeholder="••••••••" required autocomplete="current-password">
                 <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Toggle password visibility">
-                  <span class="icon-svg" id="eyeIcon"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></span>
+                  <!-- JS sets this to Eye Closed Outline on load -->
+                  <span class="icon-svg" id="eyeIcon"></span>
                 </button>
               </div>
               <div class="caps-warning" id="capsWarning">
-                <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></span>
+                <!-- Premium Outline Warning -->
+                <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" /></svg></span>
                 Caps Lock is ON
               </div>
             </div>
@@ -427,47 +366,55 @@
 
             <div class="auth-button-stack">
               <button type="submit" class="btn-submit" id="submitBtn">
-                Sign In
+                Sign In Securely
               </button>
               
-              <button type="button" class="btn-alt-login" onclick="showToast('Connecting to Identity Verification...', 'success')">
-                <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29L5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.59 7.59c-.38.39-1.02.39-1.41 0z"/></svg></span>
-                Continue with Ghana Card
+              <button type="button" class="btn-ghana-card" onclick="showToast('Connecting to Smile Identity...', 'success')">
+                <!-- Premium Outline ID Card -->
+                <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg></span>
+                Sign in with Ghana Card
               </button>
             </div>
           </form>
 
           <div class="enroll-link">
-            Don't have an account? <a href="{% url 'downloads' %}#membership-form">Sign up</a>
+            Not a member yet? <a href="{% url 'downloads' %}#membership-form">Apply for Membership</a>
           </div>
 
-        </div> <!-- End Shadcn Card -->
-
-      </div> <!-- End Form Container -->
-
-      <!-- IN-FLOW BOTTOM FOOTER -->
+        </div> 
+      </div> 
+      
+      <!-- RESTORED: IN-FLOW BOTTOM FOOTER -->
       <div class="auth-footer-simple">
         <span>Need Help? <a href="https://wa.me/233548685362" target="_blank">Chat with Support</a></span>
         <span class="footer-divider"></span>
-        <span>Powered by <a href="https://wa.me/+233245641987" target="_blank" style="font-weight: 700;">Wiselyn Spear Solutions</a></span>
+        <span>Powered by <a href="https://wa.me/+233245641987?text=Hello%20Wiselyn%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services." target="_blank" style="color: var(--coop-gold); font-weight: 800;">Wiselyn Spear Solutions</a></span>
       </div>
 
     </section>
   </main>
 
-  <!-- THEME TOGGLE ONLY -->
   <button class="float-theme-btn" id="floatThemeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Theme">
     <span class="icon-svg" id="floatThemeIcon">
-      <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      <!-- Default Moon Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
     </span>
   </button>
 
   <script>
+    // --- Outline Eye Icons ---
+    const eyeOpen = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>';
+    const eyeClosed = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>';
+
+    // Set initial eye icon
+    const eyeIcon = document.getElementById('eyeIcon');
+    if (eyeIcon) eyeIcon.innerHTML = eyeClosed;
+
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toastNotification');
       const iconSvg = type === 'success' 
-        ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+        ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" /></svg>';
       
       toast.className = `toast-notification toast-${type} show`;
       toast.innerHTML = `<span class="icon-svg toast-icon">${iconSvg}</span><span>${message}</span>`;
@@ -491,11 +438,7 @@
     }
 
     const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    const eyeIcon = document.getElementById('eyeIcon');
     
-    const eyeOpen = '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
-    const eyeClosed = '<svg viewBox="0 0 24 24"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>';
-
     if (togglePasswordBtn && passwordInput && eyeIcon) {
       togglePasswordBtn.addEventListener('click', () => {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -509,7 +452,7 @@
       const btn = document.getElementById('submitBtn');
       const originalText = btn.innerHTML;
       
-      btn.innerHTML = '<span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 2v4c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8H2c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2z"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></path></svg></span>';
+      btn.innerHTML = '<span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2v4c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8H2c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2z"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></path></svg></span>';
       btn.disabled = true;
 
       setTimeout(() => {
@@ -521,11 +464,9 @@
 
     const floatThemeBtn = document.getElementById('floatThemeToggleBtn');
     const savedTheme = localStorage.getItem('gcpcul-theme') || 'light';
-    const floatThemeIcon = document.getElementById('floatThemeIcon');
     
     if (savedTheme === 'dark') { 
       document.documentElement.setAttribute('data-theme', 'dark'); 
-      if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG;
     }
 
     if (floatThemeBtn) {
@@ -534,11 +475,9 @@
         if (currentTheme === 'dark') {
           document.documentElement.removeAttribute('data-theme');
           localStorage.setItem('gcpcul-theme', 'light');
-          if (floatThemeIcon) floatThemeIcon.innerHTML = moonSVG;
         } else {
           document.documentElement.setAttribute('data-theme', 'dark');
           localStorage.setItem('gcpcul-theme', 'dark');
-          if (floatThemeIcon) floatThemeIcon.innerHTML = sunSVG;
         }
       });
     }
