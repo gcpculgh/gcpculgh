@@ -5,566 +5,1297 @@
 
 {% block extra_css %}
 <style>
-    /* ==========================================
-       NEWS & BLOG PAGE SPECIFIC STYLES
-       ========================================== */
-       
-    .tag-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 800; padding: 0.4rem 0.85rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.04em; }
-    .tag-news { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
-    .tag-guide { background: #F0FDFA; color: #0D9488; border: 1px solid #99F6E4; }
-    .tag-security { background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; }
-    .tag-dividend { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
-    
-    [data-theme="dark"] .tag-news { background: rgba(79, 70, 229, 0.15); color: #A5B4FC; border-color: #4F46E5; }
-    [data-theme="dark"] .tag-guide { background: rgba(13, 148, 136, 0.15); color: #5EEAD4; border-color: #0D9488; }
-    [data-theme="dark"] .tag-security { background: rgba(225, 29, 72, 0.15); color: #FDA4AF; border-color: #E11D48; }
-    [data-theme="dark"] .tag-dividend { background: rgba(217, 119, 6, 0.15); color: #FCD34D; border-color: #D97706; }
 
-    /* VIEW SECTIONS */
-    .view-section { display: block; animation: fadeIn 0.3s ease; }
-    .view-section.hidden { display: none; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
 
-    /* BULLETPROOF FIXED PROGRESS BAR */
-    .reading-progress-container {
-      position: fixed;
-      top: 4.85rem; /* Sits flush underneath the main sticky header */
-      left: 0;
+  .tag-news {
+    background: #EEF2FF;
+    color: #4F46E5;
+    border: 1px solid #C7D2FE;
+  }
+
+  .tag-guide {
+    background: #F0FDFA;
+    color: #0D9488;
+    border: 1px solid #99F6E4;
+  }
+
+  .tag-security {
+    background: #FFF1F2;
+    color: #E11D48;
+    border: 1px solid #FECDD3;
+  }
+
+  .tag-dividend {
+    background: #FFFBEB;
+    color: #D97706;
+    border: 1px solid #FDE68A;
+  }
+
+  [data-theme="dark"] .tag-news {
+    background: rgba(79, 70, 229, 0.15);
+    color: #A5B4FC;
+    border-color: #4F46E5;
+  }
+
+  [data-theme="dark"] .tag-guide {
+    background: rgba(13, 148, 136, 0.15);
+    color: #5EEAD4;
+    border-color: #0D9488;
+  }
+
+  [data-theme="dark"] .tag-security {
+    background: rgba(225, 29, 72, 0.15);
+    color: #FDA4AF;
+    border-color: #E11D48;
+  }
+
+  [data-theme="dark"] .tag-dividend {
+    background: rgba(217, 119, 6, 0.15);
+    color: #FCD34D;
+    border-color: #D97706;
+  }
+
+  .view-section {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .view-section.hidden {
+    display: none;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .reading-progress-container {
+    position: fixed;
+    top: 4.85rem;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  [data-theme="dark"] .reading-progress-container {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .reading-progress-bar {
+    height: 100%;
+    background: var(--coop-gold);
+    width: 0%;
+    border-radius: 0 4px 4px 0;
+    transition: width 0.1s ease-out;
+  }
+
+  /* DIRECTORY VIEW (HERO) */
+  .spotlight-hero {
+    position: relative;
+    background-color: #10241A;
+    color: #FFFFFF;
+    overflow: hidden;
+    border-bottom: 4px solid var(--coop-gold);
+  }
+
+  .spotlight-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(0.9);
+  }
+
+  .spotlight-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(16, 36, 26, 0.95) 0%, rgba(16, 36, 26, 0.85) 45%, rgba(16, 36, 26, 0.2) 100%);
+    backdrop-filter: blur(6px);
+    z-index: 2;
+  }
+
+  .spotlight-content-wrap {
+    position: relative;
+    z-index: 3;
+    padding-top: clamp(4rem, 7vw, 6.5rem);
+    padding-bottom: clamp(4rem, 7vw, 6.5rem);
+    max-width: 52rem;
+  }
+
+  .spotlight-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .spotlight-date {
+    font-size: 0.9rem;
+    color: #CBD5E1;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .spotlight-title {
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+
+  .spotlight-excerpt {
+    font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+    color: #F8FAFC;
+    line-height: 1.7;
+    margin-bottom: 2.25rem;
+  }
+
+  .spotlight-author-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .author-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid var(--coop-gold);
+    object-fit: cover;
+  }
+
+  .author-info strong {
+    display: block;
+    font-size: 1rem;
+    color: #FFFFFF;
+    font-weight: 800;
+  }
+
+  .author-info span {
+    display: block;
+    font-size: 0.85rem;
+    color: #94A3B8;
+  }
+
+  /* FILTER BAR */
+  .filter-bar-wrapper {
+    position: sticky;
+    top: 4.85rem;
+    z-index: 800;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 0;
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+    /* Hides scrollbar in Chrome/Safari/Brave */
+  }
+
+  .filter-tab-btn {
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.55rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    flex-shrink: 0;
+    /* Prevents buttons from squishing */
+    white-space: nowrap;
+  }
+
+  .filter-tab-btn:hover,
+  .filter-tab-btn.active {
+    background: var(--primary-green);
+    color: #FFFFFF;
+    border-color: var(--primary-green);
+    box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2);
+  }
+
+  /* BLOG GRID */
+  .blog-section {
+    padding: clamp(4rem, 6vw, 6rem) 0;
+    background: var(--bg-page);
+    min-height: 50vh;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    gap: 2.75rem;
+  }
+
+  .blog-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent-green);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .blog-thumb {
+    height: 14rem;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--slate-800);
+  }
+
+  .blog-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .blog-card:hover .blog-thumb img {
+    transform: scale(1.05);
+  }
+
+  .blog-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .blog-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.15rem;
+  }
+
+  .blog-meta-right {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .blog-card h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.35;
+    margin-bottom: 1rem;
+  }
+
+  .blog-card p {
+    color: var(--text-muted);
+    font-size: 1.02rem;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  .blog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.25rem;
+    margin-top: auto;
+  }
+
+  .blog-author-mini {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .read-btn {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary-green);
+    background: rgba(10, 92, 54, 0.08);
+    border: 1px solid transparent;
+    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+  }
+
+  .blog-card:hover .read-btn {
+    background: var(--primary-green);
+    color: #FFFFFF;
+  }
+
+  .empty-state-box {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-muted);
+    display: none;
+    width: 100%;
+  }
+
+  .empty-state-box.active {
+    display: block;
+  }
+
+  .empty-state-box .icon-svg {
+    font-size: 3rem;
+    color: var(--border-color);
+    margin-bottom: 1rem;
+  }
+
+  .empty-state-box .icon-svg .material-symbols-outlined {
+    font-size: 1em;
+  }
+
+  .empty-state-box h3 {
+    font-size: 1.25rem;
+    color: var(--text-main);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  /* SINGLE ARTICLE VIEW */
+  .article-header-bar {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 0;
+    position: sticky;
+    top: 4.85rem;
+    z-index: 800;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .back-nav-btn {
+    background: var(--bg-page);
+    border: 1.5px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.55rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+  }
+
+  .back-nav-btn:hover {
+    background: var(--primary-green);
+    color: #FFFFFF;
+    border-color: var(--primary-green);
+  }
+
+  .article-hero-wrapper {
+    position: relative;
+    height: 65vh;
+    min-height: 450px;
+    display: flex;
+    align-items: flex-end;
+    background-color: #10241A;
+    overflow: hidden;
+    border-bottom: 4px solid var(--coop-gold);
+  }
+
+  .article-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(0.9);
+  }
+
+  .article-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(16, 36, 26, 1) 0%, rgba(16, 36, 26, 0.6) 50%, rgba(16, 36, 26, 0.1) 100%);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+
+  .article-hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 52rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .article-hero-title {
+    font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #FFFFFF;
+    margin: 1.25rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .article-hero-byline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .article-hero-author {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .article-hero-author img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid var(--coop-gold);
+    object-fit: cover;
+  }
+
+  .article-hero-author strong {
+    display: block;
+    font-size: 1rem;
+    color: #FFFFFF;
+    font-weight: 800;
+  }
+
+  .article-hero-author span {
+    display: block;
+    font-size: 0.85rem;
+    color: #CBD5E1;
+    font-weight: 600;
+  }
+
+  .article-hero-date-time {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .article-content-container {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 4rem clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .reader-prose {
+    font-size: 1.15rem;
+    line-height: 1.88;
+    color: var(--text-main);
+  }
+
+  .reader-prose p {
+    margin-bottom: 1.85rem;
+  }
+
+  .reader-prose h2 {
+    font-size: 1.85rem;
+    font-weight: 800;
+    margin: 3rem 0 1.25rem 0;
+    color: var(--text-main);
+  }
+
+  .reader-prose blockquote {
+    border-left: 4px solid var(--coop-gold);
+    background: var(--bg-section-alt);
+    padding: 1.5rem 1.75rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-style: italic;
+    font-weight: 600;
+    margin: 2.5rem 0;
+  }
+
+  figure.inline-article-media {
+    margin: 2.5rem 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  figure.inline-article-media img,
+  figure.inline-article-media video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  figcaption.inline-caption {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    font-weight: 600;
+  }
+
+  .article-share-footer {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .read-next-section {
+    background: var(--bg-section-alt);
+    padding: 4.5rem 0;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .read-next-header {
+    max-width: 52rem;
+    margin: 0 auto 2.5rem auto;
+    padding: 0 clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .read-next-header h3 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .read-next-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 2.25rem;
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 2rem);
+  }
+
+  .newsletter-section {
+    padding: clamp(4.5rem, 6vw, 6.5rem) 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .newsletter-card {
+    background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%);
+    border-radius: var(--radius-lg);
+    padding: clamp(3rem, 5vw, 4.5rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .newsletter-text h3 {
+    color: #FFFFFF;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-text p {
+    color: #F8FAFC;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .newsletter-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: #FFFFFF;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .newsletter-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .newsletter-btn {
+    background: var(--coop-gold);
+    color: #10241A;
+    font-weight: 800;
+    border: none;
+    padding: 0 1.75rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .newsletter-btn:hover {
+    background: #D89A0E;
+  }
+
+  .newsletter-trust-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .newsletter-trust-avatars {
+    display: flex;
+  }
+
+  .newsletter-trust-avatars img {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    border: 2px solid #073E24;
+    object-fit: cover;
+    margin-left: -0.6rem;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .newsletter-trust-avatars img:first-child {
+    margin-left: 0;
+  }
+
+  .newsletter-trust-row span {
+    font-size: 0.85rem;
+    color: #DCEFE3;
+    font-weight: 600;
+  }
+
+  @media (max-width: 30rem) {
+    .newsletter-trust-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+  }
+
+  /* NEWS-SPECIFIC TOAST */
+  .toast-notification {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%);
+    background: #10241A;
+    color: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    z-index: 11000;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+    opacity: 0;
+    pointer-events: none;
+    width: max-content;
+    max-width: 90vw;
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .toast-success .toast-icon {
+    color: #34D399;
+    background: rgba(52, 211, 153, 0.15);
+  }
+
+  .toast-warning .toast-icon {
+    color: #FBBF24;
+    background: rgba(251, 191, 36, 0.15);
+  }
+
+  @media (max-width: 48rem) {
+    .newsletter-card {
+      grid-template-columns: 1fr;
+    }
+
+    .spotlight-content-wrap {
+      padding-top: 14rem;
+      padding-bottom: 3rem;
+    }
+
+    .spotlight-overlay {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.85) 45%, #10241A 80%);
+    }
+
+    .article-hero-wrapper {
+      min-height: 400px;
+      height: auto;
+    }
+
+    .article-hero-overlay {
+      background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.85) 45%, rgba(15, 23, 42, 0.2) 100%);
+    }
+
+    .article-hero-content {
+      padding-top: 10rem;
+      padding-bottom: 2.5rem;
+    }
+
+    .blog-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .read-btn {
       width: 100%;
-      height: 5px;
-      background: rgba(0, 0, 0, 0.08);
-      z-index: 9999;
-      pointer-events: none;
-    }
-    
-    [data-theme="dark"] .reading-progress-container { background: rgba(255, 255, 255, 0.05); }
-
-    .reading-progress-bar {
-      height: 100%;
-      background: var(--coop-gold);
-      width: 0%;
-      border-radius: 0 4px 4px 0;
-      transition: width 0.1s ease-out;
+      justify-content: center;
+      padding: 0.75rem;
     }
 
-    /* DIRECTORY VIEW (HERO) */
-    .spotlight-hero { position: relative; background-color: #0F172A; color: #FFFFFF; overflow: hidden; border-bottom: 4px solid var(--coop-gold); }
-    .spotlight-bg-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: brightness(0.9); }
-    .spotlight-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.85) 45%, rgba(15, 23, 42, 0.2) 100%); backdrop-filter: blur(6px); z-index: 2; }
-    .spotlight-content-wrap { position: relative; z-index: 3; padding: clamp(4rem, 7vw, 6.5rem) 0; max-width: 52rem; }
-    .spotlight-meta-top { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-    .spotlight-date { font-size: 0.9rem; color: #CBD5E1; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-    .spotlight-title { font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; letter-spacing: -0.02em; color: #FFFFFF; }
-    .spotlight-excerpt { font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: #F8FAFC; line-height: 1.7; margin-bottom: 2.25rem; }
-    .spotlight-author-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.25rem; }
-    .author-avatar { width: 3rem; height: 3rem; border-radius: 50%; border: 2px solid var(--coop-gold); object-fit: cover; }
-    .author-info strong { display: block; font-size: 1rem; color: #FFFFFF; font-weight: 800; }
-    .author-info span { display: block; font-size: 0.85rem; color: #94A3B8; }
-
-    /* FILTER BAR */
-    .filter-bar-wrapper { position: sticky; top: 4.85rem; z-index: 800; background: var(--bg-card); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 1rem 0; }
-    .filter-container { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 1rem; }
-    .filter-tabs { 
-      display: flex; 
-      align-items: center; 
-      gap: 0.5rem; 
-      flex-wrap: nowrap; /* Forces a single line */
-      overflow-x: auto; /* Enables horizontal swiping */
-      -webkit-overflow-scrolling: touch; /* Momentum scrolling for iOS */
-      scrollbar-width: none; /* Hides scrollbar in Firefox */
-      -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
-      padding-bottom: 4px; /* Prevents shadow clipping */
+    .newsletter-form {
+      flex-direction: column;
+      background: transparent;
+      padding: 0;
+      border: none;
+      gap: 1rem;
     }
-    .filter-tabs::-webkit-scrollbar { 
-      display: none; /* Hides scrollbar in Chrome/Safari/Brave */
+
+    .newsletter-input {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
     }
-    .filter-tab-btn { 
-      background: transparent; 
-      border: 1.5px solid var(--border-color); 
-      color: var(--text-muted); 
-      padding: 0.55rem 1.25rem; 
-      border-radius: 50px; 
-      font-size: 0.9rem; 
-      font-weight: 700; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      font-family: inherit; 
-      flex-shrink: 0; /* Prevents buttons from squishing */
-      white-space: nowrap; /* Keeps text on one line */
+
+    .newsletter-btn {
+      padding: 1rem;
+      width: 100%;
     }
-    .filter-tab-btn:hover, .filter-tab-btn.active { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
-
-    /* BLOG GRID */
-    .blog-section { padding: clamp(4rem, 6vw, 6rem) 0; background: var(--bg-page); min-height: 50vh; }
-    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)); gap: 2.75rem; }
-    .blog-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease; }
-    .blog-card:hover { transform: translateY(-6px); border-color: var(--accent-green); box-shadow: var(--shadow-lg); }
-    
-    .blog-thumb { height: 14rem; position: relative; overflow: hidden; background-color: var(--slate-800); }
-    .blog-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
-    .blog-card:hover .blog-thumb img { transform: scale(1.05); }
-
-    .blog-body { padding: 2rem; display: flex; flex-direction: column; flex-grow: 1; }
-    .blog-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; }
-    .blog-meta-right { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
-    .blog-card h3 { font-size: 1.35rem; font-weight: 800; color: var(--text-main); line-height: 1.35; margin-bottom: 1rem; }
-    .blog-card p { color: var(--text-muted); font-size: 1.02rem; line-height: 1.65; margin-bottom: 2rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
-    .blog-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.25rem; margin-top: auto; }
-    .blog-author-mini { font-size: 0.9rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
-    
-    .read-btn { font-size: 0.85rem; font-weight: 800; color: var(--primary-green); background: rgba(10, 92, 54, 0.08); border: 1px solid transparent; padding: 0.5rem 1.1rem; border-radius: 50px; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.2s ease; }
-    .blog-card:hover .read-btn { background: var(--primary-green); color: #FFFFFF; }
-
-    .empty-state-box { text-align: center; padding: 4rem 1rem; color: var(--text-muted); display: none; width: 100%; }
-    .empty-state-box.active { display: block; }
-    .empty-state-box .icon-svg { font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; }
-    .empty-state-box h3 { font-size: 1.25rem; color: var(--text-main); font-weight: 800; margin-bottom: 0.5rem; }
-
-    /* SINGLE ARTICLE VIEW */
-    .article-header-bar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 0.85rem 0; position: sticky; top: 4.85rem; z-index: 800; box-shadow: var(--shadow-sm); }
-    .back-nav-btn { background: var(--bg-page); border: 1.5px solid var(--border-color); color: var(--text-main); padding: 0.55rem 1.2rem; border-radius: 50px; font-weight: 800; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease; }
-    .back-nav-btn:hover { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); }
-
-    .article-hero-wrapper { position: relative; height: 65vh; min-height: 450px; display: flex; align-items: flex-end; background-color: #0F172A; overflow: hidden; border-bottom: 4px solid var(--coop-gold); }
-    .article-hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; filter: brightness(0.9); }
-    .article-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.1) 100%); backdrop-filter: blur(4px); z-index: 2; }
-    .article-hero-content { position: relative; z-index: 3; width: 100%; max-width: 52rem; margin: 0 auto; padding: 2rem clamp(1.25rem, 4vw, 2rem); }
-    .article-hero-title { font-size: clamp(2.2rem, 4.8vw, 3.8rem); font-weight: 800; line-height: 1.15; color: #FFFFFF; margin: 1.25rem 0; letter-spacing: -0.02em; }
-    .article-hero-byline { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.2); }
-    .article-hero-author { display: flex; align-items: center; gap: 0.85rem; }
-    .article-hero-author img { width: 3rem; height: 3rem; border-radius: 50%; border: 2px solid var(--coop-gold); object-fit: cover; }
-    .article-hero-author strong { display: block; font-size: 1rem; color: #FFFFFF; font-weight: 800; }
-    .article-hero-author span { display: block; font-size: 0.85rem; color: #CBD5E1; font-weight: 600; }
-    .article-hero-date-time { font-size: 0.88rem; font-weight: 700; color: #94A3B8; display: flex; align-items: center; gap: 0.5rem; }
-
-    .article-content-container { max-width: 48rem; margin: 0 auto; padding: 4rem clamp(1.25rem, 4vw, 2rem); }
-    .reader-prose { font-size: 1.15rem; line-height: 1.88; color: var(--text-main); }
-    .reader-prose p { margin-bottom: 1.85rem; }
-    .reader-prose h2 { font-size: 1.85rem; font-weight: 800; margin: 3rem 0 1.25rem 0; color: var(--text-main); }
-    .reader-prose blockquote { border-left: 4px solid var(--coop-gold); background: var(--bg-section-alt); padding: 1.5rem 1.75rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; font-weight: 600; margin: 2.5rem 0; }
-    
-    figure.inline-article-media { margin: 2.5rem 0; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-card); box-shadow: var(--shadow-sm); }
-    figure.inline-article-media img, figure.inline-article-media video { width: 100%; height: auto; display: block; }
-    figcaption.inline-caption { padding: 0.85rem 1.25rem; font-size: 0.85rem; color: var(--text-muted); background: var(--bg-card); border-top: 1px solid var(--border-color); font-weight: 600; }
-
-    .article-share-footer { margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-
-    .read-next-section { background: var(--bg-section-alt); padding: 4.5rem 0; border-top: 1px solid var(--border-color); }
-    .read-next-header { max-width: 52rem; margin: 0 auto 2.5rem auto; padding: 0 clamp(1.25rem, 4vw, 2rem); }
-    .read-next-header h3 { font-size: 1.75rem; font-weight: 800; color: var(--text-main); }
-    .read-next-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 2.25rem; max-width: 52rem; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2rem); }
-
-    .newsletter-section { padding: clamp(4.5rem, 6vw, 6.5rem) 0; background: var(--bg-card); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-    .newsletter-card { background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); border-radius: var(--radius-lg); padding: clamp(3rem, 5vw, 4.5rem); display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; box-shadow: var(--shadow-lg); }
-    .newsletter-text h3 { color: #FFFFFF; font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
-    .newsletter-text p { color: #F8FAFC; font-size: 1.1rem; line-height: 1.7; }
-    .newsletter-form { display: flex; gap: 0.75rem; background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); }
-    .newsletter-input { flex-grow: 1; background: transparent; border: none; color: #FFFFFF; padding: 0.85rem 1.25rem; font-size: 1rem; outline: none; }
-    .newsletter-input::placeholder { color: rgba(255,255,255,0.6); }
-    .newsletter-btn { background: var(--coop-gold); color: #0F172A; font-weight: 800; border: none; padding: 0 1.75rem; border-radius: 50px; cursor: pointer; transition: all 0.2s ease; font-family: inherit; }
-    .newsletter-btn:hover { background: #D89A0E; }
-
-    /* NEWS-SPECIFIC TOAST */
-    .toast-notification { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-150%); background: #0F172A; color: #FFFFFF; padding: 1rem 1.5rem; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); z-index: 11000; display: flex; align-items: center; gap: 0.75rem; font-weight: 700; font-size: 0.95rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; opacity: 0; pointer-events: none; width: max-content; max-width: 90vw; text-align: left; line-height: 1.4; }
-    .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast-icon { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; flex-shrink: 0; }
-    .toast-success .toast-icon { color: #34D399; background: rgba(52, 211, 153, 0.15); }
-    .toast-warning .toast-icon { color: #FBBF24; background: rgba(251, 191, 36, 0.15); }
-
-    @media (max-width: 48rem) {
-      .spotlight-content-wrap { padding-top: 14rem; padding-bottom: 3rem; }
-      .spotlight-overlay { background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.85) 45%, #0F172A 80%); }
-      .article-hero-wrapper { min-height: 400px; height: auto; }
-      .article-hero-overlay { background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.85) 45%, rgba(15, 23, 42, 0.2) 100%); }
-      .article-hero-content { padding-top: 10rem; padding-bottom: 2.5rem; }
-      .blog-footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
-      .read-btn { width: 100%; justify-content: center; padding: 0.75rem; }
-      .newsletter-form { flex-direction: column; background: transparent; padding: 0; border: none; gap: 1rem; }
-      .newsletter-input { background: rgba(255,255,255,0.1); border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); text-align: center; }
-      .newsletter-btn { padding: 1rem; width: 100%; }
-    }
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-  <!-- THE UPGRADE: COMPLETELY INDEPENDENT FIXED PROGRESS BAR CONTAINER -->
-  <div class="reading-progress-container" id="progressContainer" style="display: none;">
-    <div class="reading-progress-bar" id="readingProgressBar"></div>
+<div class="reading-progress-container" id="progressContainer" style="display: none;">
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+</div>
+
+<div id="mainBlogView" class="view-section">
+  <section class="spotlight-hero">
+    <img src="https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1600"
+      alt="News Hero Background" class="spotlight-bg-img" onerror="this.style.display='none';">
+    <div class="spotlight-overlay"></div>
+    <div class="container spotlight-content-wrap">
+      <div class="spotlight-meta-top">
+        <span class="tag-badge tag-dividend"
+          style="background: var(--coop-gold); color: #10241A; border: none;">Featured Announcement</span>
+        <span class="spotlight-date">August 2, 2026</span>
+        <span class="spotlight-date">8 min read</span>
+      </div>
+      <h2 class="spotlight-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h2>
+      <p class="spotlight-excerpt">The Board of Directors has officially approved an 18% dividend yield on all active
+        share capital following a highly successful fiscal year.</p>
+      <div class="spotlight-author-bar">
+        <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Finance Committee" class="author-avatar">
+        <div class="author-info">
+          <strong>GCPCUL Finance Committee</strong>
+          <span>Official Board Communication</span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-gold" onclick="openArticle('spotlight')">Read Featured Story</button>
+    </div>
+  </section>
+
+  <div class="filter-bar-wrapper">
+    <div class="container filter-container">
+      <div class="filter-tabs" id="articleFilterBar">
+        <button class="filter-tab-btn active" data-filter="all">All News (4)</button>
+        <button class="filter-tab-btn" data-filter="dividend">Dividends</button>
+        <button class="filter-tab-btn" data-filter="guide">Financial Literacy</button>
+        <button class="filter-tab-btn" data-filter="security">Security & Portal</button>
+        <button class="filter-tab-btn" data-filter="news">Union Governance</button>
+      </div>
+    </div>
   </div>
 
-  <!-- ==========================================
-       VIEW 1: MAIN BLOG DIRECTORY
-       ========================================== -->
-  <div id="mainBlogView" class="view-section">
-    <section class="spotlight-hero">
-      <img src="https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="News Hero Background" class="spotlight-bg-img" onerror="this.style.display='none';">
-      <div class="spotlight-overlay"></div>
-      <div class="container spotlight-content-wrap">
-        <div class="spotlight-meta-top">
-          <span class="tag-badge tag-dividend" style="background: var(--coop-gold); color: #0F172A; border: none;">Featured Announcement</span>
-          <span class="spotlight-date">August 2, 2026</span>
-          <span class="spotlight-date">8 min read</span>
+  <section class="blog-section">
+    <div class="container">
+      <div class="empty-state-box" id="blogEmptyState">
+        <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
+        <h3>No Articles Found</h3>
+        <p>There are currently no publications available in this category.</p>
+      </div>
+
+      <div class="blog-grid" id="blogGrid">
+
+        <div class="blog-card" data-category="guide" onclick="openArticle('isl')">
+          <div class="blog-thumb">
+            <img src="https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Financial Literacy Thumbnail" loading="lazy" onerror="this.style.display='none';">
+          </div>
+          <div class="blog-body">
+            <div class="blog-meta">
+              <span class="tag-badge tag-guide">Financial Literacy</span>
+              <span class="blog-meta-right">5 min read</span>
+            </div>
+            <h3>How to Maximize Your Import Support Loan (ISL)</h3>
+            <p>A step-by-step guide for pharmacists on leveraging GCPCUL commercial credit to import pharmaceuticals,
+              scale infrastructure, and negotiate better supplier rates.</p>
+            <div class="blog-footer">
+              <div class="blog-author-mini">Loans Committee</div>
+              <span class="read-btn">Read Article →</span>
+            </div>
+          </div>
         </div>
-        <h2 class="spotlight-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h2>
-        <p class="spotlight-excerpt">The Board of Directors has officially approved an 18% dividend yield on all active share capital following a highly successful fiscal year.</p>
-        <div class="spotlight-author-bar">
-          <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Finance Committee" class="author-avatar" onerror="this.src='https://via.placeholder.com/50';">
-          <div class="author-info">
+
+        <div class="blog-card" data-category="security" onclick="openArticle('security')">
+          <div class="blog-thumb">
+            <img
+              src="https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800"
+              alt="Security Thumbnail" loading="lazy" onerror="this.style.display='none';">
+          </div>
+          <div class="blog-body">
+            <div class="blog-meta">
+              <span class="tag-badge tag-security">Security & Portal</span>
+              <span class="blog-meta-right">3 min read</span>
+            </div>
+            <h3>Zero-Trust Security: How the New Portal Protects You</h3>
+            <p>We've completely overhauled our digital infrastructure. Learn why GCPCUL never stores your payment PINs
+              and how our new Maker-Checker workflows prevent unauthorized access.</p>
+            <div class="blog-footer">
+              <div class="blog-author-mini">IT Dept</div>
+              <span class="read-btn">Read Article →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-category="news" onclick="openArticle('governance')">
+          <div class="blog-thumb">
+            <img
+              src="{% static 'assets/images/peer_group.jpg' %}"
+              alt="Governance Thumbnail" loading="lazy" onerror="this.style.display='none';">
+          </div>
+          <div class="blog-body">
+            <div class="blog-meta">
+              <span class="tag-badge tag-news">Union Governance</span>
+              <span class="blog-meta-right">Jul 12, 2026</span>
+            </div>
+            <h3>Meet the Newly Elected 2026 Board of Directors</h3>
+            <p>Following a successful voting process at the 38th AGM, we are proud to introduce the new executive
+              committee tasked with steering the credit union's strategic vision.</p>
+            <div class="blog-footer">
+              <div class="blog-author-mini">Electoral Committee</div>
+              <span class="read-btn">Read Article →</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="blog-card" data-category="guide" onclick="openArticle('lpp')">
+          <div class="blog-thumb">
+            <img
+              src="{% static 'assets/images/logo.jpg' %}"
+              alt="Guide Thumbnail" loading="lazy" onerror="this.style.display='none';">
+          </div>
+          <div class="blog-body">
+            <div class="blog-meta">
+              <span class="tag-badge tag-guide">Financial Literacy</span>
+              <span class="blog-meta-right">4 min read</span>
+            </div>
+            <h3>Why the CUA Loan Protection Plan is Your Ultimate Safety Net</h3>
+            <p>Every loan at GCPCUL comes with automatic CUA insurance. Here is exactly how it protects your family from
+              inherited debt in the event of unforeseen medical circumstances.</p>
+            <div class="blog-footer">
+              <div class="blog-author-mini">Welfare Committee</div>
+              <span class="read-btn">Read Article →</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div> 
+
+
+<div id="singleArticleView" class="view-section hidden">
+
+  <div class="article-header-bar">
+    <div class="container">
+      <button type="button" class="back-nav-btn" onclick="closeArticle()">
+        <span>← Back to News Directory</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="article-hero-wrapper">
+    <img src="{% static 'assets/images/peer_group.jpg' %}"
+      alt="Article Hero" class="article-hero-bg" onerror="this.style.display='none';">
+    <div class="article-hero-overlay"></div>
+
+    <div class="container article-hero-content">
+      <span class="tag-badge tag-dividend"
+        style="background: var(--coop-gold); color: #10241A; border: none; margin-bottom: 0.5rem;">Featured
+        Announcement</span>
+      <h1 class="article-hero-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h1>
+
+      <div class="article-hero-byline">
+        <div class="article-hero-author">
+          <img src="{% static 'assets/images/logo.jpg' %}" alt="Author Avatar"
+            onerror="this.src='https://via.placeholder.com/50';">
+          <div>
             <strong>GCPCUL Finance Committee</strong>
             <span>Official Board Communication</span>
           </div>
         </div>
-        <button type="button" class="btn btn-gold" onclick="openArticle('spotlight')">Read Featured Story</button>
-      </div>
-    </section>
-
-    <div class="filter-bar-wrapper">
-      <div class="container filter-container">
-        <div class="filter-tabs" id="articleFilterBar">
-          <button class="filter-tab-btn active" data-filter="all">All News (4)</button>
-          <button class="filter-tab-btn" data-filter="dividend">Dividends</button>
-          <button class="filter-tab-btn" data-filter="guide">Financial Literacy</button>
-          <button class="filter-tab-btn" data-filter="security">Security & Portal</button>
-          <button class="filter-tab-btn" data-filter="news">Union Governance</button>
+        <div class="article-hero-date-time">
+          <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
+          August 2, 2026 • 8 min read
         </div>
       </div>
     </div>
+  </div>
 
-    <section class="blog-section">
-      <div class="container">
-        <div class="empty-state-box" id="blogEmptyState">
-          <div class="icon-svg"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
-          <h3>No Articles Found</h3>
-          <p>There are currently no publications available in this category.</p>
-        </div>
+  <article class="container article-content-container">
+    <div class="reader-prose" id="articleBodyContent">
+      <p>The Board of Directors of the Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL) is proud to
+        announce a historic milestone for our cooperative. Following a highly successful 2025 fiscal year, marked by
+        disciplined risk management and robust loan portfolio growth, the Annual General Meeting has officially approved
+        an <strong>18% dividend yield</strong> on all active share capital.</p>
 
-        <div class="blog-grid" id="blogGrid">
-          
-          <div class="blog-card" data-category="guide" onclick="openArticle('isl')">
-            <div class="blog-thumb">
-              <img src="https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Financial Literacy Thumbnail" loading="lazy" onerror="this.style.display='none';">
-            </div>
-            <div class="blog-body">
-              <div class="blog-meta">
-                <span class="tag-badge tag-guide">Financial Literacy</span>
-                <span class="blog-meta-right">5 min read</span>
-              </div>
-              <h3>How to Maximize Your Import Support Loan (ISL)</h3>
-              <p>A step-by-step guide for pharmacists on leveraging GCPCUL commercial credit to import pharmaceuticals, scale infrastructure, and negotiate better supplier rates.</p>
-              <div class="blog-footer">
-                <div class="blog-author-mini">Loans Committee</div>
-                <span class="read-btn">Read Article →</span>
-              </div>
-            </div>
-          </div>
+      <h2>How Your Dividend is Calculated</h2>
+      <p>Dividends are calculated based on your average share balance throughout the fiscal year. To reward consistency,
+        members who maintained their share capital without deductions received the highest proportional returns. This
+        18% yield significantly outperforms current commercial fixed-deposit rates, validating our cooperative model.
+      </p>
 
-          <div class="blog-card" data-category="security" onclick="openArticle('security')">
-            <div class="blog-thumb">
-              <img src="https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Security Thumbnail" loading="lazy" onerror="this.style.display='none';">
-            </div>
-            <div class="blog-body">
-              <div class="blog-meta">
-                <span class="tag-badge tag-security">Security & Portal</span>
-                <span class="blog-meta-right">3 min read</span>
-              </div>
-              <h3>Zero-Trust Security: How the New Portal Protects You</h3>
-              <p>We've completely overhauled our digital infrastructure. Learn why GCPCUL never stores your payment PINs and how our new Maker-Checker workflows prevent unauthorized access.</p>
-              <div class="blog-footer">
-                <div class="blog-author-mini">IT Dept</div>
-                <span class="read-btn">Read Article →</span>
-              </div>
-            </div>
-          </div>
+      <figure class="inline-article-media">
+        <img src="{% static 'assets/images/peer_group.jpg' %}"
+          alt="Members voting at AGM" onerror="this.style.display='none';">
+        <figcaption class="inline-caption">Members voting on resolution proposals during the annual plenary session.
+          Photo: GCPCUL</figcaption>
+      </figure>
 
-          <div class="blog-card" data-category="news" onclick="openArticle('governance')">
-            <div class="blog-thumb">
-              <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Governance Thumbnail" loading="lazy" onerror="this.style.display='none';">
-            </div>
-            <div class="blog-body">
-              <div class="blog-meta">
-                <span class="tag-badge tag-news">Union Governance</span>
-                <span class="blog-meta-right">Jul 12, 2026</span>
-              </div>
-              <h3>Meet the Newly Elected 2026 Board of Directors</h3>
-              <p>Following a successful voting process at the 38th AGM, we are proud to introduce the new executive committee tasked with steering the credit union's strategic vision.</p>
-              <div class="blog-footer">
-                <div class="blog-author-mini">Electoral Committee</div>
-                <span class="read-btn">Read Article →</span>
-              </div>
-            </div>
-          </div>
+      <blockquote>
+        "Our strength lies in our collective equity. This record payout is a direct result of our members' commitment to
+        steady saving and responsible borrowing." <br>
+        <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">— GCPCUL Board
+          Chairman</span>
+      </blockquote>
 
-          <div class="blog-card" data-category="guide" onclick="openArticle('lpp')">
-            <div class="blog-thumb">
-              <img src="https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Guide Thumbnail" loading="lazy" onerror="this.style.display='none';">
-            </div>
-            <div class="blog-body">
-              <div class="blog-meta">
-                <span class="tag-badge tag-guide">Financial Literacy</span>
-                <span class="blog-meta-right">4 min read</span>
-              </div>
-              <h3>Why the CUA Loan Protection Plan is Your Ultimate Safety Net</h3>
-              <p>Every loan at GCPCUL comes with automatic CUA insurance. Here is exactly how it protects your family from inherited debt in the event of unforeseen medical circumstances.</p>
-              <div class="blog-footer">
-                <div class="blog-author-mini">Welfare Committee</div>
-                <span class="read-btn">Read Article →</span>
-              </div>
-            </div>
-          </div>
+      <h2>When Will Payouts Hit Your Account?</h2>
+      <p>Distributions will be automatically credited to members' regular savings accounts starting the second week of
+        August. Members can track their updated balances seamlessly via the official GCPCUL Mobile App or by using our
+        USSD shortcode <strong>*899*334#</strong>.</p>
 
-        </div>
-      </div>
-    </section>
-  </div> <!-- End Main Blog View -->
-
-
-  <!-- ==========================================
-       VIEW 2: SINGLE ARTICLE PAGE
-       ========================================== -->
-  <div id="singleArticleView" class="view-section hidden">
-    
-    <div class="article-header-bar">
-      <div class="container">
-        <button type="button" class="back-nav-btn" onclick="closeArticle()">
-          <span>← Back to News Directory</span>
-        </button>
-      </div>
+      <p>We encourage all members to consider reinvesting their dividends into their share capital to compound their
+        future returns and unlock higher Fast-Track borrowing limits for the upcoming year.</p>
     </div>
 
-    <div class="article-hero-wrapper">
-      <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Article Hero" class="article-hero-bg" onerror="this.style.display='none';">
-      <div class="article-hero-overlay"></div>
-      
-      <div class="article-hero-content">
-        <span class="tag-badge tag-dividend" style="background: var(--coop-gold); color: #0F172A; border: none; margin-bottom: 0.5rem;">Featured Announcement</span>
-        <h1 class="article-hero-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h1>
-        
-        <div class="article-hero-byline">
-          <div class="article-hero-author">
-            <img src="{% static 'assets/images/logo.jpg' %}" alt="Author Avatar" onerror="this.src='https://via.placeholder.com/50';">
-            <div>
-              <strong>GCPCUL Finance Committee</strong>
-              <span>Official Board Communication</span>
-            </div>
+    <div class="article-share-footer">
+      <div style="font-weight: 700; color: var(--text-main);">Share this insight:</div>
+      <button type="button" class="btn btn-outline" id="readerShareBtn">
+        <span class="icon-svg"><span class="material-symbols-outlined">share</span></span>
+        Share Article
+      </button>
+    </div>
+  </article>
+
+  <div class="read-next-section">
+    <div class="read-next-header">
+      <h3>Keep Reading</h3>
+    </div>
+    <div class="read-next-grid">
+      <div class="blog-card" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="blog-thumb">
+          <img src="https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=600"
+            alt="Related Thumb" loading="lazy" onerror="this.style.display='none';">
+        </div>
+        <div class="blog-body" style="padding: 1.5rem;">
+          <div class="blog-meta"><span class="tag-badge tag-guide">Financial Literacy</span></div>
+          <h3
+            style="font-size: 1.15rem; margin-bottom: 0.5rem; margin-top: 0.5rem; line-height: 1.35; color: var(--text-main);">
+            How to Maximize Your ISL</h3>
+          <p
+            style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">
+            Leverage commercial credit to scale infrastructure, import pharmaceuticals, and negotiate better supplier
+            rates.</p>
+          <div class="blog-footer">
+            <div class="blog-author-mini" style="font-size: 0.85rem; font-weight: 700;">Loans Committee</div>
+            <span class="read-btn" style="padding: 0.35rem 0.8rem; font-size: 0.75rem;">Read Article →</span>
           </div>
-          <div class="article-hero-date-time">
-            <span class="icon-svg"><svg viewBox="0 0 24 24" width="1.2em" height="1.2em"><path fill="currentColor" d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><path fill="currentColor" d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg></span>
-            August 2, 2026 • 8 min read
+        </div>
+      </div>
+
+      <div class="blog-card" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="blog-thumb">
+          <img
+            src="https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=600"
+            alt="Related Thumb" loading="lazy" onerror="this.style.display='none';">
+        </div>
+        <div class="blog-body" style="padding: 1.5rem;">
+          <div class="blog-meta"><span class="tag-badge tag-security">Security & Portal</span></div>
+          <h3
+            style="font-size: 1.15rem; margin-bottom: 0.5rem; margin-top: 0.5rem; line-height: 1.35; color: var(--text-main);">
+            Zero-Trust Portal Security</h3>
+          <p
+            style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">
+            Learn how our new Maker-Checker workflows protect you and why GCPCUL never stores payment PINs.</p>
+          <div class="blog-footer">
+            <div class="blog-author-mini" style="font-size: 0.85rem; font-weight: 700;">IT Dept</div>
+            <span class="read-btn" style="padding: 0.35rem 0.8rem; font-size: 0.75rem;">Read Article →</span>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <article class="article-content-container">
-      <div class="reader-prose" id="articleBodyContent">
-        <p>The Board of Directors of the Ghana Co-operative Pharmacists' Credit Union Limited (GCPCUL) is proud to announce a historic milestone for our cooperative. Following a highly successful 2025 fiscal year, marked by disciplined risk management and robust loan portfolio growth, the Annual General Meeting has officially approved an <strong>18% dividend yield</strong> on all active share capital.</p>
+</div> 
 
-        <h2>How Your Dividend is Calculated</h2>
-        <p>Dividends are calculated based on your average share balance throughout the fiscal year. To reward consistency, members who maintained their share capital without deductions received the highest proportional returns. This 18% yield significantly outperforms current commercial fixed-deposit rates, validating our cooperative model.</p>
 
-        <figure class="inline-article-media">
-          <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Members voting at AGM" onerror="this.style.display='none';">
-          <figcaption class="inline-caption">Members voting on resolution proposals during the annual plenary session. Photo: GCPCUL</figcaption>
-        </figure>
-
-        <blockquote>
-          "Our strength lies in our collective equity. This record payout is a direct result of our members' commitment to steady saving and responsible borrowing." <br>
-          <span style="font-size: 0.9rem; color: var(--text-muted); display: block; margin-top: 0.5rem;">— GCPCUL Board Chairman</span>
-        </blockquote>
-
-        <h2>When Will Payouts Hit Your Account?</h2>
-        <p>Distributions will be automatically credited to members' regular savings accounts starting the second week of August. Members can track their updated balances seamlessly via the official GCPCUL Mobile App or by using our USSD shortcode <strong>*899*334#</strong>.</p>
-        
-        <p>We encourage all members to consider reinvesting their dividends into their share capital to compound their future returns and unlock higher Fast-Track borrowing limits for the upcoming year.</p>
-      </div>
-
-      <div class="article-share-footer">
-        <div style="font-weight: 700; color: var(--text-main);">Share this insight:</div>
-        <button type="button" class="btn btn-outline" id="readerShareBtn">
-          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg></span>
-          Share Article
-        </button>
-      </div>
-    </article>
-
-    <div class="read-next-section">
-      <div class="read-next-header">
-        <h3>Keep Reading</h3>
-      </div>
-      <div class="read-next-grid">
-        <div class="blog-card" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-          <div class="blog-thumb">
-            <img src="https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Related Thumb" loading="lazy" onerror="this.style.display='none';">
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-card">
+      <div class="newsletter-text">
+        <h3>Never Miss a Financial Update.</h3>
+        <p>Join 3,690+ members who receive our quarterly insights on dividend yields, new loan products, and cooperative
+          governance directly in their inbox.</p>
+        <div class="newsletter-trust-row">
+          <div class="newsletter-trust-avatars">
+            <img src="{% static 'assets/images/dr-paul-owusu.jpg' %}"
+              alt="">
+            <img src="{% static 'assets/images/linda-landing.jpg' %}"
+              alt="">
+            <img src="{% static 'assets/images/peer_one.jpg' %}"
+              alt="">
           </div>
-          <div class="blog-body" style="padding: 1.5rem;">
-            <div class="blog-meta"><span class="tag-badge tag-guide">Financial Literacy</span></div>
-            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; margin-top: 0.5rem; line-height: 1.35; color: var(--text-main);">How to Maximize Your ISL</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">Leverage commercial credit to scale infrastructure, import pharmaceuticals, and negotiate better supplier rates.</p>
-            <div class="blog-footer">
-              <div class="blog-author-mini" style="font-size: 0.85rem; font-weight: 700;">Loans Committee</div>
-              <span class="read-btn" style="padding: 0.35rem 0.8rem; font-size: 0.75rem;">Read Article →</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="blog-card" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-          <div class="blog-thumb">
-            <img src="https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Related Thumb" loading="lazy" onerror="this.style.display='none';">
-          </div>
-          <div class="blog-body" style="padding: 1.5rem;">
-            <div class="blog-meta"><span class="tag-badge tag-security">Security & Portal</span></div>
-            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; margin-top: 0.5rem; line-height: 1.35; color: var(--text-main);">Zero-Trust Portal Security</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">Learn how our new Maker-Checker workflows protect you and why GCPCUL never stores payment PINs.</p>
-            <div class="blog-footer">
-              <div class="blog-author-mini" style="font-size: 0.85rem; font-weight: 700;">IT Dept</div>
-              <span class="read-btn" style="padding: 0.35rem 0.8rem; font-size: 0.75rem;">Read Article →</span>
-            </div>
-          </div>
+          <span>Trusted by pharmacists across Ghana</span>
         </div>
       </div>
+      <form class="newsletter-form"
+        onsubmit="event.preventDefault(); showToast('Successfully subscribed to GCPCUL Insights!', 'success');">
+        <input type="email" class="newsletter-input" placeholder="Enter your email address..." required>
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
     </div>
+  </div>
+</section>
 
-  </div> <!-- End Article View -->
-
-
-  <section class="newsletter-section">
-    <div class="container">
-      <div class="newsletter-card">
-        <div class="newsletter-text">
-          <h3>Never Miss a Financial Update.</h3>
-          <p>Join 3,600+ members who receive our quarterly insights on dividend yields, new loan products, and cooperative governance directly in their inbox.</p>
-        </div>
-        <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Successfully subscribed to GCPCUL Insights!', 'success');">
-          <input type="email" class="newsletter-input" placeholder="Enter your email address..." required>
-          <button type="submit" class="newsletter-btn">Subscribe</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- NEWS SPECIFIC TOAST -->
-  <div id="toastNotification" class="toast-notification"></div>
+<!-- NEWS SPECIFIC TOAST -->
+<div id="toastNotification" class="toast-notification"></div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    /* CUSTOM PREMIUM TOAST NOTIFICATION */
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toastNotification');
-      const iconSvg = type === 'success' 
-        ? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
-        : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
-      
-      toast.className = `toast-notification toast-${type} show`;
-      toast.innerHTML = `<span class="icon-svg toast-icon">${iconSvg}</span><span>${message}</span>`;
-      
-      setTimeout(() => { toast.classList.remove('show'); }, 3500);
-    }
+  /* CUSTOM PREMIUM TOAST NOTIFICATION */
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toastNotification');
+    const iconSvg = type === 'success'
+      ? '<span class="material-symbols-outlined">check_circle</span>'
+      : '<span class="material-symbols-outlined">warning</span>';
 
-    const mainBlogView = document.getElementById('mainBlogView');
-    const singleArticleView = document.getElementById('singleArticleView');
+    toast.className = `toast-notification toast-${type} show`;
+    toast.innerHTML = `<span class="icon-svg toast-icon">${iconSvg}</span><span>${message}</span>`;
 
-    /* FIX: Show/Hide the progress bar explicitly */
-    function openArticle(articleKey) {
-      mainBlogView.classList.add('hidden');
-      singleArticleView.classList.remove('hidden');
-      document.getElementById('progressContainer').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    setTimeout(() => { toast.classList.remove('show'); }, 3500);
+  }
 
-    function closeArticle() {
-      singleArticleView.classList.add('hidden');
-      mainBlogView.classList.remove('hidden');
-      document.getElementById('progressContainer').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  const mainBlogView = document.getElementById('mainBlogView');
+  const singleArticleView = document.getElementById('singleArticleView');
 
-    /* DIRECTORY CATEGORY FILTERING */
-    const filterBtns = document.querySelectorAll('#articleFilterBar .filter-tab-btn');
-    const blogCards = document.querySelectorAll('.blog-card');
-    const blogEmptyState = document.getElementById('blogEmptyState');
+  function openArticle(articleKey) {
+    mainBlogView.classList.add('hidden');
+    singleArticleView.classList.remove('hidden');
+    document.getElementById('progressContainer').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-    if (filterBtns) {
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          filterBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
+  function closeArticle() {
+    singleArticleView.classList.add('hidden');
+    mainBlogView.classList.remove('hidden');
+    document.getElementById('progressContainer').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-          const category = btn.getAttribute('data-filter');
-          let visibleCount = 0;
+  /* DIRECTORY CATEGORY FILTERING */
+  const filterBtns = document.querySelectorAll('#articleFilterBar .filter-tab-btn');
+  const blogCards = document.querySelectorAll('.blog-card');
+  const blogEmptyState = document.getElementById('blogEmptyState');
 
-          blogCards.forEach(card => {
-            const cardCat = card.getAttribute('data-category');
-            if (category === 'all' || cardCat === category) {
-              card.style.display = 'flex';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
+  if (filterBtns) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-          if (visibleCount === 0) {
-            blogEmptyState.classList.add('active');
+        const category = btn.getAttribute('data-filter');
+        let visibleCount = 0;
+
+        blogCards.forEach(card => {
+          const cardCat = card.getAttribute('data-category');
+          if (category === 'all' || cardCat === category) {
+            card.style.display = 'flex';
+            visibleCount++;
           } else {
-            blogEmptyState.classList.remove('active');
+            card.style.display = 'none';
           }
         });
-      });
-    }
 
-    /* SHARE API */
-    const readerShareBtn = document.getElementById('readerShareBtn');
-    if (readerShareBtn) {
-      readerShareBtn.addEventListener('click', async () => {
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: '2026 Dividend Payouts Declared',
-              text: 'Check out this important financial update from GCPCUL.',
-              url: window.location.href
-            });
-          } catch (err) {
-            console.log('Share cancelled.');
-          }
+        if (visibleCount === 0) {
+          blogEmptyState.classList.add('active');
         } else {
-          showToast('Sharing is not supported on this browser. Copy the link instead!', 'warning');
+          blogEmptyState.classList.remove('active');
         }
       });
-    }
+    });
+  }
 
-    /* THE UPGRADE: CONTENT-SPECIFIC READING PROGRESS BAR SCRIPT */
-    window.addEventListener('scroll', () => {
-      const singleView = document.getElementById('singleArticleView');
-      const progressBar = document.getElementById('readingProgressBar');
-      
-      // Target the actual text content, NOT the whole page
-      const articleContent = document.getElementById('articleBodyContent');
-      
-      if (singleView && !singleView.classList.contains('hidden') && progressBar && articleContent) {
-        
-        // Get the article's position relative to the screen
-        const rect = articleContent.getBoundingClientRect();
-        
-        // Account for the sticky header height (approx 80px)
-        const headerOffset = 80; 
-        
-        // Calculate the total scrollable distance of JUST the article text
-        const totalScrollDistance = rect.height - window.innerHeight + headerOffset;
-        
-        let scrollProgress = 0;
-        
-        if (totalScrollDistance > 0) {
-          // Calculate how far down the user has scrolled INTO the article
-          const distanceScrolled = headerOffset - rect.top;
-          scrollProgress = (distanceScrolled / totalScrollDistance) * 100;
-        } else {
-          // If the article is so short it fits on one screen, mark it 100%
-          scrollProgress = 100;
+  /* SHARE API */
+  const readerShareBtn = document.getElementById('readerShareBtn');
+  if (readerShareBtn) {
+    readerShareBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: '2026 Dividend Payouts Declared',
+            text: 'Check out this important financial update from GCPCUL.',
+            url: window.location.href
+          });
+        } catch (err) {
+          console.log('Share cancelled.');
         }
-        
-        // Strictly cap the bar between 0% and 100%
-        progressBar.style.width = Math.min(Math.max(scrollProgress, 0), 100) + '%';
+      } else {
+        showToast('Sharing is not supported on this browser. Copy the link instead!', 'warning');
       }
     });
+  }
+
+  window.addEventListener('scroll', () => {
+    const singleView = document.getElementById('singleArticleView');
+    const progressBar = document.getElementById('readingProgressBar');
+
+    // Target the actual text content, NOT the whole page
+    const articleContent = document.getElementById('articleBodyContent');
+
+    if (singleView && !singleView.classList.contains('hidden') && progressBar && articleContent) {
+
+      // Get the article's position relative to the screen
+      const rect = articleContent.getBoundingClientRect();
+
+      // Account for the sticky header height (approx 80px)
+      const headerOffset = 80;
+
+      // Calculate the total scrollable distance of JUST the article text
+      const totalScrollDistance = rect.height - window.innerHeight + headerOffset;
+
+      let scrollProgress = 0;
+
+      if (totalScrollDistance > 0) {
+        // Calculate how far down the user has scrolled INTO the article
+        const distanceScrolled = headerOffset - rect.top;
+        scrollProgress = (distanceScrolled / totalScrollDistance) * 100;
+      } else {
+        // If the article is so short it fits on one screen, mark it 100%
+        scrollProgress = 100;
+      }
+
+      // Strictly cap the bar between 0% and 100%
+      progressBar.style.width = Math.min(Math.max(scrollProgress, 0), 100) + '%';
+    }
+  });
 </script>
 {% endblock %}
