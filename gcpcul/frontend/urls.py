@@ -11,6 +11,7 @@ urlpatterns = [
     path('downloads/', views.downloads, name="downloads"),
     path('news/', views.news, name="news"), 
     path('login/', views.login, name="login"),
-    path('contact-us/', views.contact, name="contact")
+    path('contact-us/', views.contact, name="contact"),
+    path('src/email-image/', views.email_image, name="email-image")
 ]
 

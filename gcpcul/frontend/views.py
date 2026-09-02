@@ -27,3 +27,6 @@ def login(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+def email_image(request):
+    return render(request, "email-image.html")
