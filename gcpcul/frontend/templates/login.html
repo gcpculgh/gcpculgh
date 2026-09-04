@@ -100,16 +100,6 @@
       position: relative;
     }
 
-    .auth-visual::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
-      background-size: 22px 22px;
-      opacity: .6;
-      z-index: 1;
-    }
-
     .auth-visual-content { position: relative; z-index: 3; display: flex; flex-direction: column; height: 100%; }
 
     .auth-logo { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
@@ -130,7 +120,6 @@
     }
     
     .trust-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: #D9C89A; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; }
-    .trust-eyebrow::before { content: ''; width: 1.6rem; height: 1px; background: #D9C89A; }
 
     .css-trust-widget h2 { font-size: clamp(2rem, 3.5vw, 2.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
     .css-trust-widget h2 span { color: var(--gold-bright); }

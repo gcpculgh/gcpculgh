@@ -67,11 +67,7 @@
       position: relative;
       overflow: hidden;
     }
-    
-    .digital-advantage-banner::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--primary-green);
-    }
-    
+
     [data-theme="dark"] .digital-advantage-banner { background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%); }
 
     .digital-advantage-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
@@ -127,10 +123,10 @@
         <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
         
         <div class="store-badge-row">
-          <a href="#" class="store-badge-link">
+          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" class="store-badge-link">
             <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'apple')">
           </a>
-          <a href="#" class="store-badge-link">
+          <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" class="store-badge-link" blank>
             <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'play')">
           </a>
         </div>
@@ -255,7 +251,7 @@
           </div>
         </div>
 
-        <div class="doc-card" data-category="form">
+        <!-- <div class="doc-card" data-category="form">
           <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">group_add</span></span></div>
           <div class="doc-info">
             <span class="doc-meta">PDF · 1 page · <span class="doc-size auto-size">Calculating...</span></span>
@@ -265,7 +261,7 @@
               <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- DYNAMIC PORTAL ONLY: Dividend Statement -->
         <div class="doc-card" data-category="report">
@@ -283,7 +279,7 @@
           </div>
         </div>
 
-        <div class="doc-card" data-category="form">
+        <!-- <div class="doc-card" data-category="form">
           <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">health_and_safety</span></span></div>
           <div class="doc-info">
             <span class="doc-meta">PDF · 2 pages · <span class="doc-size auto-size">Calculating...</span></span>
@@ -293,9 +289,9 @@
               <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <div class="doc-card" data-category="legal">
+        <!-- <div class="doc-card" data-category="legal">
           <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">gavel</span></span></div>
           <div class="doc-info">
             <span class="doc-meta">PDF · Public · <span class="doc-size auto-size">Calculating...</span></span>
@@ -305,7 +301,7 @@
               <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>

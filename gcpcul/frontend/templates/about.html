@@ -28,7 +28,6 @@
     .timeline-year-col { text-align: right; padding-top: 0.15rem; }
     .timeline-year { font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem; color: var(--primary-green); }
     .timeline-line-col { position: relative; }
-    .timeline-line-col::before { content: ''; position: absolute; top: 0.5rem; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; background: var(--coop-gold); border: 3px solid var(--bg-page); box-shadow: 0 0 0 1.5px var(--border-color); z-index: 2; }
     .timeline-line-col::after { content: ''; position: absolute; top: 1.4rem; left: 50%; transform: translateX(-50%); width: 2px; bottom: -2rem; background: var(--border-color); }
     .timeline-item:last-child .timeline-line-col::after { display: none; }
     .timeline-content { padding-bottom: 2.5rem; font-size: 1.05rem; color: var(--text-muted); line-height: 1.75; }
@@ -42,7 +41,7 @@
     .founders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); gap: 1.5rem; }
     .founder-card { display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem; border-radius: 16px; background: var(--bg-section-alt); border: 1px solid var(--border-color); transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .founder-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
-    .founder-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--primary-light); color: var(--heading-green); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
+    .founder-photo { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-color); background: var(--stack-back); }
     .founder-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.15rem; }
     .founder-info p { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
@@ -57,6 +56,20 @@
     .team-card:hover .team-social-btn { transform: scale(1.12); }
     .team-info h4 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem; }
     .team-info p { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+
+    /* COMMITTEES & STAFF DIRECTORY */
+    .committee-filter-bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 2.5rem; padding-bottom: 4px; }
+    .committee-filter-bar::-webkit-scrollbar { display: none; }
+    .committee-filter-btn { background: transparent; border: 1.5px solid var(--border-color); color: var(--text-muted); padding: 0.55rem 1.25rem; border-radius: 50px; font-size: 0.88rem; font-weight: 700; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: all 0.2s ease; font-family: inherit; }
+    .committee-filter-btn:hover, .committee-filter-btn.active { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); }
+    .committee-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: 1.25rem; }
+    .committee-card { display: flex; align-items: center; gap: 1rem; padding: 1.1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .committee-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .committee-photo { width: 3.5rem; height: 3.5rem; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-color); background: var(--stack-back); }
+    .committee-info h4 { font-size: 0.95rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.1rem; line-height: 1.3; }
+    .committee-info p { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
+    .committee-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); display: none; width: 100%; grid-column: 1 / -1; }
+    .committee-empty-state.active { display: block; }
 
     .mission-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 2.5rem; }
     .mission-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2.5rem; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -95,6 +108,13 @@
         <h2 class="hero-title">Empowering the Healthcare Community through Cooperative Wealth.</h2>
         <p class="page-header-desc">Established by pharmacists, for pharmacists. We exist to provide transparent, high-yield financial solutions that secure your professional and personal future.</p>
       </div>
+      <div class="about-hero-photo-wrap">
+        <img src="{% static 'assets/images/linda-landing.jpg' %}" alt="GCPCUL pharmacist members in discussion">
+        <div class="about-hero-badge">
+          <span class="num">38+</span>
+          <span>Years serving Ghana's pharmacists, since 1985</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -129,42 +149,41 @@
         <h2>The Founding Team</h2>
       </div>
       
-      <!-- UX FIX: ADDED material-symbols-outlined CLASS TO SPANS -->
       <div class="founders-grid">
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">person</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. E.Y Sese" onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. E.Y Sese</h4><p>Chairman</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">edit_document</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. Isaac Otieku-Boadu" onerror="this.src='https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. Isaac Otieku-Boadu</h4><p>Secretary</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">account_balance</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. E.K. Addae" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. E.K. Addae</h4><p>Treasurer</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">account_balance_wallet</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/936119/pexels-photo-936119.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. J.K. Korsah" onerror="this.src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. J.K. Korsah</h4><p>Asst. Treasurer</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">groups</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. W.M. Asima" onerror="this.src='https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. W.M. Asima</h4><p>Founding Member</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">groups</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. D.A. Oboubi" onerror="this.src='https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. D.A. Oboubi</h4><p>Founding Member</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">groups</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. E.K. Ashitey" onerror="this.src='https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. E.K. Ashitey</h4><p>Founding Member</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">groups</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/2381463/pexels-photo-2381463.jpeg?auto=compress&cs=tinysrgb&w=200" alt="R.P.A. Cudjoe" onerror="this.src='https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>R.P.A. Cudjoe</h4><p>Founding Member</p></div>
         </div>
         <div class="founder-card">
-          <div class="founder-icon"><span class="material-symbols-outlined">groups</span></div>
+          <img class="founder-photo" src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Mr. E.W. Asante" onerror="this.src='https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=200&q=80';">
           <div class="founder-info"><h4>Mr. E.W. Asante</h4><p>Founding Member</p></div>
         </div>
       </div>
@@ -220,6 +239,120 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMITTEES & STAFF DIRECTORY -->
+  <section class="section" id="committees">
+    <div class="container">
+      <div class="section-header">
+        <span>Democratic Governance</span>
+        <h2>Our Committees & Staff</h2>
+      </div>
+
+      <div class="committee-filter-bar" id="committeeFilterBar">
+        <button class="committee-filter-btn active" data-filter="all">All (21)</button>
+        <button class="committee-filter-btn" data-filter="board">Board of Directors</button>
+        <button class="committee-filter-btn" data-filter="supervisory">Supervisory Committee</button>
+        <button class="committee-filter-btn" data-filter="loans">Loans Committee</button>
+        <button class="committee-filter-btn" data-filter="education">Education & Editorial</button>
+        <button class="committee-filter-btn" data-filter="staff">Management & Staff</button>
+      </div>
+
+      <div class="committee-empty-state" id="committeeEmptyState">
+        <p>No members found in this category.</p>
+      </div>
+
+      <div class="committee-grid" id="committeeGrid">
+        <div class="committee-card" data-category="board">
+          <img class="committee-photo" src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Dr. Richard K. Awuah" onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Dr. Richard K. Awuah</h4><p>Board Chairman</p></div>
+        </div>
+        <div class="committee-card" data-category="board">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3765114/pexels-photo-3765114.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mrs. Abena Osei-Bonsu" onerror="this.src='https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mrs. Abena Osei-Bonsu</h4><p>Vice Chairperson</p></div>
+        </div>
+        <div class="committee-card" data-category="board">
+          <img class="committee-photo" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Kwame Darko" onerror="this.src='https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Kwame Darko</h4><p>Board Secretary</p></div>
+        </div>
+        <div class="committee-card" data-category="board">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3781539/pexels-photo-3781539.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Comfort Nyarko" onerror="this.src='https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Comfort Nyarko</h4><p>Board Member</p></div>
+        </div>
+        <div class="committee-card" data-category="board">
+          <img class="committee-photo" src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Solomon Tetteh" onerror="this.src='https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Solomon Tetteh</h4><p>Board Member</p></div>
+        </div>
+
+        <div class="committee-card" data-category="supervisory">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Linda Amoako" onerror="this.src='https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Linda Amoako</h4><p>Committee Chairperson</p></div>
+        </div>
+        <div class="committee-card" data-category="supervisory">
+          <img class="committee-photo" src="https://images.pexels.com/photos/936119/pexels-photo-936119.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Ibrahim Mahama" onerror="this.src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Ibrahim Mahama</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="supervisory">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3767392/pexels-photo-3767392.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mrs. Grace Ofori-Attah" onerror="this.src='https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mrs. Grace Ofori-Attah</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="supervisory">
+          <img class="committee-photo" src="https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Yaw Boateng" onerror="this.src='https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Yaw Boateng</h4><p>Committee Member</p></div>
+        </div>
+
+        <div class="committee-card" data-category="loans">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3573351/pexels-photo-3573351.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Sarah Asiamah" onerror="this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Sarah Asiamah</h4><p>Committee Head</p></div>
+        </div>
+        <div class="committee-card" data-category="loans">
+          <img class="committee-photo" src="https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Daniel Quaye" onerror="this.src='https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Daniel Quaye</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="loans">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Priscilla Mensah" onerror="this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Priscilla Mensah</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="loans">
+          <img class="committee-photo" src="https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Kojo Amankwah" onerror="this.src='https://images.unsplash.com/photo-1552058544-f2b08422138a?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Kojo Amankwah</h4><p>Committee Member</p></div>
+        </div>
+
+        <div class="committee-card" data-category="education">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3812743/pexels-photo-3812743.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Nana Yaa Asantewaa" onerror="this.src='https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Nana Yaa Asantewaa</h4><p>Committee Chairperson</p></div>
+        </div>
+        <div class="committee-card" data-category="education">
+          <img class="committee-photo" src="https://images.pexels.com/photos/2381463/pexels-photo-2381463.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Emmanuel Larbi" onerror="this.src='https://images.unsplash.com/photo-1531384441138-2736e62e0919?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Emmanuel Larbi</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="education">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3790811/pexels-photo-3790811.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Pharm. Rebecca Adjei" onerror="this.src='https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Pharm. Rebecca Adjei</h4><p>Committee Member</p></div>
+        </div>
+        <div class="committee-card" data-category="education">
+          <img class="committee-photo" src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mrs. Efua Sarpong" onerror="this.src='https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mrs. Efua Sarpong</h4><p>Committee Member</p></div>
+        </div>
+
+        <div class="committee-card" data-category="staff">
+          <img class="committee-photo" src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Michael Owusu" onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Michael Owusu</h4><p>General Manager</p></div>
+        </div>
+        <div class="committee-card" data-category="staff">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3796229/pexels-photo-3796229.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mrs. Joyce Appiah" onerror="this.src='https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mrs. Joyce Appiah</h4><p>Operations Manager</p></div>
+        </div>
+        <div class="committee-card" data-category="staff">
+          <img class="committee-photo" src="https://images.pexels.com/photos/2381070/pexels-photo-2381070.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Mr. Felix Owusu-Ansah" onerror="this.src='https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Mr. Felix Owusu-Ansah</h4><p>Finance Manager</p></div>
+        </div>
+        <div class="committee-card" data-category="staff">
+          <img class="committee-photo" src="https://images.pexels.com/photos/3760263/pexels-photo-3760263.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Ms. Abigail Nkrumah" onerror="this.src='https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=150&q=80';">
+          <div class="committee-info"><h4>Ms. Abigail Nkrumah</h4><p>Member Services Lead</p></div>
+        </div>
       </div>
     </div>
   </section>
@@ -312,4 +445,34 @@
       </div>
     </div>
   </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const committeeFilterBtns = document.querySelectorAll('#committeeFilterBar .committee-filter-btn');
+  const committeeCards = document.querySelectorAll('.committee-card');
+  const committeeEmptyState = document.getElementById('committeeEmptyState');
+
+  committeeFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      committeeFilterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const category = btn.getAttribute('data-filter');
+      let visibleCount = 0;
+
+      committeeCards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        if (category === 'all' || cardCat === category) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      committeeEmptyState.classList.toggle('active', visibleCount === 0);
+    });
+  });
+</script>
 {% endblock %}
