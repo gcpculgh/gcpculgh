@@ -12,8 +12,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0" rel="stylesheet">
   
   <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      font-size: 1.4em;
+      line-height: 1;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin-icon .material-symbols-outlined { animation: spin 1s linear infinite; display: inline-block; }
     /* ==========================================
        GLOBAL VARIABLES
        ========================================== */
@@ -21,6 +30,7 @@
       --primary-green: #0A5C36;
       --heading-green: #0A5C36;
       --accent-green: #148F5B;
+      --primary-light: #EAF2EC;
       --coop-gold: #B8862E;
       --gold-bright: #EBAA14;
       
@@ -46,6 +56,7 @@
       --heading-green: #34D399;
       --primary-green: #0A5C36;
       --accent-green: #10B981;
+      --primary-light: #0F241A;
       
       --bg-page: #0B1120;
       --bg-card: #111827;
@@ -100,6 +111,16 @@
       position: relative;
     }
 
+    .auth-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+      background-size: 22px 22px;
+      opacity: .6;
+      z-index: 1;
+    }
+
     .auth-visual-content { position: relative; z-index: 3; display: flex; flex-direction: column; height: 100%; }
 
     .auth-logo { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
@@ -120,6 +141,7 @@
     }
     
     .trust-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: #D9C89A; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; }
+    .trust-eyebrow::before { content: ''; width: 1.6rem; height: 1px; background: #D9C89A; }
 
     .css-trust-widget h2 { font-size: clamp(2rem, 3.5vw, 2.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
     .css-trust-widget h2 span { color: var(--gold-bright); }
@@ -128,6 +150,7 @@
     .security-badges { display: flex; gap: 1.5rem; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 1.5rem; }
     .badge-item { display: flex; align-items: center; gap: 0.75rem; }
     .badge-icon { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: rgba(235, 170, 20, 0.15); color: var(--gold-bright); display: flex; align-items: center; justify-content: center; }
+    .badge-icon .material-symbols-outlined { font-size: 1.4rem; }
     .badge-item span { font-weight: 700; font-size: 0.9rem; color: #FFFFFF; }
 
     /* RIGHT PANEL: INDEPENDENTLY SCROLLABLE */
@@ -158,7 +181,7 @@
     }
 
     .form-header { margin-bottom: 2.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .desktop-lock-icon { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--primary-light); color: var(--primary-green); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; border: 1px solid rgba(10, 92, 54, 0.1); }
+    .desktop-lock-icon { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--primary-light); color: var(--heading-green); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; border: 1px solid rgba(10, 92, 54, 0.1); }
     .desktop-lock-icon svg { width: 1.65rem; height: 1.65rem; }
     .mobile-logo-icon { display: none; } 
 
@@ -262,7 +285,7 @@
     <section class="auth-visual">
       <div class="auth-visual-content">
         <a href="{% url 'home' %}" class="auth-logo">
-          <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo">
+          <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" onerror="this.style.display='none';">
           <h1>Ghana Co-operative Pharmacists'<br>Credit Union Limited</h1>
         </a>
 
@@ -275,14 +298,14 @@
             <div class="badge-item">
               <div class="badge-icon">
                 <!-- Premium Outline Shield Check -->
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                <span class="material-symbols-outlined">gpp_good</span>
               </div>
               <span>100% CUA Insured</span>
             </div>
             <div class="badge-item">
               <div class="badge-icon">
                 <!-- Premium Outline Biometric Fingerprint -->
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" /></svg>
+                <span class="material-symbols-outlined">fingerprint</span>
               </div>
               <span>Biometric Sign-Off</span>
             </div>
@@ -298,7 +321,7 @@
         <a href="{% url 'home' %}" class="back-btn">
           Back to Main Site
           <!-- Premium Outline Arrow Right -->
-          <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" /></svg></span>
+          <span class="icon-svg"><span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_forward</span></span>
         </a>
       </div>
 
@@ -308,9 +331,9 @@
           <div class="form-header">
             <div class="desktop-lock-icon">
               <!-- Premium Outline Lock -->
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+              <span class="material-symbols-outlined">lock</span>
             </div>
-            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="mobile-logo-icon">
+            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="mobile-logo-icon" onerror="this.style.display='none';">
             
             <h2>Member Login</h2>
             <p>Access your financial dashboard</p>
@@ -322,7 +345,7 @@
               <label for="memberId">Member ID or Phone Number</label>
               <div class="input-wrapper">
                 <!-- Premium Outline User -->
-                <span class="icon-svg input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg></span>
+                <span class="icon-svg input-icon"><span class="material-symbols-outlined">person</span></span>
                 <input type="text" id="memberId" class="form-control" placeholder="e.g. GCP-1045" required autocomplete="username">
               </div>
             </div>
@@ -331,7 +354,7 @@
               <label for="password">Secure PIN / Password</label>
               <div class="input-wrapper">
                 <!-- Premium Outline Lock -->
-                <span class="icon-svg input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg></span>
+                <span class="icon-svg input-icon"><span class="material-symbols-outlined">lock</span></span>
                 <input type="password" id="password" class="form-control mono" placeholder="••••••••" required autocomplete="current-password">
                 <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Toggle password visibility">
                   <!-- JS sets this to Eye Closed Outline on load -->
@@ -340,7 +363,7 @@
               </div>
               <div class="caps-warning" id="capsWarning">
                 <!-- Premium Outline Warning -->
-                <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" /></svg></span>
+                <span class="icon-svg"><span class="material-symbols-outlined">warning</span></span>
                 Caps Lock is ON
               </div>
             </div>
@@ -360,7 +383,7 @@
               
               <button type="button" class="btn-ghana-card" onclick="showToast('Connecting to Smile Identity...', 'success')">
                 <!-- Premium Outline ID Card -->
-                <span class="icon-svg"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg></span>
+                <span class="icon-svg"><span class="material-symbols-outlined">badge</span></span>
                 Sign in with Ghana Card
               </button>
             </div>
@@ -392,8 +415,8 @@
 
   <script>
     // --- Outline Eye Icons ---
-    const eyeOpen = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>';
-    const eyeClosed = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>';
+    const eyeOpen = '<span class="material-symbols-outlined">visibility</span>';
+    const eyeClosed = '<span class="material-symbols-outlined">visibility_off</span>';
 
     // Set initial eye icon
     const eyeIcon = document.getElementById('eyeIcon');
@@ -402,8 +425,8 @@
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toastNotification');
       const iconSvg = type === 'success' 
-        ? '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" /></svg>';
+        ? '<span class="material-symbols-outlined">gpp_good</span>'
+        : '<span class="material-symbols-outlined">warning</span>';
       
       toast.className = `toast-notification toast-${type} show`;
       toast.innerHTML = `<span class="icon-svg toast-icon">${iconSvg}</span><span>${message}</span>`;
@@ -441,7 +464,7 @@
       const btn = document.getElementById('submitBtn');
       const originalText = btn.innerHTML;
       
-      btn.innerHTML = '<span class="icon-svg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2v4c4.41 0 8 3.59 8 8s-3.59 8-8 8-8-3.59-8-8H2c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2z"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></path></svg></span>';
+      btn.innerHTML = '<span class="icon-svg spin-icon"><span class="material-symbols-outlined">progress_activity</span></span>';
       btn.disabled = true;
 
       setTimeout(() => {

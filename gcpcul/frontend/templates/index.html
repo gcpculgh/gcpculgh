@@ -1240,7 +1240,7 @@
       <div class="hero-eyebrow">Serving Ghana's pharmacists since 1988</div>
       <h1 class="hero-title">Where pharmacists<br>build wealth <span>together.</span></h1>
       <p class="hero-desc"><strong>3,690+ healthcare professionals</strong> already save, borrow, and grow their share
-        capital through GCPCUL — a credit union owned by its members, not shareholders. Every cedi you save is 100%
+        capital through GCPCUL, a credit union owned by its members, not shareholders. Every cedi you save is 100%
         CUA-insured.</p>
       <div class="hero-cta-bar">
         <a href="{% url 'login' %}" class="btn btn-gold">Become a Member — 10 Minutes</a>
@@ -1362,13 +1362,13 @@
         <span class="eyebrow">Who can join</span>
         <h3 style="margin-top:.7rem">Three months to your first loan.</h3>
         <p>Open to every registered pharmacist in Ghana, plus staff at pharmacy-related institutions. Save consistently
-          for 3 months and you're eligible to borrow — reviewed by an elected Loans Committee, not a call centre.</p>
+          for 3 months and you're eligible to borrow - reviewed by an elected Loans Committee, not a call centre.</p>
         <ul class="qualify-list">
           <li>
             <span class="check-icon-badge"><span class="icon-svg"><svg viewBox="0 0 24 24">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg></span></span>
-            <span><strong>3-month rule.</strong> Save consistently, then apply — no waiting years to build trust.</span>
+            <span><strong>3-month rule.</strong> Save consistently, then apply - no waiting years to build trust.</span>
           </li>
           <li>
             <span class="check-icon-badge"><span class="icon-svg"><svg viewBox="0 0 24 24">
@@ -1382,7 +1382,7 @@
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg></span></span>
             <span><strong>Transparent appraisal.</strong> Every application is reviewed against CUA's published risk
-              guidelines — no black box.</span>
+              guidelines - no black box.</span>
           </li>
         </ul>
         <a href="{% url 'login' %}" class="btn btn-gold" style="margin-top: 2rem;">Start Membership Enrollment</a>
@@ -1506,13 +1506,29 @@
         <div class="input-validation-msg" id="loanAmountValidationMsg" role="alert"></div>
       </div>
       <div class="form-group">
-        <label for="loanMonths">Repayment period <span class="hint">— longer terms lower your monthly
-            amount</span></label>
-        <select class="form-control" id="loanMonths">
-          <option value="12">12 Months</option>
-          <option value="24" selected>24 Months</option>
-          <option value="36">36 Months</option>
-        </select>
+        <label for="loanMonths">Repayment period <span class="hint">— longer terms lower your monthly amount</span></label>
+        <div class="custom-select-wrap" id="monthsSelectWrap">
+          <button type="button" class="custom-select-trigger" id="monthsTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <span id="monthsTriggerLabel">24 Months</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </button>
+          <div class="custom-select-panel" id="monthsPanel" role="listbox" tabindex="-1">
+            <button type="button" class="custom-select-option" role="option" aria-selected="false" data-index="0">
+              <span class="opt-name">12 Months</span>
+            </button>
+            <button type="button" class="custom-select-option active" role="option" aria-selected="true" data-index="1">
+              <span class="opt-name">24 Months</span>
+            </button>
+            <button type="button" class="custom-select-option" role="option" aria-selected="false" data-index="2">
+              <span class="opt-name">36 Months</span>
+            </button>
+          </div>
+          <select class="visually-hidden-select" id="loanMonths" tabindex="-1" aria-hidden="true">
+            <option value="12">12 Months</option>
+            <option value="24" selected>24 Months</option>
+            <option value="36">36 Months</option>
+          </select>
+        </div>
       </div>
       <div class="calc-result-bar">
         <span>Estimated monthly installment:</span>
@@ -1730,7 +1746,6 @@
 
 {% block extra_js %}
 <script>
-
   // ---- Loan calculator: reducing-balance EMI estimate, using the actual
   // rate and risk ceiling for whichever loan product is selected ----
   const MIN_LOAN = 500;
@@ -1750,7 +1765,7 @@
   }
 
   function calculateEMI(isTyping) {
-    if (!categorySelect) return;
+    if (!categorySelect || !loanMonths) return;
     const opt = categorySelect.options[categorySelect.selectedIndex];
     const annualRate = parseFloat(opt.getAttribute('data-rate')) || 15;
     const maxLoan = parseFloat(opt.getAttribute('data-max-amt')) || 100000;
@@ -1774,78 +1789,89 @@
     monthlyDisplay.textContent = formatGHS(emi) + ' / mo';
   }
 
+  // ---- Universal Custom Select Logic for ALL dropdowns ----
+  const customSelectWraps = document.querySelectorAll('.custom-select-wrap');
+  
+  customSelectWraps.forEach(wrap => {
+    const trigger = wrap.querySelector('.custom-select-trigger');
+    const label = wrap.querySelector('span[id$="TriggerLabel"]');
+    const panel = wrap.querySelector('.custom-select-panel');
+    const options = Array.from(wrap.querySelectorAll('.custom-select-option'));
+    const hiddenSelect = wrap.querySelector('.visually-hidden-select');
+    
+    if (!trigger || !hiddenSelect) return;
 
-  const categoryTrigger = document.getElementById('categoryTrigger');
-  const categoryTriggerLabel = document.getElementById('categoryTriggerLabel');
-  const categoryPanel = document.getElementById('categoryPanel');
-  const categoryOptions = categoryPanel ? Array.from(categoryPanel.querySelectorAll('.custom-select-option')) : [];
-  let categoryHighlightedIndex = 0;
+    let highlightedIndex = hiddenSelect.selectedIndex > -1 ? hiddenSelect.selectedIndex : 0;
 
-  function openCategoryPanel() {
-    categoryPanel.classList.add('open');
-    categoryTrigger.classList.add('open');
-    categoryTrigger.setAttribute('aria-expanded', 'true');
-    categoryHighlightedIndex = categorySelect.selectedIndex;
-    highlightCategoryOption(categoryHighlightedIndex);
-    categoryPanel.focus();
-  }
+    function openPanel() {
+      panel.classList.add('open');
+      trigger.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      highlightedIndex = hiddenSelect.selectedIndex;
+      highlightOption(highlightedIndex);
+      panel.focus();
+    }
 
-  function closeCategoryPanel() {
-    categoryPanel.classList.remove('open');
-    categoryTrigger.classList.remove('open');
-    categoryTrigger.setAttribute('aria-expanded', 'false');
-  }
+    function closePanel() {
+      panel.classList.remove('open');
+      trigger.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
 
-  function highlightCategoryOption(index) {
-    categoryOptions.forEach((opt, i) => opt.classList.toggle('highlighted', i === index));
-    const el = categoryOptions[index];
-    if (el) el.scrollIntoView({ block: 'nearest' });
-  }
+    function highlightOption(index) {
+      options.forEach((opt, i) => opt.classList.toggle('highlighted', i === index));
+      if (options[index]) options[index].scrollIntoView({ block: 'nearest' });
+    }
 
-  function selectCategoryIndex(index) {
-    categorySelect.selectedIndex = index;
-    categoryOptions.forEach((opt, i) => {
-      opt.classList.toggle('active', i === index);
-      opt.setAttribute('aria-selected', i === index ? 'true' : 'false');
+    function selectOption(index) {
+      hiddenSelect.selectedIndex = index;
+      options.forEach((opt, i) => {
+        opt.classList.toggle('active', i === index);
+        opt.setAttribute('aria-selected', i === index ? 'true' : 'false');
+      });
+      if (label && options[index]) {
+        label.textContent = options[index].querySelector('.opt-name').textContent;
+      }
+      hiddenSelect.dispatchEvent(new Event('change'));
+      closePanel();
+      trigger.focus();
+    }
+
+    trigger.addEventListener('click', () => {
+      panel.classList.contains('open') ? closePanel() : openPanel();
     });
-    categoryTriggerLabel.textContent = categorySelect.options[index].value;
-    categorySelect.dispatchEvent(new Event('change'));
-    closeCategoryPanel();
-    categoryTrigger.focus();
-  }
 
-  if (categoryTrigger && categoryPanel) {
-    categoryTrigger.addEventListener('click', () => {
-      categoryPanel.classList.contains('open') ? closeCategoryPanel() : openCategoryPanel();
+    options.forEach((opt, i) => {
+      opt.addEventListener('click', () => selectOption(i));
+      opt.addEventListener('mouseenter', () => { highlightedIndex = i; highlightOption(i); });
     });
-    categoryOptions.forEach((opt, i) => {
-      opt.addEventListener('click', () => selectCategoryIndex(i));
-      opt.addEventListener('mouseenter', () => { categoryHighlightedIndex = i; highlightCategoryOption(i); });
-    });
-    categoryPanel.addEventListener('keydown', (e) => {
+
+    // Keyboard navigation
+    panel.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        categoryHighlightedIndex = Math.min(categoryHighlightedIndex + 1, categoryOptions.length - 1);
-        highlightCategoryOption(categoryHighlightedIndex);
+        highlightedIndex = Math.min(highlightedIndex + 1, options.length - 1);
+        highlightOption(highlightedIndex);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        categoryHighlightedIndex = Math.max(categoryHighlightedIndex - 1, 0);
-        highlightCategoryOption(categoryHighlightedIndex);
+        highlightedIndex = Math.max(highlightedIndex - 1, 0);
+        highlightOption(highlightedIndex);
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        selectCategoryIndex(categoryHighlightedIndex);
+        selectOption(highlightedIndex);
       } else if (e.key === 'Escape') {
-        closeCategoryPanel();
-        categoryTrigger.focus();
+        closePanel();
+        trigger.focus();
       }
     });
-    document.addEventListener('click', (e) => {
-      if (!categoryTrigger.contains(e.target) && !categoryPanel.contains(e.target)) {
-        closeCategoryPanel();
-      }
-    });
-  }
 
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) closePanel();
+    });
+  });
+
+  // Wire up the calculator triggers
   if (categorySelect) {
     categorySelect.addEventListener('change', () => calculateEMI(false));
   }
@@ -1854,7 +1880,7 @@
     loanAmount.addEventListener('input', () => calculateEMI(true));
     loanAmount.addEventListener('blur', () => calculateEMI(false));
     loanMonths.addEventListener('change', () => calculateEMI(false));
-    calculateEMI(false);
+    calculateEMI(false); // Run once on load
   }
 
   // ---- Testimonial carousel ----

@@ -56,15 +56,15 @@
   }
 
   .breadcrumb {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #D9C89A;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: #A7F3D0;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 1.25rem;
+    gap: 0.6rem;
+    margin-bottom: 1.4rem;
   }
 
   .hero-title {
@@ -876,8 +876,7 @@
 
 <!-- CINEMATIC KEN BURNS HERO SECTION -->
 <section class="gallery-hero">
-  <img src="{% static 'assets/images/gallery-backdrop.png' %}" alt="Gallery Hero Background" class="hero-bg-anim"
-    onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1600&q=80';">
+  <img src="{% static 'assets/images/gallery-backdrop.png' %}" alt="Gallery Hero Background" class="hero-bg-anim">
   <div class="hero-bg-overlay"></div>
 
   <div class="container hero-content">

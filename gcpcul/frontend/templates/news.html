@@ -421,36 +421,26 @@
     margin-bottom: 0.5rem;
   }
 
-  /* SINGLE ARTICLE VIEW */
-  .article-header-bar {
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    padding: 0.85rem 0;
-    position: sticky;
-    top: 4.85rem;
-    z-index: 800;
-    box-shadow: var(--shadow-sm);
-  }
-
   .back-nav-btn {
-    background: var(--bg-page);
-    border: 1.5px solid var(--border-color);
-    color: var(--text-main);
-    padding: 0.55rem 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    padding: 0.5rem 1.1rem;
     border-radius: 50px;
-    font-weight: 800;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    margin-bottom: 2rem;
     transition: all 0.2s ease;
   }
 
   .back-nav-btn:hover {
-    background: var(--primary-green);
-    color: #FFFFFF;
-    border-color: var(--primary-green);
+    background: #FFFFFF;
+    color: var(--primary-green);
   }
 
   .article-hero-wrapper {
@@ -458,7 +448,7 @@
     height: 65vh;
     min-height: 450px;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     background-color: #10241A;
     overflow: hidden;
     border-bottom: 4px solid var(--coop-gold);
@@ -884,10 +874,10 @@
       <div class="spotlight-meta-top">
         <span class="tag-badge tag-dividend"
           style="background: var(--coop-gold); color: #10241A; border: none;">Featured Announcement</span>
-        <span class="spotlight-date">August 2, 2026</span>
+        <span class="spotlight-date">August 2, 2022</span>
         <span class="spotlight-date">8 min read</span>
       </div>
-      <h2 class="spotlight-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h2>
+      <h2 class="spotlight-title">2022 Dividend Payouts Declared: A Record 18% Yield for Active Members</h2>
       <p class="spotlight-excerpt">The Board of Directors has officially approved an 18% dividend yield on all active
         share capital following a highly successful fiscal year.</p>
       <div class="spotlight-author-bar">
@@ -930,7 +920,7 @@
           </div>
           <div class="blog-body">
             <div class="blog-meta">
-              <span class="tag-badge tag-guide">Financial Literacy</span>
+              <span class="tag-badge tag-guide" style="font-family: var(--font-mono);">Financial Literacy</span>
               <span class="blog-meta-right">5 min read</span>
             </div>
             <h3>How to Maximize Your Import Support Loan (ISL)</h3>
@@ -951,7 +941,7 @@
           </div>
           <div class="blog-body">
             <div class="blog-meta">
-              <span class="tag-badge tag-security">Security & Portal</span>
+              <span class="tag-badge tag-security" style="font-family: var(--font-mono);">Security & Portal</span>
               <span class="blog-meta-right">3 min read</span>
             </div>
             <h3>Zero-Trust Security: How the New Portal Protects You</h3>
@@ -972,10 +962,10 @@
           </div>
           <div class="blog-body">
             <div class="blog-meta">
-              <span class="tag-badge tag-news">Union Governance</span>
-              <span class="blog-meta-right">Jul 12, 2026</span>
+              <span class="tag-badge tag-news" style="font-family: var(--font-mono);">Union Governance</span>
+              <span class="blog-meta-right">Jul 12, 2022</span>
             </div>
-            <h3>Meet the Newly Elected 2026 Board of Directors</h3>
+            <h3>Meet the Newly Elected 2022 Board of Directors</h3>
             <p>Following a successful voting process at the 38th AGM, we are proud to introduce the new executive
               committee tasked with steering the credit union's strategic vision.</p>
             <div class="blog-footer">
@@ -993,7 +983,7 @@
           </div>
           <div class="blog-body">
             <div class="blog-meta">
-              <span class="tag-badge tag-guide">Financial Literacy</span>
+              <span class="tag-badge tag-guide" style="font-family: var(--font-mono);">Financial Literacy</span>
               <span class="blog-meta-right">4 min read</span>
             </div>
             <h3>Why the CUA Loan Protection Plan is Your Ultimate Safety Net</h3>
@@ -1013,30 +1003,23 @@
 
 
 <div id="singleArticleView" class="view-section hidden">
-
-  <div class="article-header-bar">
-    <div class="container">
-      <button type="button" class="back-nav-btn" onclick="closeArticle()">
-        <span>← Back to News Directory</span>
-      </button>
-    </div>
-  </div>
-
   <div class="article-hero-wrapper">
     <img src="{% static 'assets/images/peer_group.jpg' %}"
       alt="Article Hero" class="article-hero-bg" onerror="this.style.display='none';">
     <div class="article-hero-overlay"></div>
 
     <div class="container article-hero-content">
+      <button type="button" class="back-nav-btn" onclick="closeArticle()">
+        <span>← Back to News Directory</span>
+      </button>
       <span class="tag-badge tag-dividend"
         style="background: var(--coop-gold); color: #10241A; border: none; margin-bottom: 0.5rem;">Featured
         Announcement</span>
-      <h1 class="article-hero-title">2026 Dividend Payouts Declared: A Record 18% Yield for Active Members</h1>
+      <h1 class="article-hero-title">2022 Dividend Payouts Declared: A Record 18% Yield for Active Members</h1>
 
       <div class="article-hero-byline">
         <div class="article-hero-author">
-          <img src="{% static 'assets/images/logo.jpg' %}" alt="Author Avatar"
-            onerror="this.src='https://via.placeholder.com/50';">
+          <img src="{% static 'assets/images/logo.jpg' %}" alt="Author Avatar">
           <div>
             <strong>GCPCUL Finance Committee</strong>
             <span>Official Board Communication</span>
@@ -1044,7 +1027,7 @@
         </div>
         <div class="article-hero-date-time">
           <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
-          August 2, 2026 • 8 min read
+          August 2, 2022 • 8 min read
         </div>
       </div>
     </div>
@@ -1251,7 +1234,7 @@
       if (navigator.share) {
         try {
           await navigator.share({
-            title: '2026 Dividend Payouts Declared',
+            title: '2022 Dividend Payouts Declared',
             text: 'Check out this important financial update from GCPCUL.',
             url: window.location.href
           });
