@@ -159,15 +159,12 @@
     </div>
   </section>
 
-  <div class="filter-bar-wrapper">
-    <div class="container filter-container">
-      <div class="filter-tabs" id="docFilterBar">
-        <button class="filter-tab-btn active" data-filter="all">All Documents</button>
-        <button class="filter-tab-btn" data-filter="form">Application Forms</button>
-        <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
-        <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
-      </div>
-    </div>
+  <div class="filter-tabs" id="docFilterBar">
+      <button class="filter-tab-btn active" data-filter="all">All Documents</button>
+      <button class="filter-tab-btn" data-filter="form">Application Forms</button>
+      <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
+      <button class="filter-tab-btn" data-filter="agm">Annual Reports (3)</button>
+      <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
   </div>
 
   <section class="section">
@@ -255,7 +252,6 @@
             <h4>Corporate Loan Application</h4>
             <p>Loan application specifically tailored for corporate entities and business expansion.</p>
             <div class="doc-actions">
-              <!-- Exact match to your screenshot typo 'corportate' so it doesn't 404 -->
               <a href="{% static 'assets/documents/corportate-loan-application-form.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
@@ -297,6 +293,42 @@
                 Access in Portal 
                 <span class="icon-svg" style="margin-left: 0.25rem; font-size: 1.1em;"><span class="material-symbols-outlined">login</span></span>
               </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="agm">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2026 AGM · <span class="doc-size auto-size">Calculating...</span></span>
+            <h4>2026 Annual General Meeting Report</h4>
+            <p>Comprehensive review of financial performance, audited statements, and board resolutions.</p>
+            <div class="doc-actions">
+              <a href="{% static 'assets/documents/agm-report-2026.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="agm">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2023 AGM · <span class="doc-size auto-size">Calculating...</span></span>
+            <h4>2023 Annual General Meeting Report</h4>
+            <p>Official audited financials and executive committee reports for the fiscal year.</p>
+            <div class="doc-actions">
+              <a href="{% static 'assets/documents/agm-report-2023.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-card" data-category="agm">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
+          <div class="doc-info">
+            <span class="doc-meta">PDF · 2022 AGM · <span class="doc-size auto-size">Calculating...</span></span>
+            <h4>2022 Annual General Meeting Report</h4>
+            <p>Official audited financials and executive committee reports for the fiscal year.</p>
+            <div class="doc-actions">
+              <a href="{% static 'assets/documents/agm-report-2022.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
         </div>
