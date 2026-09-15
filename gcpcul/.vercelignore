@@ -1,0 +1,17 @@
+# Ignore local database
+db.sqlite3
+db.sqlite3-journal
+
+# Ignore Git history (which can be huge)
+.git/
+.gitignore
+
+# Ignore local caches and environments
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+
+# Ignore media (since Cloudflare handles this)
+media/
