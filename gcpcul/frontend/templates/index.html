@@ -1185,6 +1185,40 @@
     padding: clamp(1.75rem, 5vw, 2.75rem);
   }
 
+  /* PREMIUM EMPTY STATE COMPONENT */
+  .premium-empty-state {
+    grid-column: 1 / -1; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4.5rem 2rem;
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+  }
+
+  .premium-empty-state .empty-icon {
+    font-size: 3.5rem;
+    color: #CBD5E1;
+    margin-bottom: 1.2rem;
+  }
+
+  .premium-empty-state h4 {
+    color: var(--text-main);
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .premium-empty-state p {
+    max-width: 24rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
   @media (max-width: 64rem) {
 
     .hero-grid,
@@ -1228,39 +1262,7 @@
       border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* PREMIUM EMPTY STATE COMPONENT */
-    .premium-empty-state {
-      grid-column: 1 / -1; /* Forces it to span the entire width of the grid */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4.5rem 2rem;
-      background: var(--bg-card);
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-lg);
-      color: var(--text-muted);
-    }
-
-    .premium-empty-state .empty-icon {
-      font-size: 3.5rem;
-      color: #CBD5E1;
-      margin-bottom: 1.2rem;
-    }
-
-    .premium-empty-state h4 {
-      color: var(--text-main);
-      font-weight: 800;
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .premium-empty-state p {
-      max-width: 24rem;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+    
   }
 </style>
 {% endblock %}
@@ -1319,7 +1321,11 @@
         <div class="happening-title">{{ happening.title }}</div>
       </a>
       {% empty %}
-        <p style="padding: 1rem;">No recent happenings to display.</p>
+          <div class="premium-empty-state">
+            <span class="material-symbols-outlined empty-icon">event_busy</span>
+            <h4>No recent happenings</h4>
+            <p>We'll update this space when new community events or governance meetings are scheduled.</p>
+          </div>
       {% endfor %}
     </div>
   </div>
