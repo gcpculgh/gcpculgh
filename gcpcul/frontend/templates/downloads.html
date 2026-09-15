@@ -130,6 +130,26 @@
       .digital-advantage-banner { padding: 1.5rem; }
       .benefits-grid { flex-direction: column; gap: 1rem; }
     }
+
+    /* ==========================================
+       PREMIUM DOCUMENT CATEGORY THEMING
+       ========================================== */
+       
+    /* 1. Application Forms (The Default Green) */
+    .doc-card[data-category="form"] { border-top: 3px solid var(--primary-green); }
+    .doc-card[data-category="form"] .doc-icon { background-color: #DCFCE7; color: #166534; }
+    
+    /* 2. AGM Reports (The Corporate Gold) */
+    .doc-card[data-category="agm"] { border-top: 3px solid var(--coop-gold); }
+    .doc-card[data-category="agm"] .doc-icon { background-color: #FEF3C7; color: #92400E; }
+    
+    /* 3. Statements & Portal Features (The Digital Blue) */
+    .doc-card[data-category="report"] { border-top: 3px solid #3B82F6; }
+    .doc-card[data-category="report"] .doc-icon { background-color: #DBEAFE; color: #1E40AF; }
+    
+    /* 4. Legal & Policies (The Formal Slate) */
+    .doc-card[data-category="legal"] { border-top: 3px solid #64748B; }
+    .doc-card[data-category="legal"] .doc-icon { background-color: #F1F5F9; color: #334155; }
 </style>
 {% endblock %}
 
@@ -145,7 +165,7 @@
         <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
         
         <div class="store-badge-row">
-          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" class="store-badge-link">
+          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" class="store-badge-link" blank>
             <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'apple')">
           </a>
           <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" class="store-badge-link" blank>
@@ -159,12 +179,16 @@
     </div>
   </section>
 
-  <div class="filter-tabs" id="docFilterBar">
-      <button class="filter-tab-btn active" data-filter="all">All Documents</button>
-      <button class="filter-tab-btn" data-filter="form">Application Forms</button>
-      <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
-      <button class="filter-tab-btn" data-filter="agm">Annual Reports (3)</button>
-      <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
+  <div class="filter-bar-wrapper">
+    <div class="container filter-container">
+      <div class="filter-tabs" id="docFilterBar">
+          <button class="filter-tab-btn active" data-filter="all">All Documents</button>
+          <button class="filter-tab-btn" data-filter="form">Application Forms</button>
+          <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
+          <button class="filter-tab-btn" data-filter="agm">Annual Reports</button>
+          <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
+      </div>
+    </div>
   </div>
 
   <section class="section">
@@ -174,21 +198,30 @@
         <h2>Official Forms & Member Documents</h2>
       </div>
 
-      <div class="digital-advantage-banner">
-        <div class="digital-advantage-header">
-          <div class="icon-svg"><span class="material-symbols-outlined">rocket_launch</span></div>
-          <h3>Skip the Paperwork. Apply Online.</h3>
-        </div>
-        <p>You can still download our traditional PDF forms below, but logging into the Member Portal offers a vastly superior experience. Applying for loans and benefits digitally unlocks automated advantages:</p>
+      <div class="digital-advantage-banner" id="digitalBanner" style="position: relative; border: 2px dashed var(--border-color); background: transparent; box-shadow: none;">
         
-        <div class="benefits-grid">
+        <div style="position: absolute; top: 1.5rem; right: 1.5rem; background: var(--coop-gold); color: #073E24; padding: 0.5rem 1.25rem; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 6px 16px rgba(216, 154, 14, 0.4); border: none;">
+          <span class="material-symbols-outlined" style="font-size: 1.1rem;">engineering</span>
+          Web Portal In Development
+        </div>
+
+        <div style="max-width: 80%;">
+          <div class="digital-advantage-header">
+            <div class="icon-svg" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color);"><span class="material-symbols-outlined">rocket_launch</span></div>
+            <h3 style="color: var(--text-main);">Skip the Paperwork. Apply Online.</h3>
+          </div>
+          <p style="color: var(--text-muted);">You can still download our traditional PDF forms below, but our upcoming Web Member Portal will offer a vastly superior experience. Applying for loans and benefits digitally will unlock:</p>
+        </div>
+        
+        <!-- VISIBLE BENEFITS -->
+        <div class="benefits-grid" style="opacity: 0.85;">
           <div class="benefit-item">
             <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
             Instant Loan Pre-Approval
           </div>
           <div class="benefit-item">
             <span class="icon-svg"><span class="material-symbols-outlined">auto_awesome</span></span>
-            Zero Manual Data Entry (Auto-filled)
+            Zero Manual Data Entry
           </div>
           <div class="benefit-item">
             <span class="icon-svg"><span class="material-symbols-outlined">schedule</span></span>
@@ -196,9 +229,14 @@
           </div>
         </div>
         
-        <div>
-          <a href="{% url 'login' %}" class="btn btn-gold">Go to Member Portal →</a>
+        <!-- CLEARLY LOCKED BUTTON -->
+        <div style="margin-top: 0.5rem;">
+          <button disabled class="btn" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 50px; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
+            Web Access Locked
+          </button>
         </div>
+        
       </div>
 
       <div class="empty-state-box" id="docEmptyState">
@@ -209,153 +247,86 @@
 
       <div class="doc-grid" id="docGrid">
         
-        <div class="doc-card" data-category="form" id="loan-application">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">description</span></span></div>
+        <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
+        {% for form in forms %}
+        <div class="doc-card" data-category="form" style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name }}</span></span></div>
           <div class="doc-info">
-            <span class="doc-meta">PDF · 3 pages · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Standard Loan Application</h4>
-            <p>Required for all manual Personal, Business, Housing, and Medical loan requests.</p>
+            <span class="doc-meta">
+              {% if form.document %}
+                PDF · {{ form.pages }} page{{ form.pages|pluralize }} · <span class="doc-size" style="color: var(--text-main);">{{ form.document.size|filesizeformat }}</span>
+              {% else %}
+                <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
+              {% endif %}
+            </span>
+            
+            <h4>
+              {{ form.title }}
+              {% if not form.document %}
+                <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+              {% endif %}
+            </h4>
+            
+            <p>{{ form.description }}</p>
+            
             <div class="doc-actions">
-              <a href="{% static 'assets/documents/new-loan-application.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
+              {% if form.document %}
+                <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
+              {% else %}
+                <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+              {% endif %}
             </div>
           </div>
         </div>
-        
-        <div class="doc-card" data-category="form" id="membership-form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">person_add</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 2 pages · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Membership Enrollment Form</h4>
-            <p>New-member registration, including next-of-kin and share capital details.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/new-membership-application-form.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
+        {% endfor %}
+        <!-- END DYNAMIC FORMS -->
 
-        <div class="doc-card" data-category="form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">domain</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 3 PAGES · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Corporate Account Opening Form</h4>
-            <p>Required for registering a pharmacy or corporate business entity with GCPCUL.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/corporate-account-opening-form.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
+        <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
+        <div class="doc-card" data-category="report" style="position: relative;">
+          
+          <!-- Premium Floating "Upcoming" Badge -->
+          <div style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
+            Portal Feature
           </div>
-        </div>
-
-        <div class="doc-card" data-category="form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">real_estate_agent</span></span></div>
+          
+          <!-- Icon coloring is now handled automatically by the CSS above! -->
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
+          
           <div class="doc-info">
-            <span class="doc-meta">PDF · 5 PAGES · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Corporate Loan Application</h4>
-            <p>Loan application specifically tailored for corporate entities and business expansion.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/corportate-loan-application-form.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-card" data-category="form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">child_care</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 1 PAGE · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Kiddie Account Opening Form</h4>
-            <p>Application to open a minor trust or savings account for your children.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/kiddie-account-opening-form.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- <div class="doc-card" data-category="form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">group_add</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 1 page · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>Guarantor Consent Form</h4>
-            <p>Signed by a guarantor backing a committee-reviewed loan above the threshold.</p>
-            <div class="doc-actions">
-              <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div> -->
-
-        <!-- DYNAMIC PORTAL ONLY: Dividend Statement -->
-        <div class="doc-card" data-category="report">
-          <div class="doc-icon" style="color: var(--heading-green); background: var(--primary-light);"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--accent-green);">Dynamic Generation</span></span>
+            <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--text-muted);">Dynamic Generation</span></span>
             <h4>Dividend & Share Statement</h4>
-            <p>Your personalized annual statement of share capital, dividends, and savings growth.</p>
+            <p style="color: var(--text-muted);">Your personalized annual statement of share capital, dividends, and savings growth.</p>
+            
             <div class="doc-actions">
-              <a href="{% url 'login' %}" class="btn btn-gold btn-sm">
-                Access in Portal 
-                <span class="icon-svg" style="margin-left: 0.25rem; font-size: 1.1em;"><span class="material-symbols-outlined">login</span></span>
-              </a>
+              <!-- LOCKED BUTTON -->
+              <button disabled class="btn btn-outline btn-sm" style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
+                Portal Access Locked
+              </button>
             </div>
           </div>
         </div>
 
+        {% for report in reports %}
         <div class="doc-card" data-category="agm">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
+          
+          <!-- DYNAMIC ICON -->
+          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
+          
           <div class="doc-info">
-            <span class="doc-meta">PDF · 2026 AGM · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>2026 Annual General Meeting Report</h4>
-            <p>Comprehensive review of financial performance, audited statements, and board resolutions.</p>
+            <span class="doc-meta">PDF · {{ report.year }} AGM · <span class="doc-size" style="color: var(--text-main);">{{ report.document.size|filesizeformat }}</span></span>
+            <h4>{{ report.year }} {{ report.title }}</h4>
+            
+            <!-- DYNAMIC SUMMARY -->
+            <p>{{ report.description }}</p>
+            
             <div class="doc-actions">
-              <a href="{% static 'assets/documents/agm-report-2026.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
+              <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
             </div>
           </div>
         </div>
+        {% endfor %}
 
-        <div class="doc-card" data-category="agm">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 2023 AGM · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>2023 Annual General Meeting Report</h4>
-            <p>Official audited financials and executive committee reports for the fiscal year.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/agm-report-2023.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-card" data-category="agm">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">pie_chart</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 2022 AGM · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>2022 Annual General Meeting Report</h4>
-            <p>Official audited financials and executive committee reports for the fiscal year.</p>
-            <div class="doc-actions">
-              <a href="{% static 'assets/documents/agm-report-2022.pdf' %}" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- <div class="doc-card" data-category="form">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">health_and_safety</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · 2 pages · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>LPP Declaration Form</h4>
-            <p>Health declaration required to manually activate CUA group loan insurance coverage.</p>
-            <div class="doc-actions">
-              <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div> -->
-
-        <!-- <div class="doc-card" data-category="legal">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">gavel</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">PDF · Public · <span class="doc-size auto-size">Calculating...</span></span>
-            <h4>By-Laws & Constitution</h4>
-            <p>The Union's governing rules as approved by the Registrar of Co-operatives.</p>
-            <div class="doc-actions">
-              <a href="#" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
   </section>
@@ -366,16 +337,29 @@
     const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
     const docCards = document.querySelectorAll('.doc-card');
     const docEmptyState = document.getElementById('docEmptyState');
+    const digitalBanner = document.getElementById('digitalBanner'); // Grab the banner
 
     if (filterBtns) {
       filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+          // Remove active state from all buttons
           filterBtns.forEach(b => b.classList.remove('active'));
+          // Add active state to clicked button
           btn.classList.add('active');
 
           const category = btn.getAttribute('data-filter');
           let visibleCount = 0;
 
+          // 1. CONTEXTUAL BANNER LOGIC: Hide banner if they are looking for reports
+          if (digitalBanner) {
+            if (category === 'all' || category === 'form') {
+              digitalBanner.style.display = 'flex';
+            } else {
+              digitalBanner.style.display = 'none';
+            }
+          }
+
+          // 2. DOCUMENT FILTER LOGIC
           docCards.forEach(card => {
             const cardCat = card.getAttribute('data-category');
             if (category === 'all' || cardCat === category) {
@@ -386,6 +370,7 @@
             }
           });
 
+          // 3. EMPTY STATE LOGIC
           if (visibleCount === 0) {
             docEmptyState.classList.add('active');
           } else {
@@ -394,48 +379,5 @@
         });
       });
     }
-
-    // Auto-Calculate File Sizes via HTTP HEAD Requests
-    document.addEventListener('DOMContentLoaded', () => {
-      const allDocCards = document.querySelectorAll('.doc-card');
-
-      allDocCards.forEach(card => {
-        const downloadLink = card.querySelector('a[download]');
-        const sizeSpan = card.querySelector('.auto-size');
-
-        if (downloadLink && sizeSpan) {
-          const fileUrl = downloadLink.getAttribute('href');
-
-          // Skip placeholder links so the console doesn't throw errors
-          if (!fileUrl || fileUrl === '#') {
-             sizeSpan.textContent = 'Pending Upload';
-             return;
-          }
-
-          // Fetch the header to get the exact file size from Vercel
-          fetch(fileUrl, { method: 'HEAD' })
-            .then(response => {
-              if (response.ok) {
-                const bytes = response.headers.get('content-length');
-                if (bytes) {
-                  const kb = bytes / 1024;
-                  if (kb > 1000) {
-                    sizeSpan.textContent = (kb / 1024).toFixed(1) + ' MB';
-                  } else {
-                    sizeSpan.textContent = Math.round(kb) + ' KB';
-                  }
-                } else {
-                  sizeSpan.textContent = 'Size unknown';
-                }
-              } else {
-                sizeSpan.textContent = 'File unavailable';
-              }
-            })
-            .catch(error => {
-              sizeSpan.textContent = 'Size unknown';
-            });
-        }
-      });
-    });
 </script>
 {% endblock %}

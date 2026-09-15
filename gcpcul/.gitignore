@@ -1,0 +1,29 @@
+# 1. Environment Variables (CRITICAL: Protects your Cloudflare R2 API keys)
+.env
+.env.local
+
+# 2. Virtual Environment
+venv/
+env/
+
+# 3. Python & Django Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+
+# 4. Local Database (Ignore if using SQLite locally so you don't overwrite production)
+db.sqlite3
+db.sqlite3-journal
+
+# 5. Static & Media Files (Handled by Cloudflare and your Production Server)
+media/
+staticfiles/
+static_root/
+
+# 6. OS & Editor Configs
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

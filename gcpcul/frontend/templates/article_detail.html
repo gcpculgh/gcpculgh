@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ article.title }} | GCPCUL{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* TAG BADGES */
+  .tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .tag-news { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
+  .tag-guide { background: #F0FDFA; color: #0D9488; border: 1px solid #99F6E4; }
+  .tag-security { background: #FFF1F2; color: #E11D48; border: 1px solid #FECDD3; }
+  .tag-dividend { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+
+  [data-theme="dark"] .tag-news { background: rgba(79, 70, 229, 0.15); color: #A5B4FC; border-color: #4F46E5; }
+  [data-theme="dark"] .tag-guide { background: rgba(13, 148, 136, 0.15); color: #5EEAD4; border-color: #0D9488; }
+  [data-theme="dark"] .tag-security { background: rgba(225, 29, 72, 0.15); color: #FDA4AF; border-color: #E11D48; }
+  [data-theme="dark"] .tag-dividend { background: rgba(217, 119, 6, 0.15); color: #FCD34D; border-color: #D97706; }
+
+  /* READING PROGRESS BAR */
+  .reading-progress-container {
+    position: fixed;
+    top: 4.85rem;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+  [data-theme="dark"] .reading-progress-container { background: rgba(255, 255, 255, 0.05); }
+  .reading-progress-bar {
+    height: 100%;
+    background: var(--coop-gold);
+    width: 0%;
+    border-radius: 0 4px 4px 0;
+    transition: width 0.1s ease-out;
+  }
+
+  /* PREMIUM HERO */
+  .article-hero-wrapper {
+    position: relative;
+    height: 65vh;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    background-color: #10241A;
+    overflow: hidden;
+    border-bottom: 4px solid var(--coop-gold);
+  }
+  .article-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    filter: brightness(0.9);
+  }
+  .article-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(16, 36, 26, 1) 0%, rgba(16, 36, 26, 0.6) 50%, rgba(16, 36, 26, 0.1) 100%);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+  }
+  .article-hero-content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 52rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: clamp(1.25rem, 4vw, 2rem);
+    padding-right: clamp(1.25rem, 4vw, 2rem);
+  }
+  .article-hero-title {
+    font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: #FFFFFF;
+    margin: 1.25rem 0;
+    letter-spacing: -0.02em;
+  }
+  .article-hero-byline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .article-hero-author { display: flex; align-items: center; gap: 0.85rem; }
+  .article-hero-author img {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid var(--coop-gold);
+    object-fit: cover;
+  }
+  .article-hero-author strong { display: block; font-size: 1rem; color: #FFFFFF; font-weight: 800; }
+  .article-hero-author span { display: block; font-size: 0.85rem; color: #CBD5E1; font-weight: 600; }
+  .article-hero-date-time {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .back-nav-btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .back-nav-btn:hover { background: #FFFFFF; color: var(--primary-green); }
+
+  /* ARTICLE BODY CONTENT */
+  .article-content-container {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 4rem clamp(1.25rem, 4vw, 2rem);
+  }
+  .reader-prose { font-size: 1.15rem; line-height: 1.88; color: var(--text-main); }
+  .reader-prose p { margin-bottom: 1.85rem; }
+  .reader-prose h2 { font-size: 1.85rem; font-weight: 800; margin: 3rem 0 1.25rem 0; color: var(--text-main); }
+  .reader-prose blockquote {
+    border-left: 4px solid var(--coop-gold);
+    background: var(--bg-section-alt);
+    padding: 1.5rem 1.75rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-style: italic;
+    font-weight: 600;
+    margin: 2.5rem 0;
+  }
+  
+  /* SUMMERNOTE INLINE IMAGES */
+  .reader-prose img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-md);
+    margin: 2.5rem 0;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-share-footer {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  /* READ NEXT SECTION */
+  .read-next-section {
+    background: var(--bg-section-alt);
+    padding: 4.5rem 0;
+    border-top: 1px solid var(--border-color);
+  }
+  .read-next-header {
+    max-width: 52rem;
+    margin: 0 auto 2.5rem auto;
+    padding: 0 clamp(1.25rem, 4vw, 2rem);
+  }
+  .read-next-header h3 { font-size: 1.75rem; font-weight: 800; color: var(--text-main); }
+  .read-next-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 2.25rem;
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 2rem);
+  }
+  
+  .blog-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .blog-card:hover { transform: translateY(-6px); border-color: var(--accent-green); box-shadow: var(--shadow-lg); }
+  .blog-thumb { height: 14rem; position: relative; overflow: hidden; background-color: var(--slate-800); }
+  .blog-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+  .blog-card:hover .blog-thumb img { transform: scale(1.05); }
+  .blog-body { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+  .blog-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; }
+  .blog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.25rem;
+    margin-top: auto;
+  }
+  .blog-author-mini { font-size: 0.9rem; font-weight: 700; color: var(--text-main); }
+  .read-btn {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary-green);
+    background: rgba(10, 92, 54, 0.08);
+    border: 1px solid transparent;
+    padding: 0.35rem 0.8rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+  }
+  .blog-card:hover .read-btn { background: var(--primary-green); color: #FFFFFF; }
+
+  @media (max-width: 48rem) {
+    .article-hero-wrapper { min-height: 400px; height: auto; }
+    .article-hero-overlay { background: linear-gradient(to top, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.85) 45%, rgba(15, 23, 42, 0.2) 100%); }
+    .article-hero-content { padding-top: 10rem; padding-bottom: 2.5rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- PROGRESS BAR -->
+<div class="reading-progress-container" id="progressContainer" style="display: block;">
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+</div>
+
+<!-- PREMIUM HERO -->
+<div class="article-hero-wrapper">
+  {% if article.cover_image %}
+  <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="article-hero-bg" onerror="this.style.display='none';">
+  {% endif %}
+  <div class="article-hero-overlay"></div>
+
+  <div class="container article-hero-content">
+    <a href="{% url 'news' %}" class="back-nav-btn">
+      <span>← Back to News Directory</span>
+    </a>
+    
+    <div style="margin-bottom: 0.5rem;">
+      <!-- Dynamically gets topic color from your database -->
+      <span class="tag-badge tag-{% if article.topic == 'security' %}security{% elif article.topic == 'dividends' %}dividend{% elif article.topic == 'loans' %}guide{% else %}news{% endif %}">
+        {{ article.get_topic_display }}
+      </span>
+    </div>
+    
+    <h1 class="article-hero-title">{{ article.title }}</h1>
+
+    <div class="article-hero-byline">
+      <div class="article-hero-author">
+        <img src="{% static 'assets/images/logo.jpg' %}" alt="Author Avatar">
+        <div>
+          <strong>{{ article.author }}</strong>
+          <span>GCPCUL Official Communication</span>
+        </div>
+      </div>
+      <div class="article-hero-date-time">
+        <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
+        {{ article.published_date|date:"F j, Y" }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FULL ARTICLE CONTENT -->
+<article class="container article-content-container">
+  <div class="reader-prose" id="articleBodyContent">
+    <!-- The '|safe' filter renders your Summernote edits perfectly -->
+    {{ article.content|safe }}
+  </div>
+
+  <div class="article-share-footer">
+    <div style="font-weight: 700; color: var(--text-main);">Share this insight:</div>
+    <button type="button" class="btn btn-outline" id="readerShareBtn">
+      <span class="icon-svg"><span class="material-symbols-outlined">share</span></span>
+      Share Article
+    </button>
+  </div>
+</article>
+
+<!-- KEEP READING SECTION -->
+<div class="read-next-section">
+  <div class="read-next-header">
+    <h3>Keep Reading</h3>
+  </div>
+  <div class="read-next-grid">
+    {% for rel in related %}
+    <a href="{% url 'article_detail' rel.id %}" class="blog-card">
+      <div class="blog-thumb">
+        {% if rel.cover_image %}
+        <img src="{{ rel.cover_image.url }}" alt="{{ rel.title }}" loading="lazy" onerror="this.style.display='none';">
+        {% endif %}
+      </div>
+      <div class="blog-body">
+        <div class="blog-meta">
+          <span class="tag-badge tag-{% if rel.topic == 'security' %}security{% elif rel.topic == 'dividends' %}dividend{% elif rel.topic == 'loans' %}guide{% else %}news{% endif %}">
+            {{ rel.get_topic_display }}
+          </span>
+        </div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; margin-top: 0.5rem; line-height: 1.35; color: var(--text-main);">
+          {{ rel.title }}
+        </h3>
+        <p style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">
+          {{ rel.summary }}
+        </p>
+        <div class="blog-footer">
+          <div class="blog-author-mini">{{ rel.author }}</div>
+          <span class="read-btn">Read Article →</span>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+       <p style="padding: 0 2rem; color: var(--text-muted);">More articles coming soon.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* READING PROGRESS BAR JS */
+  window.addEventListener('scroll', () => {
+    const progressBar = document.getElementById('readingProgressBar');
+    const articleContent = document.getElementById('articleBodyContent');
+    
+    if (progressBar && articleContent) {
+      const rect = articleContent.getBoundingClientRect();
+      const headerOffset = 80;
+      const totalScrollDistance = rect.height - window.innerHeight + headerOffset;
+      
+      let scrollProgress = 0;
+      if (totalScrollDistance > 0) {
+        const distanceScrolled = headerOffset - rect.top;
+        scrollProgress = (distanceScrolled / totalScrollDistance) * 100;
+      } else {
+        scrollProgress = 100;
+      }
+      
+      progressBar.style.width = Math.min(Math.max(scrollProgress, 0), 100) + '%';
+    }
+  });
+
+  /* SHARE BUTTON JS */
+  const readerShareBtn = document.getElementById('readerShareBtn');
+  if (readerShareBtn) {
+    readerShareBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: '{{ article.title }}',
+            url: window.location.href
+          });
+        } catch (err) {
+          console.log('Share cancelled.');
+        }
+      } else {
+        alert("Copy this link to share: " + window.location.href);
+      }
+    });
+  }
+</script>
+{% endblock %}

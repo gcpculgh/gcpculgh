@@ -2,11 +2,13 @@
 
 {% block title %}Ledger | GCPCUL Admin{% endblock %}
 
+{% block breadcrumb %}Ledger & Deposits{% endblock %}
+
 {% block content %}
 <header class="top-header">
   <div class="page-title">
     <h1>Ledger & Deposits</h1>
-    <p>Immutable log of all financial transactions.</p>
+    <p>Immutable log of all financial transactions. Flagged entries need reconciliation before month-end close.</p>
   </div>
   <div class="header-actions">
     <button class="btn-outline">Filter Dates</button>
@@ -31,7 +33,10 @@
           <td style="padding: 1.25rem; font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">TX-992384</td>
           <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Aug 11, 2026<br><span style="font-size:0.75rem; color:var(--text-muted);">10:04 AM</span></td>
           <td style="padding: 1.25rem; font-weight: 600; color: var(--text-main);">GCP-00456</td>
-          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Share Capital Top-Up</td>
+          <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">
+            Share Capital Top-Up<br>
+            <span class="badge badge-danger" style="margin-top:0.3rem;" title="No matching provider settlement batch found yet">Unreconciled</span>
+          </td>
           <td style="padding: 1.25rem; color: var(--text-main); font-size: 0.9rem;">Mobile Money</td>
           <td style="padding: 1.25rem; text-align: right; font-weight: 600; font-family: monospace; font-size: 0.95rem; color: var(--emerald-500);">+ GH¢ 500.00</td>
         </tr>

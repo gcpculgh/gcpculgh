@@ -2,21 +2,30 @@
 
 {% block title %}News & Blog | GCPCUL Admin{% endblock %}
 
+{% block breadcrumb %}News & Blog{% endblock %}
+
 {% block content %}
 <header class="top-header">
   <div class="page-title">
     <h1>News & Announcements</h1>
-    <p>Manage public blog posts and member updates.</p>
+    <p>What you publish here is the first thing 3,690+ members see. Drafts stay invisible until you hit Publish.</p>
   </div>
+  
   <div class="header-actions">
-    <div class="search-bar" style="width:16rem;">
-      <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-      <input type="text" placeholder="Search posts...">
-    </div>
-    <button class="btn-primary">
+    <!-- SEARCH FORM -->
+    <form method="GET" action="" class="search-bar" style="width:16rem; display:flex; align-items:center;">
+      <span class="icon-svg" style="color:var(--text-muted);">
+        <svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" name="q" value="{{ query }}" placeholder="Search posts..." style="border:none; background:transparent; outline:none; margin-left:0.5rem; width:100%;">
+    </form>
+    
+    <!-- NEW POST BUTTON (Routes to built-in Django Summernote Admin) -->
+    <!-- Note: Replace 'administrator' with your actual app name if different -->
+    <a href="{% url 'admin:administrator_newsarticle_add' %}" class="btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;">
       <span class="icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
       New Post
-    </button>
+    </a>
   </div>
 </header>
 
@@ -33,24 +42,50 @@
         </tr>
       </thead>
       <tbody>
+        {% for article in articles %}
         <tr style="border-bottom: 1px solid var(--border-color);">
-          <td style="padding: 1.25rem; font-weight:500; color: var(--text-main);">2026 Annual Dividend Declaration</td>
-          <td style="padding: 1.25rem; color: var(--text-main);">System Admin</td>
-          <td style="padding: 1.25rem;"><span class="badge badge-success">Published</span></td>
-          <td style="padding: 1.25rem; color: var(--text-main);">Aug 10, 2026</td>
-          <td style="padding: 1.25rem; text-align:right; color:var(--text-muted); cursor:pointer;">
-            <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+          <td style="padding: 1.25rem; font-weight:500; color: var(--text-main);">
+            {{ article.title }}
+            {% if article.is_featured %}
+              <span style="font-size:0.7rem; background:var(--coop-gold); color:#10241A; padding:0.1rem 0.4rem; border-radius:4px; margin-left:0.5rem; font-weight:800;">HERO</span>
+            {% endif %}
+          </td>
+          
+          <td style="padding: 1.25rem; color: var(--text-main);">{{ article.author }}</td>
+          
+          <!-- DYNAMIC STATUS BADGE -->
+          <td style="padding: 1.25rem;">
+            {% if article.status == 'published' %}
+              <span class="badge" style="background:#D1FAE5; color:#065F46; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700;">Published</span>
+            {% else %}
+              <span class="badge" style="background:#FEF3C7; color:#92400E; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:700;">Draft</span>
+            {% endif %}
+          </td>
+          
+          <td style="padding: 1.25rem; color: var(--text-main);">
+            {% if article.published_date %}
+              {{ article.published_date|date:"M j, Y" }}
+            {% else %}
+              --
+            {% endif %}
+          </td>
+          
+          <!-- EDIT BUTTON (Routes to built-in Django Summernote Admin) -->
+          <td style="padding: 1.25rem; text-align:right;">
+            <a href="{% url 'admin:administrator_newsarticle_change' article.id %}" style="color:var(--text-muted); text-decoration:none; display:inline-flex; align-items:center; gap:0.25rem; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='var(--primary-green)'" onmouseout="this.style.color='var(--text-muted)'">
+              Edit <span class="material-symbols-outlined" style="font-size:1.1rem;">edit_square</span>
+            </a>
           </td>
         </tr>
-        <tr style="border-bottom: 1px solid var(--border-color);">
-          <td style="padding: 1.25rem; font-weight:500; color: var(--text-main);">Notice of Annual General Meeting</td>
-          <td style="padding: 1.25rem; color: var(--text-main);">Board Sec.</td>
-          <td style="padding: 1.25rem;"><span class="badge badge-warning">Draft</span></td>
-          <td style="padding: 1.25rem; color: var(--text-main);">--</td>
-          <td style="padding: 1.25rem; text-align:right; color:var(--text-muted); cursor:pointer;">
-            <span class="icon-svg"><svg><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+        
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+            <div style="margin-bottom: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 2rem;">article</span></div>
+            No articles found. Click "New Post" to create one.
           </td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

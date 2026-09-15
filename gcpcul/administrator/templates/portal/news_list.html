@@ -1,0 +1,165 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}News & Blog | GCPCUL Admin{% endblock %}
+
+{% block breadcrumb %}News & Blog{% endblock %}
+
+{% block content %}
+<header class="top-header">
+  <div class="page-title">
+    <h1>Content & Announcements</h1>
+    <p>Manage long-form articles and global micro-copy alerts from one place.</p>
+  </div>
+  
+  <div class="header-actions">
+    <!-- SEARCH FORM -->
+    <form method="GET" action="" class="search-bar" style="width:16rem; display:flex; align-items:center;">
+      <span class="icon-svg" style="color:var(--text-muted);">
+        <svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" name="q" value="{{ query }}" placeholder="Search articles..." style="border:none; background:transparent; outline:none; margin-left:0.5rem; width:100%;">
+    </form>
+    
+    <!-- NEW BANNER BUTTON -->
+    <a href="{% url 'admin:administrator_announcement_add' %}" class="btn-outline" style="text-decoration:none;">
+      <span class="icon-svg"><svg><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+      New Banner
+    </a>
+
+    <!-- NEW ARTICLE BUTTON -->
+    <a href="{% url 'admin:administrator_newsarticle_add' %}" class="btn-primary" style="text-decoration:none;">
+      <span class="icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      New Article
+    </a>
+  </div>
+</header>
+
+<!-- PANEL 1: GLOBAL ANNOUNCEMENT BANNERS -->
+<div class="panel-card" style="padding:0; margin-bottom: 2.5rem;">
+  <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid var(--border-color);">
+    <h3 class="panel-title" style="margin-bottom:0;">Global Alert Banners</h3>
+    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">These micro-messages stack at the very top of the public portal.</p>
+  </div>
+  
+  <div style="width: 100%; overflow-x: auto;">
+    <table class="shadcn-table">
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Alert Type</th>
+          <th>Visibility</th>
+          <th>Created</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for alert in announcements %}
+        <tr>
+          <!-- Renders the raw HTML so admin can see their link structure safely -->
+          <td style="font-weight:500; color:var(--text-main); max-width: 20rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            {{ alert.message|striptags|truncatechars:50 }}
+          </td>
+          
+          <td>
+            {% if alert.alert_type == 'urgent' %}
+              <span class="badge badge-danger">Urgent</span>
+            {% elif alert.alert_type == 'warning' %}
+              <span class="badge badge-warning">Warning</span>
+            {% else %}
+              <span class="badge" style="background:#DBEAFE; color:#1E40AF; border:1px solid #BFDBFE;">Info</span>
+            {% endif %}
+          </td>
+          
+          <td>
+            {% if alert.is_active %}
+              <span class="badge badge-success">Active Online</span>
+            {% else %}
+              <span class="badge badge-neutral">Hidden</span>
+            {% endif %}
+          </td>
+          
+          <td style="color: var(--text-main);">{{ alert.created_at|date:"M j, Y" }}</td>
+          
+          <td class="text-right">
+            <a href="{% url 'admin:administrator_announcement_change' alert.id %}" style="color:var(--text-muted); text-decoration:none; display:inline-flex; align-items:center; gap:0.25rem; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='var(--primary-green)'" onmouseout="this.style.color='var(--text-muted)'">
+              Edit <span class="material-symbols-outlined" style="font-size:1.1rem;">edit_square</span>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+            No active banners. Click "New Banner" to broadcast an alert.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PANEL 2: LONG-FORM ARTICLES -->
+<div class="panel-card" style="padding:0;">
+  <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid var(--border-color);">
+    <h3 class="panel-title" style="margin-bottom:0;">News & Publications</h3>
+  </div>
+
+  <div style="width: 100%; overflow-x: auto;">
+    <table class="shadcn-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in articles %}
+        <tr>
+          <td style="font-weight:500; color: var(--text-main);">
+            {{ article.title }}
+            {% if article.is_featured %}
+              <span style="font-size:0.7rem; background:var(--coop-gold); color:#10241A; padding:0.1rem 0.4rem; border-radius:4px; margin-left:0.5rem; font-weight:800;">HERO</span>
+            {% endif %}
+          </td>
+          
+          <td style="color: var(--text-main);">{{ article.author }}</td>
+          
+          <td>
+            {% if article.status == 'published' %}
+              <span class="badge" style="background:#D1FAE5; color:#065F46; padding:0.25rem 0.75rem; border-radius:50px;">Published</span>
+            {% else %}
+              <span class="badge badge-warning" style="padding:0.25rem 0.75rem; border-radius:50px;">Draft</span>
+            {% endif %}
+          </td>
+          
+          <td style="color: var(--text-main);">
+            {% if article.published_date %}
+              {{ article.published_date|date:"M j, Y" }}
+            {% else %}
+              --
+            {% endif %}
+          </td>
+          
+          <td class="text-right">
+            <a href="{% url 'admin:administrator_newsarticle_change' article.id %}" style="color:var(--text-muted); text-decoration:none; display:inline-flex; align-items:center; gap:0.25rem; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='var(--primary-green)'" onmouseout="this.style.color='var(--text-muted)'">
+              Edit <span class="material-symbols-outlined" style="font-size:1.1rem;">edit_square</span>
+            </a>
+          </td>
+        </tr>
+        
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+            <div style="margin-bottom: 0.5rem;"><span class="material-symbols-outlined" style="font-size: 2rem;">article</span></div>
+            No articles found. Click "New Article" to create one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

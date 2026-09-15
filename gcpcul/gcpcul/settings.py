@@ -12,22 +12,20 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+import dj_database_url 
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nik#-^m9%f$l+@-70v9$qu04*uexuv!z3)9$&%j4b^%i+uo$t+'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
+# DEBUG = config("DEBUG", default=False, cast=bool)
 DEBUG = False
-# DEBUG = True
 
-ALLOWED_HOSTS = ['gcpculgh.com', 'www.gcpculgh.com', '.vercel.app']
-# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST_1"), os.getenv("ALLOWED_HOST_2"), os.getenv("ALLOWED_HOST_3"), os.getenv("ALLOWED_HOST_4")]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -38,9 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.redirects',
+    'storages',
     'frontend',
     'administrator',
-    'users'
+    'users',
+    'django_summernote',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +57,28 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'gcpcul.urls'
 
-import os
+# Required for Summernote to display correctly in the Django Admin
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# Summernote Configuration
+SUMMERNOTE_CONFIG = {
+    'iframe': True,
+    'summernote': {
+        'width': '100%',
+        'height': '600',
+        'toolbar': [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+    },
+    # Forces admins to be logged in to upload images to your R2 bucket
+    'attachment_require_authentication': True, 
+}
+
+load_dotenv()
 
 TEMPLATES = [
     {
@@ -72,6 +93,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'administrator.context_processors.global_announcements',
             ],
         },
     },
@@ -84,10 +106,11 @@ WSGI_APPLICATION = 'gcpcul.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default= os.getenv("DATABASE_URL_POOLED"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
@@ -126,7 +149,7 @@ SITE_ID = 1
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
@@ -136,5 +159,29 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
+
+# Cloudflare R2 Storage Settings
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+
+# Required R2 compatibility settings
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+AWS_S3_SIGNATURE_VERSION = os.getenv("AWS_S3_SIGNATURE_VERSION")
+AWS_S3_FILE_OVERWRITE = os.getenv("AWS_S3_FILE_OVERWRITE") == "True"
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }

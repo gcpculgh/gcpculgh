@@ -1,19 +1,23 @@
 {% extends 'portal/base.html' %}
 
 {% block title %}Members | GCPCUL Admin{% endblock %}
+{% block breadcrumb %}Members{% endblock %}
 
 {% block content %}
 <header class="top-header">
   <div class="page-title">
     <h1>Member Directory</h1>
-    <p>Manage all registered pharmacists and their accounts.</p>
+    <p>Manage every registered pharmacist and healthcare professional in the cooperative.</p>
   </div>
   <div class="header-actions">
     <div class="search-bar">
       <span class="icon-svg" style="color:var(--text-muted);"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
       <input type="text" placeholder="Search ID or Name...">
     </div>
-    <button class="btn-primary">Add Member</button>
+    <button class="btn-primary">
+      <span class="icon-svg"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      Add Member
+    </button>
   </div>
 </header>
 
@@ -32,11 +36,30 @@
   </div>
 </div>
 
+
+<!-- FILTER CHIPS — status is the axis admins scan by first; make it one click, not a mental filter -->
+<div class="filter-chip-row">
+  <button class="filter-chip active">All members <span>1,248</span></button>
+  <button class="filter-chip">Active <span>1,220</span></button>
+  <button class="filter-chip filter-chip-amber">KYC pending <span>14</span></button>
+  <button class="filter-chip filter-chip-rose">Suspended <span>14</span></button>
+</div>
+
+<!-- BULK ACTION BAR — hidden until a row is selected; batching KYC sign-offs turns 14 tiny decisions into one -->
+<div class="bulk-bar" id="bulkBar">
+  <span><strong id="bulkCount">0</strong> selected</span>
+  <div class="bulk-bar-actions">
+    <button class="btn-outline" style="padding:0.4rem 0.8rem;" onclick="document.querySelectorAll('.row-check').forEach(c=>c.checked=false); updateBulkBar();">Clear</button>
+    <button class="btn-primary" style="padding:0.4rem 0.8rem;">Verify KYC for selected</button>
+  </div>
+</div>
+
 <div class="panel-card" style="padding:0; overflow:visible;">
   <div style="width: 100%; overflow-x: auto; padding-bottom: 4rem; margin-bottom: -4rem;">
     <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px;">
       <thead>
         <tr>
+          <th style="padding: 1rem 1.25rem 1rem 1.5rem; width:2.5rem;"><input type="checkbox" id="checkAll" onclick="document.querySelectorAll('.row-check').forEach(c=>c.checked=this.checked); updateBulkBar();"></th>
           <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Member Profile</th>
           <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Member ID</th>
           <th style="padding: 1rem 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid var(--border-color); text-transform: uppercase;">Status</th>
@@ -47,6 +70,7 @@
       <tbody>
         {% for person in members %}
         <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;">
+          <td style="padding: 1.25rem 1.25rem 1.25rem 1.5rem;"><input type="checkbox" class="row-check" onclick="updateBulkBar();"></td>
           <td style="padding: 1.25rem;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <div style="width: 2rem; height: 2rem; border-radius: 50%; background: var(--bg-hover); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: var(--text-main);">
@@ -64,17 +88,29 @@
             {% if person.status == 'ACTIVE' %}
                 <span class="badge badge-success">Active</span>
             {% elif person.status == 'PENDING' %}
-                <span class="badge badge-warning">KYC Pending</span>
+                <span class="badge badge-warning" title="Smile Identity checks passed — awaiting your sign-off">KYC Pending</span>
             {% else %}
                 <span class="badge badge-danger">Suspended</span>
             {% endif %}
           </td>
           <td style="padding: 1.25rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main);">GH¢ {{ person.total_shares }}</td>
-          <td style="padding: 1.25rem; text-align: right;"><button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button></td>
+          <td style="padding: 1.25rem; text-align: right;">
+            {% if person.status == 'PENDING' %}
+              <button class="btn-primary" style="padding:0.4rem 0.8rem;">Verify</button>
+            {% else %}
+              <button class="btn-outline" style="padding:0.4rem 0.8rem;">View</button>
+            {% endif %}
+          </td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">No members found in the system yet.</td>
+          <td colspan="6" style="padding: 3rem 2rem; text-align: center;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+              <span class="icon-svg" style="color:var(--text-muted); width:2rem; height:2rem;"><svg><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
+              <p style="font-weight:600; color:var(--text-main); font-size:0.9rem;">No members match this filter yet</p>
+              <p style="color:var(--text-muted); font-size:0.82rem;">New enrollments appear here the moment someone completes the 10-minute sign-up on the public site.</p>
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -91,4 +127,20 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function updateBulkBar() {
+    const checked = document.querySelectorAll('.row-check:checked').length;
+    document.getElementById('bulkCount').innerText = checked;
+    document.getElementById('bulkBar').classList.toggle('open', checked > 0);
+  }
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
 {% endblock %}

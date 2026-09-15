@@ -20,9 +20,12 @@ from django.views.generic import RedirectView
 
 from frontend import urls as frontend_urls
 from users import urls as users_urls
+from administrator import urls as admin_urls
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('src/auth/sec/admin/', admin.site.urls),
     path('', include(frontend_urls)),
-    path('', include(users_urls))
+    path('', include(users_urls)),
+    path("", include(admin_urls)),
+    path('summernote/', include('django_summernote.urls')),
 ]

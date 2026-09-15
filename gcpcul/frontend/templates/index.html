@@ -1094,7 +1094,6 @@
     display: block;
   }
 
-  /* Fallback button, used only if the official badge SVGs (below) haven't been added yet */
   .store-btn {
     display: inline-flex;
     align-items: center;
@@ -1228,6 +1227,40 @@
       border: none;
       border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
+
+    /* PREMIUM EMPTY STATE COMPONENT */
+    .premium-empty-state {
+      grid-column: 1 / -1; /* Forces it to span the entire width of the grid */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4.5rem 2rem;
+      background: var(--bg-card);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-muted);
+    }
+
+    .premium-empty-state .empty-icon {
+      font-size: 3.5rem;
+      color: #CBD5E1;
+      margin-bottom: 1.2rem;
+    }
+
+    .premium-empty-state h4 {
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .premium-empty-state p {
+      max-width: 24rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
   }
 </style>
 {% endblock %}
@@ -1278,19 +1311,16 @@
       <h2>Stay updated on recent happenings</h2>
     </div>
     <div class="happenings-grid">
-      <a href="{% url 'news' %}" class="happening-card">
-        <img src="{% static 'assets/images/dr-paul-owusu.jpg' %}" alt="Dr. Paul Owusu Donkor" class="happening-img">
-        <div class="happening-title">Dr. Paul Owusu Donkor Elected PSGH President</div>
+      {% for happening in happenings %}
+      <a href="#" class="happening-card">
+        {% if happening.cover_image %}
+        <img src="{{ happening.cover_image.url }}" alt="{{ happening.title }}" class="happening-img">
+        {% endif %}
+        <div class="happening-title">{{ happening.title }}</div>
       </a>
-      <a href="{% url 'news' %}" class="happening-card">
-        <img src="{% static 'assets/images/audit-report-logo.webp' %}" alt="2024 Auditors Report" class="happening-img">
-        <div class="happening-title">2024 Auditors Report</div>
-      </a>
-      <a href="{% url 'news' %}" class="happening-card">
-        <img src="{% static 'assets/images/tema_cua.png' %}"
-          alt="GCPCUL Leadership Drives Credit Union Infrastructure Development" class="happening-img">
-        <div class="happening-title">GCPCUL Leadership Drives Credit Union Infrastructure Development</div>
-      </a>
+      {% empty %}
+        <p style="padding: 1rem;">No recent happenings to display.</p>
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -1606,48 +1636,31 @@
       <h2>Latest news & financial guidance</h2>
     </div>
     <div class="blog-grid">
-      <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
-        <div class="blog-thumb"
-          style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80');">
-        </div>
+      {% for blog in blogs %}
+      <a href="#" class="blog-card" style="color: inherit;">
+        {% if blog.cover_image %}
+        <div class="blog-thumb" style="background-image: url('{{ blog.cover_image.url }}');"></div>
+        {% endif %}
         <div class="blog-body">
-          <div class="blog-meta-top"><span class="tag-badge tag-news">Dividends</span><span class="blog-date">Aug 2,
-              2026 • 4 min read</span></div>
-          <h3>Understanding Your 2026 Share Capital Dividend Payouts</h3>
-          <p>How our cooperative surplus distribution works and why maintaining minimum share capital strengthens your
-            borrowing capacity.</p>
-          <div class="blog-card-footer"><span class="blog-author">Finance Committee</span><span class="read-btn">Read
-              →</span></div>
+          <div class="blog-meta-top">
+            <span class="tag-badge tag-news">{{ blog.get_topic_display }}</span>
+            <span class="blog-date">{{ blog.published_date|date:"M j, Y" }}</span>
+          </div>
+          <h3>{{ blog.title }}</h3>
+          <p>{{ blog.summary }}</p>
+          <div class="blog-card-footer">
+            <span class="blog-author">{{ blog.author }}</span>
+            <span class="read-btn">Read →</span>
+          </div>
         </div>
       </a>
-      <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
-        <div class="blog-thumb"
-          style="background-image: url('https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80');">
-        </div>
-        <div class="blog-body">
-          <div class="blog-meta-top"><span class="tag-badge tag-guide">Import Guide</span><span class="blog-date">July
-              18, 2026 • 6 min read</span></div>
-          <h3>Managing Retail Pharmacy Import Loans Effectively</h3>
-          <p>A step-by-step guide for pharmacists using GCPCUL commercial credit to import pharmaceuticals and upgrade
-            retail infrastructure.</p>
-          <div class="blog-card-footer"><span class="blog-author">Loans Committee</span><span class="read-btn">Read
-              →</span></div>
-        </div>
-      </a>
-      <a href="{% url 'news' %}" class="blog-card" style="color: inherit;">
-        <div class="blog-thumb"
-          style="background-image: url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80');">
-        </div>
-        <div class="blog-body">
-          <div class="blog-meta-top"><span class="tag-badge tag-security">Digital Safety</span><span
-              class="blog-date">June 29, 2026 • 3 min read</span></div>
-          <h3>How Our Zero-Trust Portal Protects Your Identity & PINs</h3>
-          <p>Why GCPCUL never stores payment credentials on web servers and how maker-checker workflows keep your
-            savings secure.</p>
-          <div class="blog-card-footer"><span class="blog-author">IT Security Team</span><span class="read-btn">Read
-              →</span></div>
-        </div>
-      </a>
+      {% empty %}
+          <div class="premium-empty-state">
+            <span class="material-symbols-outlined empty-icon">campaign</span>
+            <h4>No updates right now</h4>
+            <p>Check back later for recent happenings and community announcements.</p>
+          </div>
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -1746,8 +1759,6 @@
 
 {% block extra_js %}
 <script>
-  // ---- Loan calculator: reducing-balance EMI estimate, using the actual
-  // rate and risk ceiling for whichever loan product is selected ----
   const MIN_LOAN = 500;
   const categorySelect = document.getElementById('loanCategory');
   const loanAmount = document.getElementById('loanAmount');
@@ -1871,7 +1882,6 @@
     });
   });
 
-  // Wire up the calculator triggers
   if (categorySelect) {
     categorySelect.addEventListener('change', () => calculateEMI(false));
   }
@@ -1880,10 +1890,9 @@
     loanAmount.addEventListener('input', () => calculateEMI(true));
     loanAmount.addEventListener('blur', () => calculateEMI(false));
     loanMonths.addEventListener('change', () => calculateEMI(false));
-    calculateEMI(false); // Run once on load
+    calculateEMI(false); 
   }
 
-  // ---- Testimonial carousel ----
   const track = document.getElementById('tcarousel');
   if (track) {
     const cards = track.children;
