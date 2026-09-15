@@ -27,3 +27,7 @@ static_root/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Ignore heavy local PDFs
+gcpcul/frontend/static/assets/documents/
+gcpcul/agm_reports/
