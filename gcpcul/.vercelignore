@@ -15,3 +15,6 @@ __pycache__/
 
 # Ignore media (since Cloudflare handles this)
 media/
+
+gcpcul/frontend/static/assets/documents/
+gcpcul/agm_reports/
