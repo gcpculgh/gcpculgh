@@ -27,15 +27,21 @@
     .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; max-width: 40rem; line-height: 1.2; margin-bottom: 1.25rem; }
     .page-header p { font-size: 1.15rem; color: #E2E8F0; max-width: 42rem; line-height: 1.75; }
 
-    .store-badge-row { display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; margin-top: 1.5rem; }
-    .store-badge-link { display: inline-block; line-height: 0; }
-    .store-badge-img { height: 3.5rem; width: auto; display: block; }
-    /* Fallback button, used only if the official badge SVGs haven't been added yet */
-    .store-btn { display: inline-flex; align-items: center; gap: 1.25rem; background: #10241A; color: #FFFFFF; padding: 0.85rem 1.85rem; border-radius: var(--radius-md); border: 1.5px solid rgba(255,255,255,0.25); }
-    .store-btn svg { width: 2.5rem; height: 2.5rem; flex-shrink: 0; }
-    .store-btn-text { text-align: left; }
-    .store-btn-text span { display: block; font-size: 0.75rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.1rem; }
-    .store-btn-text strong { display: block; font-size: 1.35rem; font-weight: 800; color: #FFFFFF; line-height: 1.1; }
+    .app-badge-group {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap; 
+      gap: 1rem; 
+      margin-top: 1.5rem;
+      margin-bottom: 2.5rem;
+      justify-content: flex-start;
+    }
+
+    .app-badge-group img {
+      height: 3.2rem; 
+      width: auto;
+      display: block;
+    }
 
     .hero-mockup-wrapper { perspective: 1000px; display: flex; justify-content: flex-end; align-items: center; }
     .mockup-img { max-width: 85%; height: auto; border-radius: 1.25rem; box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6); transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 6px solid #10241A; }
@@ -164,12 +170,12 @@
         <h2 class="hero-title">The app, and every form you need in one place.</h2>
         <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
         
-        <div class="store-badge-row">
-          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" class="store-badge-link" blank>
-            <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'apple')">
+        <div class="app-badge-group">
+          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" target="_blank">
+            <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store">
           </a>
-          <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" class="store-badge-link" blank>
-            <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play" class="store-badge-img" onerror="window.fallbackStoreBadge(this,'play')">
+          <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" target="_blank">
+            <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play">
           </a>
         </div>
       </div>
@@ -246,89 +252,98 @@
       </div>
 
       <div class="doc-grid" id="docGrid">
+    
+    <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
+    {% for form in forms %}
+    <div class="doc-card" data-category="form" style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name }}</span></span></div>
+      <div class="doc-info">
+        <span class="doc-meta">
+          {% if form.document %}
+            <!-- FIXED: Now uses safe_file_size -->
+            PDF · {{ form.pages }} page{{ form.pages|pluralize }} · <span class="doc-size" style="color: var(--text-main);">{{ form.safe_file_size|filesizeformat }}</span>
+          {% else %}
+            <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
+          {% endif %}
+        </span>
         
-        <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
-        {% for form in forms %}
-        <div class="doc-card" data-category="form" style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name }}</span></span></div>
-          <div class="doc-info">
-            <span class="doc-meta">
-              {% if form.document %}
-                PDF · {{ form.pages }} page{{ form.pages|pluralize }} · <span class="doc-size" style="color: var(--text-main);">{{ form.document.size|filesizeformat }}</span>
-              {% else %}
-                <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
-              {% endif %}
-            </span>
-            
-            <h4>
-              {{ form.title }}
-              {% if not form.document %}
-                <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
-              {% endif %}
-            </h4>
-            
-            <p>{{ form.description }}</p>
-            
-            <div class="doc-actions">
-              {% if form.document %}
-                <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
-              {% else %}
-                <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
-              {% endif %}
-            </div>
-          </div>
+        <h4>
+          {{ form.title }}
+          {% if not form.document %}
+            <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+          {% endif %}
+        </h4>
+        
+        <p>{{ form.description }}</p>
+        
+        <div class="doc-actions">
+          {% if form.document %}
+            <!-- Safe URL Call -->
+            <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
+          {% else %}
+            <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+          {% endif %}
         </div>
-        {% endfor %}
-        <!-- END DYNAMIC FORMS -->
-
-        <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
-        <div class="doc-card" data-category="report" style="position: relative;">
-          
-          <!-- Premium Floating "Upcoming" Badge -->
-          <div style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
-            Portal Feature
-          </div>
-          
-          <!-- Icon coloring is now handled automatically by the CSS above! -->
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
-          
-          <div class="doc-info">
-            <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--text-muted);">Dynamic Generation</span></span>
-            <h4>Dividend & Share Statement</h4>
-            <p style="color: var(--text-muted);">Your personalized annual statement of share capital, dividends, and savings growth.</p>
-            
-            <div class="doc-actions">
-              <!-- LOCKED BUTTON -->
-              <button disabled class="btn btn-outline btn-sm" style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
-                <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
-                Portal Access Locked
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {% for report in reports %}
-        <div class="doc-card" data-category="agm">
-          
-          <!-- DYNAMIC ICON -->
-          <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
-          
-          <div class="doc-info">
-            <span class="doc-meta">PDF · {{ report.year }} AGM · <span class="doc-size" style="color: var(--text-main);">{{ report.document.size|filesizeformat }}</span></span>
-            <h4>{{ report.year }} {{ report.title }}</h4>
-            
-            <!-- DYNAMIC SUMMARY -->
-            <p>{{ report.description }}</p>
-            
-            <div class="doc-actions">
-              <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-
       </div>
     </div>
+    {% endfor %}
+    <!-- END DYNAMIC FORMS -->
+
+    <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
+    <div class="doc-card" data-category="report" style="position: relative;">
+      <div style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
+        Portal Feature
+      </div>
+      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
+      <div class="doc-info">
+        <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--text-muted);">Dynamic Generation</span></span>
+        <h4>Dividend & Share Statement</h4>
+        <p style="color: var(--text-muted);">Your personalized annual statement of share capital, dividends, and savings growth.</p>
+        <div class="doc-actions">
+          <button disabled class="btn btn-outline btn-sm" style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
+            Portal Access Locked
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DYNAMIC AGM REPORTS -->
+    {% for report in reports %}
+    <div class="doc-card" data-category="agm" style="{% if not report.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
+      
+      <div class="doc-info">
+        <span class="doc-meta">
+          {% if report.document %}
+            PDF · {{ report.year }} AGM · <span class="doc-size" style="color: var(--text-main);">{{ report.safe_file_size|filesizeformat }}</span>
+          {% else %}
+            <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
+          {% endif %}
+        </span>
+        
+        <h4>
+          {{ report.year }} {{ report.title }}
+          {% if not report.document %}
+            <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+          {% endif %}
+        </h4>
+        
+        <p>{{ report.description }}</p>
+        
+        <div class="doc-actions">
+          {% if report.document %}
+            <!-- FIXED: Guarded URL Call -->
+            <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
+          {% else %}
+            <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
   </section>
 {% endblock %}
 
