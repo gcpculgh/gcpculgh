@@ -824,8 +824,7 @@
 
       {% for form in forms %}
       <div class="doc-card{% if not form.document %} is-pending{% endif %}" data-category="form">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name
-              }}</span></span></div>
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{form.icon_name}}</span></span></div>
         <div class="doc-info">
           <span class="doc-meta">
             {% if form.document %}
@@ -891,8 +890,7 @@
       <!--AGM REPORTS -->
       {% for report in reports %}
       <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="agm">
-        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name
-              }}</span></span></div>
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
 
         <div class="doc-info">
           <span class="doc-meta">
