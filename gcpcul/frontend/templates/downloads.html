@@ -5,394 +5,729 @@
 
 {% block extra_css %}
 <style>
-    /* ==========================================
+  /* ==========================================
        DOWNLOADS PAGE SPECIFIC STYLES
        ========================================== */
-       
-    .page-header { padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0; background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%); color: #FFFFFF; position: relative; overflow: hidden; }
-    
-    .page-header-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; position: relative; z-index: 3; }
-    .breadcrumb { 
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--coop-gold);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem; 
+
+  .page-header {
+    padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0;
+    background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%);
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-header-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    position: relative;
+    z-index: 3;
+  }
+
+  .breadcrumb {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coop-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .page-header h2 {
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 800;
+    max-width: 40rem;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+  }
+
+  .page-header p {
+    font-size: 1.15rem;
+    color: #E2E8F0;
+    max-width: 42rem;
+    line-height: 1.75;
+  }
+
+  .app-badge-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2.5rem;
+    justify-content: flex-start;
+  }
+
+  .app-badge-group img {
+    height: 3.2rem;
+    width: auto;
+    display: block;
+  }
+
+  .hero-mockup-wrapper {
+    perspective: 1000px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .mockup-img {
+    max-width: 85%;
+    height: auto;
+    border-radius: 1.25rem;
+    box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6);
+    transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 6px solid #10241A;
+  }
+
+  .hero-mockup-wrapper:hover .mockup-img {
+    transform: rotateY(-5deg) rotateX(4deg) rotateZ(-1deg) scale(1.03);
+  }
+
+  .filter-bar-wrapper {
+    position: sticky;
+    top: 4.85rem;
+    z-index: 900;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 0;
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tab-btn {
+    background: transparent;
+    border: 1.5px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.6rem 1.35rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .filter-tab-btn:hover,
+  .filter-tab-btn.active {
+    background: var(--primary-green);
+    color: #FFFFFF;
+    border-color: var(--primary-green);
+    box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2);
+  }
+
+  .section {
+    padding: clamp(4.5rem, 6vw, 6rem) 0;
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 48rem;
+    margin: 0 auto 3.5rem auto;
+  }
+
+  .section-header span {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coop-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .section-header h2 {
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    margin-top: 0.5rem;
+    color: var(--text-main);
+  }
+
+  .digital-advantage-banner {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  [data-theme="dark"] .digital-advantage-banner {
+    background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%);
+  }
+
+  /* BANNER BADGE & TEXT FIXES */
+  .portal-dev-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(184, 134, 46, 0.12);
+    /* Soft, flat premium gold */
+    color: #9A711F;
+    /* Deep, readable gold text */
+    border: 1px solid rgba(184, 134, 46, 0.25);
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    /* Modern slightly rounded edge */
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: none;
+    /* Killed the amateur drop shadow */
+    z-index: 10;
+  }
+
+  .banner-text-content {
+    max-width: 85%;
+  }
+
+  .digital-advantage-header {
+    display: flex;
+    align-items: flex-start;
+    /* Aligns icon to the top of the text */
+    gap: 1.15rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .digital-advantage-header .icon-svg {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    /* Strictly prevents the icon from getting squished by text */
+    background: var(--primary-light);
+    color: var(--primary-green);
+    border: none;
+    border-radius: 8px;
+    /* App-style rounded square */
+    font-size: 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.15rem;
+    /* Optical alignment with the heading */
+  }
+
+  .digital-advantage-banner h3 {
+    font-size: clamp(1.4rem, 3vw, 1.65rem);
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .digital-advantage-banner p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 48rem;
+    margin: 0;
+  }
+
+  .benefits-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 0.95rem;
+  }
+
+  .benefit-item .icon-svg {
+    color: var(--coop-gold);
+  }
+
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+    gap: 1.75rem;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color);
+  }
+
+  .doc-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-section-alt);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .doc-info {
+    width: 100%;
+  }
+
+  .doc-info h4 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+    color: var(--text-main);
+    line-height: 1.3;
+  }
+
+  .doc-info p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .doc-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .doc-size {
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .doc-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+  }
+
+  .empty-state-box {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-muted);
+    display: none;
+    width: 100%;
+  }
+
+  .empty-state-box.active {
+    display: block;
+  }
+
+  .empty-state-box .icon-svg {
+    font-size: 3rem;
+    color: var(--border-color);
+    margin-bottom: 1rem;
+  }
+
+  .empty-state-box h3 {
+    font-size: 1.25rem;
+    color: var(--text-main);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  /* MOBILE RESPONSIVE FIXES */
+  @media (max-width: 48rem) {
+    .page-header-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
     }
 
-    .page-header h2 { font-size: clamp(2.25rem, 4vw, 3.25rem); font-weight: 800; max-width: 40rem; line-height: 1.2; margin-bottom: 1.25rem; }
-    .page-header p { font-size: 1.15rem; color: #E2E8F0; max-width: 42rem; line-height: 1.75; }
-
-    .app-badge-group {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap; 
-      gap: 1rem; 
-      margin-top: 1.5rem;
-      margin-bottom: 2.5rem;
-      justify-content: flex-start;
+    .hero-mockup-wrapper {
+      justify-content: center;
     }
 
-    .app-badge-group img {
-      height: 3.2rem; 
-      width: auto;
-      display: block;
+    .mockup-img {
+      max-width: 65%;
+      transform: none;
     }
 
-    .hero-mockup-wrapper { perspective: 1000px; display: flex; justify-content: flex-end; align-items: center; }
-    .mockup-img { max-width: 85%; height: auto; border-radius: 1.25rem; box-shadow: -15px 25px 50px -12px rgba(0, 0, 0, 0.6); transform: rotateY(-15deg) rotateX(8deg) rotateZ(-3deg); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 6px solid #10241A; }
-    .hero-mockup-wrapper:hover .mockup-img { transform: rotateY(-5deg) rotateX(4deg) rotateZ(-1deg) scale(1.03); }
-
-    .filter-bar-wrapper { position: sticky; top: 4.85rem; z-index: 900; background: var(--bg-card); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 1rem 0; }
-    .filter-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    .filter-tabs {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: nowrap; /* Forces a single line */
-      overflow-x: auto; /* Enables horizontal swiping */
-      -webkit-overflow-scrolling: touch; /* Momentum scrolling for iOS */
-      scrollbar-width: none; /* Hides scrollbar in Firefox */
-      -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
-      padding-bottom: 4px; /* Prevents shadow clipping */
+    .hero-mockup-wrapper:hover .mockup-img {
+      transform: translateY(-5px);
     }
-    .filter-tabs::-webkit-scrollbar {
-      display: none; /* Hides scrollbar in Chrome/Safari/Brave */
-    }
-    .filter-tab-btn { background: transparent; border: 1.5px solid var(--border-color); color: var(--text-muted); padding: 0.6rem 1.35rem; border-radius: 50px; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; font-family: inherit; flex-shrink: 0; white-space: nowrap; }
-    .filter-tab-btn:hover, .filter-tab-btn.active { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2); }
-
-    .section { padding: clamp(4.5rem, 6vw, 6rem) 0; }
-    .section-header { text-align: center; max-width: 48rem; margin: 0 auto 3.5rem auto; }
-    .section-header span { 
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--coop-gold);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem; 
-    }
-
-    .section-header h2 { font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-top: 0.5rem; color: var(--text-main); }
 
     .digital-advantage-banner {
-      background: var(--bg-card);
-      border: 1px solid var(--primary-green);
-      border-radius: var(--radius-lg);
-      padding: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 3.5rem;
-      box-shadow: var(--shadow-md);
-      display: flex;
+      padding: 1.5rem;
+    }
+
+    .benefits-grid {
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
+    }
+
+    /* THIS FIXES THE OVERLAPPING BADGE */
+    .portal-dev-badge {
       position: relative;
-      overflow: hidden;
+      top: 0;
+      right: 0;
+      align-self: flex-start;
+      margin-bottom: 1.5rem;
+      /* Gives it clean spacing above the heading */
     }
 
-    [data-theme="dark"] .digital-advantage-banner { background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%); }
-
-    .digital-advantage-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
-    .digital-advantage-header .icon-svg { width: 3rem; height: 3rem; background: var(--primary-light); color: var(--heading-green); border-radius: 50%; font-size: 1.25rem; }
-    
-    .digital-advantage-banner h3 { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.2; }
-    .digital-advantage-banner p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; max-width: 48rem; }
-
-    .benefits-grid { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1rem; margin-bottom: 1.5rem; }
-    .benefit-item { display: flex; align-items: center; gap: 0.75rem; font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
-    .benefit-item .icon-svg { color: var(--coop-gold); }
-
-    .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); gap: 1.75rem; }
-    .doc-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.75rem; box-shadow: var(--shadow-sm); display: flex; gap: 1.25rem; align-items: flex-start; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .doc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--border-color); }
-    .doc-icon { width: 3rem; height: 3rem; border-radius: var(--radius-sm); background: var(--bg-section-alt); color: var(--text-muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    
-    .doc-info { width: 100%; }
-    .doc-info h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--text-main); line-height: 1.3; }
-    .doc-info p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem; line-height: 1.5; }
-    .doc-meta { font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.75rem; display: block; }
-    .doc-size { font-weight: 800; color: var(--text-main); }
-    
-    .doc-actions { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; }
-
-    .empty-state-box { text-align: center; padding: 4rem 1rem; color: var(--text-muted); display: none; width: 100%; }
-    .empty-state-box.active { display: block; }
-    .empty-state-box .icon-svg { font-size: 3rem; color: var(--border-color); margin-bottom: 1rem; }
-    .empty-state-box h3 { font-size: 1.25rem; color: var(--text-main); font-weight: 800; margin-bottom: 0.5rem; }
-
-    @media (max-width: 48rem) {
-      .page-header-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .hero-mockup-wrapper { justify-content: center; }
-      .mockup-img { max-width: 65%; transform: none; }
-      .hero-mockup-wrapper:hover .mockup-img { transform: translateY(-5px); }
-      .store-btn { width: 100%; justify-content: center; text-align: center; }
-      .store-btn-text { text-align: center; }
-      .digital-advantage-banner { padding: 1.5rem; }
-      .benefits-grid { flex-direction: column; gap: 1rem; }
+    .banner-text-content {
+      max-width: 100%;
     }
+  }
 
-    /* ==========================================
+  /* ==========================================
        PREMIUM DOCUMENT CATEGORY THEMING
        ========================================== */
-       
-    /* 1. Application Forms (The Default Green) */
-    .doc-card[data-category="form"] { border-top: 3px solid var(--primary-green); }
-    .doc-card[data-category="form"] .doc-icon { background-color: #DCFCE7; color: #166534; }
-    
-    /* 2. AGM Reports (The Corporate Gold) */
-    .doc-card[data-category="agm"] { border-top: 3px solid var(--coop-gold); }
-    .doc-card[data-category="agm"] .doc-icon { background-color: #FEF3C7; color: #92400E; }
-    
-    /* 3. Statements & Portal Features (The Digital Blue) */
-    .doc-card[data-category="report"] { border-top: 3px solid #3B82F6; }
-    .doc-card[data-category="report"] .doc-icon { background-color: #DBEAFE; color: #1E40AF; }
-    
-    /* 4. Legal & Policies (The Formal Slate) */
-    .doc-card[data-category="legal"] { border-top: 3px solid #64748B; }
-    .doc-card[data-category="legal"] .doc-icon { background-color: #F1F5F9; color: #334155; }
+
+  .doc-card[data-category="form"] {
+    border-top: 3px solid var(--primary-green);
+  }
+
+  .doc-card[data-category="form"] .doc-icon {
+    background-color: #DCFCE7;
+    color: #166534;
+  }
+
+  .doc-card[data-category="agm"] {
+    border-top: 3px solid var(--coop-gold);
+  }
+
+  .doc-card[data-category="agm"] .doc-icon {
+    background-color: #FEF3C7;
+    color: #92400E;
+  }
+
+  .doc-card[data-category="report"] {
+    border-top: 3px solid #3B82F6;
+  }
+
+  .doc-card[data-category="report"] .doc-icon {
+    background-color: #DBEAFE;
+    color: #1E40AF;
+  }
+
+  .doc-card[data-category="legal"] {
+    border-top: 3px solid #64748B;
+  }
+
+  .doc-card[data-category="legal"] .doc-icon {
+    background-color: #F1F5F9;
+    color: #334155;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-  <section class="page-header">
-    <div class="container page-header-grid">
-      <div class="hero-content-wrapper">
-        <div class="breadcrumb">
-          <span class="icon-svg"><span class="material-symbols-outlined" style="font-size:1.1rem;">download_for_offline</span></span>
-          Member Download Center
-        </div>
-        <h2 class="hero-title">The app, and every form you need in one place.</h2>
-        <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans, membership, and dividend claims.</p>
-        
-        <div class="app-badge-group">
-          <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" target="_blank">
-            <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store">
-          </a>
-          <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" target="_blank">
-            <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play">
-          </a>
-        </div>
+<section class="page-header">
+  <div class="container page-header-grid">
+    <div class="hero-content-wrapper">
+      <div class="breadcrumb">
+        <span class="icon-svg"><span class="material-symbols-outlined"
+            style="font-size:1.1rem;">download_for_offline</span></span>
+        Member Download Center
       </div>
-      <div class="hero-mockup-wrapper">
-        <img src="{% static 'assets/images/app-boarderless.jpg' %}" alt="GCPCUL Borderless App" class="mockup-img" onerror="this.src='https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=600&q=80';">
+      <h2 class="hero-title">The app, and every form you need in one place.</h2>
+      <p class="hero-desc">Get the GCPCUL Borderless app for iOS and Android, or download the official forms for loans,
+        membership, and dividend claims.</p>
+
+      <div class="app-badge-group">
+        <a href="https://apps.apple.com/us/app/gcpcul-mobile/id6759379141" target="_blank">
+          <img src="{% static 'assets/images/apple-store-logo.svg' %}" alt="Download on the App Store">
+        </a>
+        <a href="https://play.google.com/store/search?q=gcpcul%20mobile&c=apps&hl=en" target="_blank">
+          <img src="{% static 'assets/images/badge-google-play.svg' %}" alt="Get it on Google Play">
+        </a>
       </div>
     </div>
-  </section>
-
-  <div class="filter-bar-wrapper">
-    <div class="container filter-container">
-      <div class="filter-tabs" id="docFilterBar">
-          <button class="filter-tab-btn active" data-filter="all">All Documents</button>
-          <button class="filter-tab-btn" data-filter="form">Application Forms</button>
-          <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
-          <button class="filter-tab-btn" data-filter="agm">Annual Reports</button>
-          <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
-      </div>
+    <div class="hero-mockup-wrapper">
+      <img src="{% static 'assets/images/app-boarderless.jpg' %}" alt="GCPCUL Borderless App" class="mockup-img">
     </div>
   </div>
+</section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <span>Document Vault</span>
-        <h2>Official Forms & Member Documents</h2>
+<div class="filter-bar-wrapper">
+  <div class="container filter-container">
+    <div class="filter-tabs" id="docFilterBar">
+      <button class="filter-tab-btn active" data-filter="all">All Documents</button>
+      <button class="filter-tab-btn" data-filter="form">Application Forms</button>
+      <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
+      <button class="filter-tab-btn" data-filter="agm">Annual Reports</button>
+      <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
+    </div>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span>Document Vault</span>
+      <h2>Official Forms & Member Documents</h2>
+    </div>
+
+    <div class="digital-advantage-banner" id="digitalBanner">
+
+      <div class="portal-dev-badge">
+        <span class="material-symbols-outlined" style="font-size: 1.1rem;">engineering</span>
+        Web Portal In Development
       </div>
 
-      <div class="digital-advantage-banner" id="digitalBanner" style="position: relative; border: 2px dashed var(--border-color); background: transparent; box-shadow: none;">
-        
-        <div style="position: absolute; top: 1.5rem; right: 1.5rem; background: var(--coop-gold); color: #073E24; padding: 0.5rem 1.25rem; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 6px 16px rgba(216, 154, 14, 0.4); border: none;">
-          <span class="material-symbols-outlined" style="font-size: 1.1rem;">engineering</span>
-          Web Portal In Development
+      <div class="banner-text-content">
+        <div class="digital-advantage-header">
+          <div class="icon-svg"><span class="material-symbols-outlined">rocket_launch</span></div>
+          <h3>Skip the Paperwork. Apply Online.</h3>
         </div>
-
-        <div style="max-width: 80%;">
-          <div class="digital-advantage-header">
-            <div class="icon-svg" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color);"><span class="material-symbols-outlined">rocket_launch</span></div>
-            <h3 style="color: var(--text-main);">Skip the Paperwork. Apply Online.</h3>
-          </div>
-          <p style="color: var(--text-muted);">You can still download our traditional PDF forms below, but our upcoming Web Member Portal will offer a vastly superior experience. Applying for loans and benefits digitally will unlock:</p>
-        </div>
-        
-        <!-- VISIBLE BENEFITS -->
-        <div class="benefits-grid" style="opacity: 0.85;">
-          <div class="benefit-item">
-            <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
-            Instant Loan Pre-Approval
-          </div>
-          <div class="benefit-item">
-            <span class="icon-svg"><span class="material-symbols-outlined">auto_awesome</span></span>
-            Zero Manual Data Entry
-          </div>
-          <div class="benefit-item">
-            <span class="icon-svg"><span class="material-symbols-outlined">schedule</span></span>
-            Live Application Tracking
-          </div>
-        </div>
-        
-        <!-- CLEARLY LOCKED BUTTON -->
-        <div style="margin-top: 0.5rem;">
-          <button disabled class="btn" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 50px; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
-            Web Access Locked
-          </button>
-        </div>
-        
+        <p>You can still download our traditional PDF forms below, but our upcoming Web Member Portal will offer a
+          vastly superior experience. Applying for loans and benefits digitally will unlock:</p>
       </div>
 
-      <div class="empty-state-box" id="docEmptyState">
-        <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
-        <h3>No Documents Found</h3>
-        <p>There are currently no documents available in this category.</p>
+      <!-- VISIBLE BENEFITS -->
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
+          Instant Loan Pre-Approval
+        </div>
+        <div class="benefit-item">
+          <span class="icon-svg"><span class="material-symbols-outlined">auto_awesome</span></span>
+          Zero Manual Data Entry
+        </div>
+        <div class="benefit-item">
+          <span class="icon-svg"><span class="material-symbols-outlined">schedule</span></span>
+          Live Application Tracking
+        </div>
       </div>
 
-      <div class="doc-grid" id="docGrid">
-    
-    <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
-    {% for form in forms %}
-    <div class="doc-card" data-category="form" style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
-      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name }}</span></span></div>
-      <div class="doc-info">
-        <span class="doc-meta">
-          {% if form.document %}
-            <!-- FIXED: Now uses safe_file_size -->
-            PDF · {{ form.pages }} page{{ form.pages|pluralize }} · <span class="doc-size" style="color: var(--text-main);">{{ form.safe_file_size|filesizeformat }}</span>
-          {% else %}
+      <!-- CLEARLY LOCKED BUTTON -->
+      <div style="margin-top: 0.5rem;">
+        <button disabled class="btn"
+          style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 50px; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.5rem;">
+          <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
+          Web Access Locked
+        </button>
+      </div>
+
+    </div>
+
+    <div class="empty-state-box" id="docEmptyState">
+      <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
+      <h3>No Documents Found</h3>
+      <p>There are currently no documents available in this category.</p>
+    </div>
+
+    <div class="doc-grid" id="docGrid">
+
+      <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
+      {% for form in forms %}
+      <div class="doc-card" data-category="form"
+        style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name
+              }}</span></span></div>
+        <div class="doc-info">
+          <span class="doc-meta">
+            {% if form.document %}
+            PDF · {{ form.pages }} page{{ form.pages|pluralize }}
+            {% if form.safe_file_size > 0 %}
+            · <span class="doc-size" style="color: var(--text-main);">{{ form.safe_file_size|filesizeformat }}</span>
+            {% endif %}
+            {% else %}
             <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
-          {% endif %}
-        </span>
-        
-        <h4>
-          {{ form.title }}
-          {% if not form.document %}
-            <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
-          {% endif %}
-        </h4>
-        
-        <p>{{ form.description }}</p>
-        
-        <div class="doc-actions">
-          {% if form.document %}
-            <!-- Safe URL Call -->
+            {% endif %}
+          </span>
+
+          <h4>
+            {{ form.title }}
+            {% if not form.document %}
+            <span
+              style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+            {% endif %}
+          </h4>
+
+          <p>{{ form.description }}</p>
+
+          <div class="doc-actions">
+            {% if form.document %}
             <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
-          {% else %}
-            <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
-          {% endif %}
+            {% else %}
+            <button class="btn btn-outline btn-sm" disabled
+              style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-    {% endfor %}
-    <!-- END DYNAMIC FORMS -->
+      {% endfor %}
 
-    <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
-    <div class="doc-card" data-category="report" style="position: relative;">
-      <div style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
-        Portal Feature
-      </div>
-      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span></div>
-      <div class="doc-info">
-        <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--text-muted);">Dynamic Generation</span></span>
-        <h4>Dividend & Share Statement</h4>
-        <p style="color: var(--text-muted);">Your personalized annual statement of share capital, dividends, and savings growth.</p>
-        <div class="doc-actions">
-          <button disabled class="btn btn-outline btn-sm" style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
-            <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
-            Portal Access Locked
-          </button>
+      <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
+      <div class="doc-card" data-category="report" style="position: relative;">
+        <div
+          style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
+          Portal Feature
+        </div>
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">receipt_long</span></span>
+        </div>
+        <div class="doc-info">
+          <span class="doc-meta">PDF · Annual · <span class="doc-size" style="color: var(--text-muted);">Dynamic
+              Generation</span></span>
+          <h4>Dividend & Share Statement</h4>
+          <p style="color: var(--text-muted);">Your personalized annual statement of share capital, dividends, and
+            savings growth.</p>
+          <div class="doc-actions">
+            <button disabled class="btn btn-outline btn-sm"
+              style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
+              <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
+              Portal Access Locked
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- DYNAMIC AGM REPORTS -->
-    {% for report in reports %}
-    <div class="doc-card" data-category="agm" style="{% if not report.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
-      <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
-      
-      <div class="doc-info">
-        <span class="doc-meta">
-          {% if report.document %}
-            PDF · {{ report.year }} AGM · <span class="doc-size" style="color: var(--text-main);">{{ report.safe_file_size|filesizeformat }}</span>
-          {% else %}
+      <!-- DYNAMIC AGM REPORTS -->
+      {% for report in reports %}
+      <div class="doc-card" data-category="agm"
+        style="{% if not report.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name
+              }}</span></span></div>
+
+        <div class="doc-info">
+          <span class="doc-meta">
+            {% if report.document %}
+            PDF · {{ report.year }} AGM
+            {% if report.safe_file_size > 0 %}
+            · <span class="doc-size" style="color: var(--text-main);">{{ report.safe_file_size|filesizeformat }}</span>
+            {% endif %}
+            {% else %}
             <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
-          {% endif %}
-        </span>
-        
-        <h4>
-          {{ report.year }} {{ report.title }}
-          {% if not report.document %}
-            <span style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
-          {% endif %}
-        </h4>
-        
-        <p>{{ report.description }}</p>
-        
-        <div class="doc-actions">
-          {% if report.document %}
-            <!-- FIXED: Guarded URL Call -->
+            {% endif %}
+          </span>
+
+          <h4>
+            {{ report.year }} {{ report.title }}
+            {% if not report.document %}
+            <span
+              style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+            {% endif %}
+          </h4>
+
+          <p>{{ report.description }}</p>
+
+          <div class="doc-actions">
+            {% if report.document %}
             <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
-          {% else %}
-            <button class="btn btn-outline btn-sm" disabled style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
-          {% endif %}
+            {% else %}
+            <button class="btn btn-outline btn-sm" disabled
+              style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-    {% endfor %}
+      {% endfor %}
 
+    </div>
   </div>
-  </section>
+</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
-    const docCards = document.querySelectorAll('.doc-card');
-    const docEmptyState = document.getElementById('docEmptyState');
-    const digitalBanner = document.getElementById('digitalBanner'); // Grab the banner
+  const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
+  const docCards = document.querySelectorAll('.doc-card');
+  const docEmptyState = document.getElementById('docEmptyState');
+  const digitalBanner = document.getElementById('digitalBanner'); // Grab the banner
 
-    if (filterBtns) {
-      filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          // Remove active state from all buttons
-          filterBtns.forEach(b => b.classList.remove('active'));
-          // Add active state to clicked button
-          btn.classList.add('active');
+  if (filterBtns) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active state from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        // Add active state to clicked button
+        btn.classList.add('active');
 
-          const category = btn.getAttribute('data-filter');
-          let visibleCount = 0;
+        const category = btn.getAttribute('data-filter');
+        let visibleCount = 0;
 
-          // 1. CONTEXTUAL BANNER LOGIC: Hide banner if they are looking for reports
-          if (digitalBanner) {
-            if (category === 'all' || category === 'form') {
-              digitalBanner.style.display = 'flex';
-            } else {
-              digitalBanner.style.display = 'none';
-            }
-          }
-
-          // 2. DOCUMENT FILTER LOGIC
-          docCards.forEach(card => {
-            const cardCat = card.getAttribute('data-category');
-            if (category === 'all' || cardCat === category) {
-              card.style.display = 'flex';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          // 3. EMPTY STATE LOGIC
-          if (visibleCount === 0) {
-            docEmptyState.classList.add('active');
+        // 1. CONTEXTUAL BANNER LOGIC: Hide banner if they are looking for reports
+        if (digitalBanner) {
+          if (category === 'all' || category === 'form') {
+            digitalBanner.style.display = 'flex';
           } else {
-            docEmptyState.classList.remove('active');
+            digitalBanner.style.display = 'none';
+          }
+        }
+
+        // 2. DOCUMENT FILTER LOGIC
+        docCards.forEach(card => {
+          const cardCat = card.getAttribute('data-category');
+          if (category === 'all' || cardCat === category) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
           }
         });
+
+        // 3. EMPTY STATE LOGIC
+        if (visibleCount === 0) {
+          docEmptyState.classList.add('active');
+        } else {
+          docEmptyState.classList.remove('active');
+        }
       });
-    }
+    });
+  }
 </script>
 {% endblock %}
