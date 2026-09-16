@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from django_summernote.admin import SummernoteModelAdmin
 from .models import *
 
@@ -20,3 +21,4 @@ class AnnouncementAdmin(admin.ModelAdmin):
     list_display = ('message', 'alert_type', 'is_active', 'created_at')
     list_filter = ('alert_type', 'is_active')
     search_fields = ('message',)
+

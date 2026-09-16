@@ -975,14 +975,15 @@
               we'll notify you the moment it opens.</p>
           </div>
 
-          <form id="notifyForm"
-            onsubmit="event.preventDefault(); showToast('Thanks — we\'ll email you the moment the portal launches.', 'success'); this.reset();">
+          <form id="notifyForm" method="POST" action="{% url 'waitlist_signup' %}">
+            {% csrf_token %}
             <div class="form-group" style="margin-bottom: 0;">
               <label for="notifyEmail">Email address</label>
               <div class="notify-form">
                 <div class="input-wrapper" style="flex:1;">
                   <span class="icon-svg input-icon"><span class="material-symbols-outlined">mail</span></span>
-                  <input type="email" id="notifyEmail" class="form-control" placeholder="you@example.com" required
+                  <!-- Added name="email" so Django's form parser can read it -->
+                  <input type="email" id="notifyEmail" name="email" class="form-control" placeholder="you@example.com" required
                     autocomplete="email">
                 </div>
                 <button type="submit" class="notify-btn">Notify Me</button>

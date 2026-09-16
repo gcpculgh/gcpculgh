@@ -79,3 +79,21 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.message[:50]
+
+
+class PortalWaitlist(models.Model):
+    email = models.EmailField(unique=True, db_index=True)
+    joined_at = models.DateTimeField(auto_now_add=True)
+    is_notified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.email
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True, db_index=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.email

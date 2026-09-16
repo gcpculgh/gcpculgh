@@ -796,11 +796,14 @@
           <span>Trusted by pharmacists across Ghana</span>
         </div>
       </div>
-      <form class="newsletter-form"
-        onsubmit="event.preventDefault(); showToast('Successfully subscribed to GCPCUL Insights!', 'success');">
-        <input type="email" class="newsletter-input" placeholder="Enter your email address..." required>
+      
+      <!-- REAL BACKEND WIRE-UP -->
+      <form class="newsletter-form" method="POST" action="{% url 'newsletter_signup' %}">
+        {% csrf_token %}
+        <input type="email" name="email" class="newsletter-input" placeholder="Enter your email address..." required autocomplete="email">
         <button type="submit" class="newsletter-btn">Subscribe</button>
       </form>
+
     </div>
   </div>
 </section>
