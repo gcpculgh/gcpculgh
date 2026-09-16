@@ -289,7 +289,6 @@
     line-height: 1.4;
   }
 
-  /* TRUST STRIP */
   .trust-strip {
     background: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
@@ -1027,7 +1026,6 @@
     color: #FFFFFF;
   }
 
-  /* APP / BANKING */
   .banking-section {
     background: var(--bg-card);
     padding: clamp(4.5rem, 7vw, 6.5rem) 0;
@@ -1185,7 +1183,7 @@
     padding: clamp(1.75rem, 5vw, 2.75rem);
   }
 
-  /* PREMIUM EMPTY STATE COMPONENT */
+  /* EMPTY STATE COMPONENT */
   .premium-empty-state {
     grid-column: 1 / -1; 
     display: flex;
@@ -1721,29 +1719,35 @@
   <div class="container trust-grid">
     <div class="trust-text">
       <h2>Bank-grade digital protection for your money.</h2>
-      <p style="color: #94A3B8; font-size: 1.02rem;">We've upgraded from static website forms to a zero-trust financial
+      <p style="color: #94A3B8; font-size: 1.02rem;">We are upgrading from static website forms to a zero-trust financial
         portal designed to protect your identity, medical privacy, and share capital.</p>
       <ul class="check-list">
         <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg></span></span>End-to-end encrypted Ghana Card identity verification</li>
+              </svg></span></span>Strict CUA-compliant identity verification protocols</li>
         <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg></span></span>Maker-Checker sign-off controls for disbursements over GH¢100,000</li>
+              </svg></span></span>Maker-Checker sign-off controls for large disbursements</li>
         <li><span class="check-icon"><span class="icon-svg"><svg viewBox="0 0 24 24">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg></span></span>Full CUA Loan Protection Plan (LPP) health declaration privacy</li>
+              </svg></span></span>Full CUA Loan Protection Plan (LPP) privacy guaranteed</li>
       </ul>
     </div>
     <div class="kyc-card">
+      
       <span class="tag-badge"
-        style="background: rgba(255,255,255,.12); color: #FFFFFF; margin-bottom: 1.1rem; display: inline-flex;">Smile
-        Identity Integrated</span>
+        style="background: rgba(255,255,255,.12); color: #FFFFFF; margin-bottom: 1.1rem; display: inline-flex; align-items: center; gap: 0.4rem;">
+        <span class="material-symbols-outlined" style="font-size: 1rem;">update</span>
+        Upcoming Portal Feature
+      </span>
+      
       <h4 style="font-size: 1.3rem; color: #FFFFFF; margin-bottom: 0.7rem; font-weight: 800;">Automated KYC & Biometric
         Sign-Off</h4>
+        
       <p style="color: #CBD5E1; font-size: 0.95rem; margin-bottom: 1.6rem;">GCPCUL never stores your payment credentials
-        on web servers. All ID documents are stored in encrypted vaults and verified in real-time against national
+        on web servers. In our upcoming portal release, ID documents will be stored in encrypted vaults and verified in real-time against national
         registries.</p>
+        
       <div
         style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 0.9rem 1.15rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08);">
         <span class="mono" style="color: var(--gold-bright); font-size: 0.92rem; font-weight: 700;">USSD:
@@ -1806,7 +1810,7 @@
     monthlyDisplay.textContent = formatGHS(emi) + ' / mo';
   }
 
-  // ---- Universal Custom Select Logic for ALL dropdowns ----
+  // ---- Select Logic for ALL dropdowns ----
   const customSelectWraps = document.querySelectorAll('.custom-select-wrap');
   
   customSelectWraps.forEach(wrap => {

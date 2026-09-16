@@ -5,10 +5,6 @@
 
 {% block extra_css %}
 <style>
-  /* ==========================================
-       DOWNLOADS PAGE SPECIFIC STYLES
-       ========================================== */
-
   .page-header {
     padding: clamp(4.5rem, 7vw, 6.5rem) 0 5.5rem 0;
     background: linear-gradient(135deg, #073E24 0%, var(--primary-green) 100%);
@@ -56,15 +52,24 @@
   .app-badge-group {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    margin-bottom: 2.5rem;
+    flex-wrap: nowrap;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
     justify-content: flex-start;
+    align-items: center;
+  }
+
+  .app-badge-group a {
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .app-badge-group a:hover {
+    transform: translateY(-3px);
   }
 
   .app-badge-group img {
-    height: 3.2rem;
+    height: clamp(3rem, 4.5vw, 4rem);
     width: auto;
     display: block;
   }
@@ -193,19 +198,15 @@
     background: linear-gradient(145deg, rgba(10, 92, 54, 0.1) 0%, var(--bg-card) 100%);
   }
 
-  /* BANNER BADGE & TEXT FIXES */
   .portal-dev-badge {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
     background: rgba(184, 134, 46, 0.12);
-    /* Soft, flat premium gold */
     color: #9A711F;
-    /* Deep, readable gold text */
     border: 1px solid rgba(184, 134, 46, 0.25);
     padding: 0.4rem 0.85rem;
     border-radius: 6px;
-    /* Modern slightly rounded edge */
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -214,18 +215,16 @@
     align-items: center;
     gap: 0.4rem;
     box-shadow: none;
-    /* Killed the amateur drop shadow */
     z-index: 10;
   }
 
   .banner-text-content {
-    max-width: 85%;
+    max-width: calc(100% - 17rem);
   }
 
   .digital-advantage-header {
     display: flex;
     align-items: flex-start;
-    /* Aligns icon to the top of the text */
     gap: 1.15rem;
     margin-bottom: 0.75rem;
   }
@@ -234,18 +233,15 @@
     width: 3rem;
     height: 3rem;
     flex-shrink: 0;
-    /* Strictly prevents the icon from getting squished by text */
     background: var(--primary-light);
     color: var(--primary-green);
     border: none;
     border-radius: 8px;
-    /* App-style rounded square */
     font-size: 1.35rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-top: 0.15rem;
-    /* Optical alignment with the heading */
   }
 
   .digital-advantage-banner h3 {
@@ -388,7 +384,48 @@
     margin-bottom: 0.5rem;
   }
 
-  /* MOBILE RESPONSIVE FIXES */
+  @media (max-width: 64rem) {
+    .portal-dev-badge {
+      position: relative;
+      top: auto;
+      right: auto;
+      align-self: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .banner-text-content {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .page-header-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .hero-mockup-wrapper {
+      justify-content: center;
+    }
+
+    .mockup-img {
+      max-width: 65%;
+      transform: none;
+    }
+
+    .hero-mockup-wrapper:hover .mockup-img {
+      transform: translateY(-5px);
+    }
+
+    .digital-advantage-banner {
+      padding: 1.5rem;
+    }
+
+    .benefits-grid {
+      gap: 1rem 1.5rem;
+    }
+  }
+
   @media (max-width: 48rem) {
     .page-header-grid {
       grid-template-columns: 1fr;
@@ -416,25 +453,7 @@
       flex-direction: column;
       gap: 1rem;
     }
-
-    /* THIS FIXES THE OVERLAPPING BADGE */
-    .portal-dev-badge {
-      position: relative;
-      top: 0;
-      right: 0;
-      align-self: flex-start;
-      margin-bottom: 1.5rem;
-      /* Gives it clean spacing above the heading */
-    }
-
-    .banner-text-content {
-      max-width: 100%;
-    }
   }
-
-  /* ==========================================
-       PREMIUM DOCUMENT CATEGORY THEMING
-       ========================================== */
 
   .doc-card[data-category="form"] {
     border-top: 3px solid var(--primary-green);
@@ -471,6 +490,205 @@
     background-color: #F1F5F9;
     color: #334155;
   }
+
+  /* Search field */
+  .vault-search-wrap {
+    position: relative;
+    flex: 1 1 16rem;
+    max-width: 22rem;
+  }
+
+  .vault-search-icon {
+    position: absolute;
+    left: 0.95rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    display: flex;
+  }
+
+  .vault-search-icon .material-symbols-outlined {
+    font-size: 1.15rem;
+  }
+
+  .vault-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.62rem 2.6rem 0.62rem 2.7rem;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-page);
+    color: var(--text-main);
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .vault-search-input:focus {
+    border-color: var(--primary-green);
+  }
+
+  .vault-search-clear {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vault-search-clear:hover {
+    color: var(--text-main);
+    background: var(--bg-section-alt);
+  }
+
+  .vault-search-clear.visible {
+    display: flex;
+  }
+
+  .vault-search-clear .material-symbols-outlined {
+    font-size: 1.1rem;
+  }
+
+  /* Count badge inside filter tabs */
+  .filter-tab-btn .tab-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    opacity: 0.65;
+    margin-left: 0.4rem;
+  }
+
+  /* Results counter line */
+  .vault-results-line {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .vault-results-line strong {
+    color: var(--text-main);
+    font-weight: 800;
+  }
+
+  .vault-results-line .material-symbols-outlined {
+    font-size: 1.05rem;
+    color: var(--heading-green);
+  }
+
+  /* Official documents trust strip */
+  .vault-trust-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    background: var(--primary-light);
+    border: 1px solid rgba(10, 92, 54, 0.18);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .vault-trust-strip .material-symbols-outlined {
+    font-size: 1.3rem;
+    color: var(--heading-green);
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  .vault-trust-strip p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .vault-trust-strip strong {
+    color: var(--text-main);
+    font-weight: 700;
+  }
+
+  .doc-card.is-pending {
+    opacity: 0.72;
+  }
+
+  .pending-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bg-section-alt);
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 50px;
+    vertical-align: middle;
+    margin-left: 0.4rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border-color);
+  }
+
+  .doc-meta .pending-note {
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  .doc-help-card {
+    background: var(--bg-section-alt);
+    border: 1.5px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .doc-help-card .material-symbols-outlined {
+    font-size: 1.6rem;
+    color: var(--heading-green);
+  }
+
+  .doc-help-card h4 {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+
+  .doc-help-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .doc-help-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 48rem) {
+    .vault-search-wrap {
+      max-width: 100%;
+      flex-basis: 100%;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -505,11 +723,25 @@
 <div class="filter-bar-wrapper">
   <div class="container filter-container">
     <div class="filter-tabs" id="docFilterBar">
-      <button class="filter-tab-btn active" data-filter="all">All Documents</button>
-      <button class="filter-tab-btn" data-filter="form">Application Forms</button>
-      <button class="filter-tab-btn" data-filter="report">Statements & Reports</button>
-      <button class="filter-tab-btn" data-filter="agm">Annual Reports</button>
-      <button class="filter-tab-btn" data-filter="legal">Policies & By-Laws</button>
+      <button class="filter-tab-btn active" data-filter="all">All Documents<span class="tab-count"
+          data-count-for="all"></span></button>
+      <button class="filter-tab-btn" data-filter="form">Application Forms<span class="tab-count"
+          data-count-for="form"></span></button>
+      <button class="filter-tab-btn" data-filter="report">Statements &amp; Reports<span class="tab-count"
+          data-count-for="report"></span></button>
+      <button class="filter-tab-btn" data-filter="agm">Annual Reports<span class="tab-count"
+          data-count-for="agm"></span></button>
+      <button class="filter-tab-btn" data-filter="legal">Policies &amp; By-Laws<span class="tab-count"
+          data-count-for="legal"></span></button>
+    </div>
+
+    <div class="vault-search-wrap">
+      <span class="vault-search-icon"><span class="material-symbols-outlined">search</span></span>
+      <input type="search" id="docSearchInput" class="vault-search-input" placeholder="Search documents…"
+        aria-label="Search documents">
+      <button type="button" class="vault-search-clear" id="docSearchClear" aria-label="Clear search">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
   </div>
 </div>
@@ -537,7 +769,7 @@
           vastly superior experience. Applying for loans and benefits digitally will unlock:</p>
       </div>
 
-      <!-- VISIBLE BENEFITS -->
+      <!-- BENEFITS -->
       <div class="benefits-grid">
         <div class="benefit-item">
           <span class="icon-svg"><span class="material-symbols-outlined">bolt</span></span>
@@ -553,29 +785,45 @@
         </div>
       </div>
 
-      <!-- CLEARLY LOCKED BUTTON -->
-      <div style="margin-top: 0.5rem;">
+      <div
+        style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <strong style="display: block; color: var(--text-main); font-size: 1.05rem; font-weight: 800;">Member Portal
+            Login</strong>
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Secure access for registered members.</span>
+        </div>
+
         <button disabled class="btn"
-          style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; padding: 0.75rem 1.5rem; border-radius: 50px; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.5rem;">
+          style="background: var(--bg-section-alt); color: var(--text-muted); border: 1px solid var(--border-color); box-shadow: none; cursor: not-allowed; padding: 0.75rem 1.5rem; display: inline-flex; align-items: center; gap: 0.65rem;">
           <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
-          Web Access Locked
+          Portal Login
+          <span
+            style="background: var(--border-color); color: var(--text-muted); font-size: 0.65rem; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 0.25rem;">Coming
+            Soon</span>
         </button>
       </div>
 
     </div>
 
-    <div class="empty-state-box" id="docEmptyState">
-      <div class="icon-svg"><span class="material-symbols-outlined">image_not_supported</span></div>
-      <h3>No Documents Found</h3>
-      <p>There are currently no documents available in this category.</p>
+    <div class="vault-trust-strip">
+      <span class="material-symbols-outlined">verified_user</span>
+      <p><strong>These are the official current versions.</strong> Every form and report here is issued by GCPCUL and
+        replaced the moment it's revised, so the copy you download is the one the office will accept. If a document
+        looks out of date, tell us and we'll correct it.</p>
     </div>
+
+    <div class="empty-state-box" id="docEmptyState">
+      <div class="icon-svg"><span class="material-symbols-outlined">search_off</span></div>
+      <h3>No Documents Found</h3>
+      <p>Nothing matches that search or category. Try a different keyword, or reset the filters.</p>
+    </div>
+
+    <div class="vault-results-line" id="vaultResultsLine"></div>
 
     <div class="doc-grid" id="docGrid">
 
-      <!-- DYNAMIC CLOUDFLARE R2 OFFICIAL FORMS -->
       {% for form in forms %}
-      <div class="doc-card" data-category="form"
-        style="{% if not form.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+      <div class="doc-card{% if not form.document %} is-pending{% endif %}" data-category="form">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ form.icon_name
               }}</span></span></div>
         <div class="doc-info">
@@ -586,15 +834,14 @@
             · <span class="doc-size" style="color: var(--text-main);">{{ form.safe_file_size|filesizeformat }}</span>
             {% endif %}
             {% else %}
-            <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
+            <span class="pending-note">Being prepared</span>
             {% endif %}
           </span>
 
           <h4>
             {{ form.title }}
             {% if not form.document %}
-            <span
-              style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+            <span class="pending-tag">Coming soon</span>
             {% endif %}
           </h4>
 
@@ -602,17 +849,22 @@
 
           <div class="doc-actions">
             {% if form.document %}
-            <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
+            <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span>
+              Download PDF
+            </a>
             {% else %}
-            <button class="btn btn-outline btn-sm" disabled
-              style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ form.title|urlencode }}."
+              target="_blank" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span>
+              Request a Copy
+            </a>
             {% endif %}
           </div>
         </div>
       </div>
       {% endfor %}
 
-      <!-- DYNAMIC PORTAL ONLY: Dividend Statement (LOCKED SNEAK PEEK STATE) -->
       <div class="doc-card" data-category="report" style="position: relative;">
         <div
           style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
@@ -628,7 +880,7 @@
             savings growth.</p>
           <div class="doc-actions">
             <button disabled class="btn btn-outline btn-sm"
-              style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-hover); color: var(--text-muted);">
+              style="opacity: 0.65; cursor: not-allowed; display: inline-flex; align-items: center; gap: 0.4rem; background: var(--bg-section-alt); color: var(--text-muted);">
               <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock</span>
               Portal Access Locked
             </button>
@@ -636,10 +888,9 @@
         </div>
       </div>
 
-      <!-- DYNAMIC AGM REPORTS -->
+      <!--AGM REPORTS -->
       {% for report in reports %}
-      <div class="doc-card" data-category="agm"
-        style="{% if not report.document %}opacity: 0.55; filter: grayscale(50%);{% endif %}">
+      <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="agm">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name
               }}</span></span></div>
 
@@ -651,15 +902,14 @@
             · <span class="doc-size" style="color: var(--text-main);">{{ report.safe_file_size|filesizeformat }}</span>
             {% endif %}
             {% else %}
-            <span style="color: #dc3545; font-weight: 600;">Document Pending</span>
+            <span class="pending-note">Being prepared</span>
             {% endif %}
           </span>
 
           <h4>
             {{ report.year }} {{ report.title }}
             {% if not report.document %}
-            <span
-              style="background-color: #dc3545; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; text-transform: uppercase; font-weight: bold;">Unavailable</span>
+            <span class="pending-tag">Coming soon</span>
             {% endif %}
           </h4>
 
@@ -667,15 +917,39 @@
 
           <div class="doc-actions">
             {% if report.document %}
-            <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">Download PDF</a>
+            <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span>
+              Download PDF
+            </a>
             {% else %}
-            <button class="btn btn-outline btn-sm" disabled
-              style="cursor: not-allowed; border-color: #ccc; color: #999;">Not Available</button>
+            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ report.year }}%20{{ report.title|urlencode }}."
+              target="_blank" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span>
+              Request a Copy
+            </a>
             {% endif %}
           </div>
         </div>
       </div>
       {% endfor %}
+
+      <div class="doc-help-card" id="docHelpCard">
+        <span class="material-symbols-outlined">contact_support</span>
+        <h4>Can't find what you need?</h4>
+        <p>Tell us which document you're after and a member officer will send it to you directly — usually within the
+          hour on working days.</p>
+        <div class="doc-help-actions">
+          <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20I'm%20looking%20for%20a%20document%20I%20couldn't%20find%20in%20the%20Document%20Vault."
+            target="_blank" class="btn btn-gold btn-sm">
+            <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span>
+            Ask on WhatsApp
+          </a>
+          <a href="{% url 'contact' %}" class="btn btn-outline btn-sm">
+            <span class="material-symbols-outlined" style="font-size: 1.05rem;">call</span>
+            Contact Us
+          </a>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -687,47 +961,101 @@
   const filterBtns = document.querySelectorAll('#docFilterBar .filter-tab-btn');
   const docCards = document.querySelectorAll('.doc-card');
   const docEmptyState = document.getElementById('docEmptyState');
-  const digitalBanner = document.getElementById('digitalBanner'); // Grab the banner
+  const digitalBanner = document.getElementById('digitalBanner');
+  const searchInput = document.getElementById('docSearchInput');
+  const searchClear = document.getElementById('docSearchClear');
+  const resultsLine = document.getElementById('vaultResultsLine');
 
-  if (filterBtns) {
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Remove active state from all buttons
-        filterBtns.forEach(b => b.classList.remove('active'));
-        // Add active state to clicked button
-        btn.classList.add('active');
+  let activeCategory = 'all';
 
-        const category = btn.getAttribute('data-filter');
-        let visibleCount = 0;
+  // Cache each card's searchable text once, rather than re-reading the DOM on
+  // every keystroke.
+  const cardIndex = Array.from(docCards).map(card => ({
+    el: card,
+    category: card.getAttribute('data-category') || '',
+    text: (card.textContent || '').toLowerCase().replace(/\s+/g, ' ').trim()
+  }));
 
-        // 1. CONTEXTUAL BANNER LOGIC: Hide banner if they are looking for reports
-        if (digitalBanner) {
-          if (category === 'all' || category === 'form') {
-            digitalBanner.style.display = 'flex';
-          } else {
-            digitalBanner.style.display = 'none';
-          }
-        }
-
-        // 2. DOCUMENT FILTER LOGIC
-        docCards.forEach(card => {
-          const cardCat = card.getAttribute('data-category');
-          if (category === 'all' || cardCat === category) {
-            card.style.display = 'flex';
-            visibleCount++;
-          } else {
-            card.style.display = 'none';
-          }
-        });
-
-        // 3. EMPTY STATE LOGIC
-        if (visibleCount === 0) {
-          docEmptyState.classList.add('active');
-        } else {
-          docEmptyState.classList.remove('active');
-        }
-      });
+  // Counts are derived from the rendered cards
+  function paintCounts() {
+    const totals = { all: cardIndex.length };
+    cardIndex.forEach(item => {
+      totals[item.category] = (totals[item.category] || 0) + 1;
+    });
+    document.querySelectorAll('.tab-count').forEach(badge => {
+      const key = badge.getAttribute('data-count-for');
+      const n = totals[key] || 0;
+      badge.textContent = n > 0 ? n : '';
+      const parentBtn = badge.closest('.filter-tab-btn');
+      if (parentBtn && key !== 'all') {
+        parentBtn.style.display = n > 0 ? '' : 'none';
+      }
     });
   }
+
+  function applyFilters() {
+    const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+    let visibleCount = 0;
+
+    cardIndex.forEach(item => {
+      const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+      const matchesQuery = !query || item.text.includes(query);
+      const show = matchesCategory && matchesQuery;
+      item.el.style.display = show ? 'flex' : 'none';
+      if (show) visibleCount++;
+    });
+
+    if (digitalBanner) {
+      const relevant = (activeCategory === 'all' || activeCategory === 'form') && !query;
+      digitalBanner.style.display = relevant ? 'flex' : 'none';
+    }
+
+    if (docEmptyState) {
+      docEmptyState.classList.toggle('active', visibleCount === 0);
+    }
+
+    if (resultsLine) {
+      if (visibleCount === 0) {
+        resultsLine.innerHTML = '';
+      } else if (query) {
+        resultsLine.innerHTML =
+          '<span class="material-symbols-outlined">search</span>' +
+          'Showing <strong>' + visibleCount + '</strong> document' + (visibleCount === 1 ? '' : 's') +
+          ' matching &ldquo;' + query.replace(/</g, '&lt;') + '&rdquo;';
+      } else {
+        resultsLine.innerHTML =
+          '<span class="material-symbols-outlined">folder_open</span>' +
+          'Showing <strong>' + visibleCount + '</strong> document' + (visibleCount === 1 ? '' : 's');
+      }
+    }
+
+    if (searchClear) {
+      searchClear.classList.toggle('visible', query.length > 0);
+    }
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.getAttribute('data-filter');
+      applyFilters();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      applyFilters();
+    });
+  }
+
+  paintCounts();
+  applyFilters();
 </script>
 {% endblock %}

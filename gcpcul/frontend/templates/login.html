@@ -1,19 +1,24 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Member Login | GCPCUL Portal</title>
+  <title>Member Portal — Coming Soon | GCPCUL</title>
   <meta name="description" content="Securely log in to the Ghana Co-operative Pharmacists' Credit Union member portal.">
-  
+
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicon/favicon-32x32.png' %}">
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0"
+    rel="stylesheet">
+
   <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
@@ -21,11 +26,18 @@
       line-height: 1;
       vertical-align: middle;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin-icon .material-symbols-outlined { animation: spin 1s linear infinite; display: inline-block; }
-    /* ==========================================
-       GLOBAL VARIABLES
-       ========================================== */
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spin-icon .material-symbols-outlined {
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
     :root {
       --primary-green: #0A5C36;
       --heading-green: #0A5C36;
@@ -33,17 +45,17 @@
       --primary-light: #EAF2EC;
       --coop-gold: #B8862E;
       --gold-bright: #EBAA14;
-      
+
       --bg-page: #FAF7F0;
       --bg-card: #FFFFFF;
       --text-main: #10241A;
       --text-muted: #6B6456;
       --border-color: #E4DFD1;
-      
+
       --shadow-sm: 0 1px 3px rgba(16, 36, 26, 0.06);
       --shadow-card: 0 10px 25px -5px rgba(16, 36, 26, 0.10);
       --shadow-lg: 0 20px 40px -12px rgba(16, 36, 26, 0.18);
-      
+
       --radius-sm: 0.625rem;
       --radius-md: 1rem;
       --radius-lg: 1.5rem;
@@ -57,7 +69,7 @@
       --primary-green: #0A5C36;
       --accent-green: #10B981;
       --primary-light: #0F241A;
-      
+
       --bg-page: #0B1120;
       --bg-card: #111827;
       --text-main: #F8FAFC;
@@ -65,44 +77,64 @@
       --border-color: #1E293B;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    /* SCROLL LOCK FIX: Locks the main body, enables panel scrolling */
-    html, body { 
-      width: 100%; 
-      height: 100vh; 
-      overflow: hidden; 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    body { 
-      font-family: var(--font-display); 
-      background-color: var(--bg-page); 
-      color: var(--text-main); 
-      line-height: 1.5; 
-      transition: background-color 0.3s ease, color 0.3s ease; 
-    }
-    
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; height: auto; display: block; }
-    
-    .icon-svg { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-svg svg { width: 1.25em; height: 1.25em; }
-    .mono { font-family: var(--font-mono); }
-
-    /* ==========================================
-       SPLIT LAYOUT ARCHITECTURE
-       ========================================== */
-    .auth-layout { 
-      display: flex; 
-      width: 100%; 
-      height: 100vh; 
-      overflow: hidden; 
+    html,
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* LEFT PANEL: LOCKED & STATIC */
+    body {
+      font-family: var(--font-display);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .icon-svg {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon-svg svg {
+      width: 1.25em;
+      height: 1.25em;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    .auth-layout {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
     .auth-visual {
       flex: 1.1;
-      height: 100%; 
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -115,19 +147,43 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+      background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, .06) 1px, transparent 0);
       background-size: 22px 22px;
       opacity: .6;
       z-index: 1;
     }
 
-    .auth-visual-content { position: relative; z-index: 3; display: flex; flex-direction: column; height: 100%; }
+    .auth-visual-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
 
-    .auth-logo { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-    .auth-logo img { height: 3.5rem; width: 3.5rem; border-radius: 0.65rem; background: #FFFFFF; padding: 0.15rem; box-shadow: var(--shadow-sm); }
-    .auth-logo h1 { font-size: 1.1rem; font-weight: 800; color: #FFFFFF; line-height: 1.2; }
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-    /* CSS TRUST WIDGET */
+    .auth-logo img {
+      height: 3.5rem;
+      width: 3.5rem;
+      border-radius: 0.65rem;
+      background: #FFFFFF;
+      padding: 0.15rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .auth-logo h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+
     .css-trust-widget {
       margin: auto 0;
       background: rgba(255, 255, 255, 0.05);
@@ -136,115 +192,530 @@
       border-radius: var(--radius-lg);
       padding: clamp(2rem, 4vw, 3rem);
       color: #FFFFFF;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
       max-width: 32rem;
     }
-    
-    .trust-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: #D9C89A; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.2rem; }
-    .trust-eyebrow::before { content: ''; width: 1.6rem; height: 1px; background: #D9C89A; }
 
-    .css-trust-widget h2 { font-size: clamp(2rem, 3.5vw, 2.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
-    .css-trust-widget h2 span { color: var(--gold-bright); }
-    .css-trust-widget p { font-size: 1.05rem; color: #E4EBE6; line-height: 1.6; margin-bottom: 2.5rem; }
+    .trust-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #D9C89A;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
 
-    .security-badges { display: flex; gap: 1.5rem; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 1.5rem; }
-    .badge-item { display: flex; align-items: center; gap: 0.75rem; }
-    .badge-icon { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: rgba(235, 170, 20, 0.15); color: var(--gold-bright); display: flex; align-items: center; justify-content: center; }
-    .badge-icon .material-symbols-outlined { font-size: 1.15rem; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
-    .badge-item span { font-weight: 700; font-size: 0.9rem; color: #FFFFFF; }
+    .trust-eyebrow::before {
+      content: '';
+      width: 1.6rem;
+      height: 1px;
+      background: #D9C89A;
+    }
 
-    /* RIGHT PANEL: INDEPENDENTLY SCROLLABLE */
+    .css-trust-widget h2 {
+      font-size: clamp(2rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .css-trust-widget h2 span {
+      color: var(--gold-bright);
+    }
+
+    .css-trust-widget p {
+      font-size: 1.05rem;
+      color: #E4EBE6;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    .security-badges {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 1.5rem;
+    }
+
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .badge-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(235, 170, 20, 0.15);
+      color: var(--gold-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge-icon .material-symbols-outlined {
+      font-size: 1.15rem;
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    .badge-item span {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #FFFFFF;
+    }
+
     .auth-panel {
       flex: 1;
       height: 100%;
       background: var(--bg-page);
-      overflow-y: auto; /* Scroll isolated to this side */
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       padding: clamp(2rem, 4vw, 3rem);
     }
 
-    .auth-panel-header { width: 100%; margin-bottom: 2rem; display: flex; justify-content: flex-end; flex-shrink: 0; }
-    .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); transition: color 0.2s ease; }
-    .back-btn:hover { color: var(--heading-green); }
+    .auth-panel-header {
+      width: 100%;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
 
-    .form-container { width: 100%; max-width: 28rem; margin: auto; flex-shrink: 0; }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--heading-green);
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 28rem;
+      margin: auto;
+      flex-shrink: 0;
+    }
 
     .auth-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
-      padding: clamp(2rem, 4vw, 3rem); 
+      padding: clamp(2rem, 4vw, 3rem);
       display: flex;
       flex-direction: column;
     }
 
-    .form-header { margin-bottom: 2.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
-    .desktop-lock-icon { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--primary-light); color: var(--heading-green); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; border: 1px solid rgba(10, 92, 54, 0.1); }
-    .desktop-lock-icon svg { width: 1.65rem; height: 1.65rem; }
-    .mobile-logo-icon { display: none; } 
-    .mobile-welcome-strip { display: none; }
-    .mobile-welcome-text { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
-    .mobile-welcome-badges { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
-    .mobile-mini-badge { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); background: var(--bg-page); border: 1px solid var(--border-color); padding: 0.35rem 0.75rem; border-radius: 50px; }
-    .mobile-mini-badge .material-symbols-outlined { font-size: 0.9rem; color: var(--heading-green); font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .form-header {
+      margin-bottom: 2.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-    .form-header h2 { font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.4rem; letter-spacing: -0.01em; }
-    .form-header p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+    .desktop-lock-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--heading-green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
+      border: 1px solid rgba(10, 92, 54, 0.1);
+    }
 
-    .form-group { margin-bottom: 1.5rem; position: relative; text-align: left; }
-    .form-group label { display: block; font-weight: 700; font-size: 0.9rem; color: var(--text-main); margin-bottom: 0.6rem; }
-    
-    .input-wrapper { position: relative; display: flex; align-items: center; }
-    .input-icon { position: absolute; left: 1.15rem; color: var(--text-muted); pointer-events: none; transition: color 0.2s ease; width: 1.25rem; height: 1.25rem; }
-    
-    .form-control { width: 100%; height: 3.25rem; padding: 0.5rem 1rem 0.5rem 3.2rem; font-size: 1.05rem; font-weight: 600; border: 1.5px solid var(--border-color); background: transparent; color: var(--text-main); border-radius: var(--radius-sm); outline: none; font-family: inherit; transition: all 0.2s ease; }
-    .form-control:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(10, 92, 54, 0.1); }
-    .form-control:focus + .input-icon, .input-wrapper:focus-within .input-icon { color: var(--primary-green); }
+    .desktop-lock-icon svg {
+      width: 1.65rem;
+      height: 1.65rem;
+    }
 
-    .password-toggle { position: absolute; right: 1.15rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; width: 1.25rem; height: 1.25rem; }
-    .password-toggle:hover { color: var(--text-main); }
+    .mobile-logo-icon {
+      display: none;
+    }
 
-    .caps-warning { display: none; color: #DC2626; font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; align-items: center; gap: 0.4rem; animation: fadeIn 0.2s ease; }
-    .caps-warning.active { display: flex; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .mobile-welcome-strip {
+      display: none;
+    }
 
-    .form-options { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; margin-bottom: 2.2rem; font-size: 0.9rem; font-weight: 600; }
-    .checkbox-wrap { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); }
-    .checkbox-wrap input { accent-color: var(--primary-green); width: 1.1rem; height: 1.1rem; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; }
-    
-    .forgot-link { color: var(--text-muted); transition: color 0.2s ease; }
-    .forgot-link:hover { color: var(--heading-green); text-decoration: underline; }
+    .mobile-welcome-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .mobile-welcome-badges {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mobile-mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-page);
+      border: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+    }
+
+    .mobile-mini-badge .material-symbols-outlined {
+      font-size: 0.9rem;
+      color: var(--heading-green);
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    .form-header h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .form-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.6rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1.15rem;
+      color: var(--text-muted);
+      pointer-events: none;
+      transition: color 0.2s ease;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 3.25rem;
+      padding: 0.5rem 1rem 0.5rem 3.2rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border-color);
+      background: transparent;
+      color: var(--text-main);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-green);
+      box-shadow: 0 0 0 4px rgba(10, 92, 54, 0.1);
+    }
+
+    .form-control:focus+.input-icon,
+    .input-wrapper:focus-within .input-icon {
+      color: var(--primary-green);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1.15rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    .password-toggle:hover {
+      color: var(--text-main);
+    }
+
+    .caps-warning {
+      display: none;
+      color: #DC2626;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.6rem;
+      align-items: center;
+      gap: 0.4rem;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .caps-warning.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      margin-bottom: 2.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .checkbox-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .checkbox-wrap input {
+      accent-color: var(--primary-green);
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .forgot-link:hover {
+      color: var(--heading-green);
+      text-decoration: underline;
+    }
 
     /* BUTTONS */
-    .auth-button-stack { display: flex; flex-direction: column; gap: 1rem; }
+    .auth-button-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-    .btn-submit { width: 100%; height: 3.5rem; background: var(--primary-green); color: #FFFFFF; font-size: 1.05rem; font-weight: 700; border-radius: var(--radius-sm); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s ease, transform 0.1s ease; box-shadow: var(--shadow-sm); }
-    .btn-submit:hover { background: var(--accent-green); transform: translateY(-1px); }
+    .btn-submit {
+      width: 100%;
+      height: 3.5rem;
+      background: var(--primary-green);
+      color: #FFFFFF;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s ease, transform 0.1s ease;
+      box-shadow: var(--shadow-sm);
+    }
 
-    .btn-ghana-card { width: 100%; height: 3.5rem; background: transparent; color: var(--text-main); font-size: 1.02rem; font-weight: 700; border-radius: var(--radius-sm); border: 1.5px solid var(--border-color); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; transition: all 0.2s ease; font-family: inherit; }
-    .btn-ghana-card:hover { border-color: var(--primary-green); color: var(--heading-green); background: rgba(10, 92, 54, 0.02); }
-    
-    .enroll-link { text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+    .btn-submit:hover {
+      background: var(--accent-green);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghana-card {
+      width: 100%;
+      height: 3.5rem;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 1.02rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-ghana-card:hover {
+      border-color: var(--primary-green);
+      color: var(--heading-green);
+      background: rgba(10, 92, 54, 0.02);
+    }
+
+    .enroll-link {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
 
     /* COMING SOON STATE */
-    .coming-soon-badge { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coop-gold); background: rgba(184, 134, 46, 0.12); border: 1px solid rgba(184, 134, 46, 0.35); padding: 0.4rem 0.9rem; border-radius: 50px; margin-bottom: 1.1rem; }
-    .coming-soon-badge .material-symbols-outlined { font-size: 0.95rem; }
-    .notify-form { display: flex; gap: 0.6rem; margin-bottom: 1.75rem; }
-    .notify-form .form-control { flex: 1; }
-    .notify-btn { background: var(--primary-green); color: #FFFFFF; font-weight: 700; font-size: 0.92rem; border: none; padding: 0 1.4rem; border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; transition: background 0.2s ease; font-family: inherit; }
-    .notify-btn:hover { background: var(--accent-green); }
-    .help-divider { display: flex; align-items: center; gap: 0.85rem; margin: 1.75rem 0 1.25rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
-    .help-divider::before, .help-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
-    .help-actions { display: flex; flex-direction: column; gap: 0.75rem; }
-    .btn-help-action { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.92rem; text-decoration: none; transition: all 0.2s ease; border: 1.5px solid var(--border-color); color: var(--text-main); }
-    .btn-help-action:hover { border-color: var(--primary-green); background: var(--primary-light); }
-    .btn-help-action.whatsapp { border-color: #25D366; color: #128C3E; background: rgba(37, 211, 102, 0.08); }
-    [data-theme="dark"] .btn-help-action.whatsapp { color: #34D399; }
-    .btn-help-action.whatsapp:hover { background: rgba(37, 211, 102, 0.15); }
-    .enroll-link a { color: var(--heading-green); font-weight: 800; transition: opacity 0.2s ease; }
-    .enroll-link a:hover { opacity: 0.8; text-decoration: underline; }
+    .coming-soon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--coop-gold);
+      background: rgba(184, 134, 46, 0.12);
+      border: 1px solid rgba(184, 134, 46, 0.35);
+      padding: 0.4rem 0.9rem;
+      border-radius: 50px;
+      margin-bottom: 1.1rem;
+    }
+
+    .coming-soon-badge .material-symbols-outlined {
+      font-size: 0.95rem;
+    }
+
+    .notify-form {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .notify-form .form-control {
+      flex: 1;
+    }
+
+    .notify-btn {
+      background: var(--primary-green);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: none;
+      padding: 0 1.4rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+      font-family: inherit;
+    }
+
+    .notify-btn:hover {
+      background: var(--accent-green);
+    }
+
+    .help-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin: 1.75rem 0 1.25rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .help-divider::before,
+    .help-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    .help-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-help-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-help-action:hover {
+      border-color: var(--primary-green);
+      background: var(--primary-light);
+    }
+
+    .btn-help-action.whatsapp {
+      border-color: #25D366;
+      color: #128C3E;
+      background: rgba(37, 211, 102, 0.08);
+    }
+
+    [data-theme="dark"] .btn-help-action.whatsapp {
+      color: #34D399;
+    }
+
+    .btn-help-action.whatsapp:hover {
+      background: rgba(37, 211, 102, 0.15);
+    }
+
+    .enroll-link a {
+      color: var(--heading-green);
+      font-weight: 800;
+      transition: opacity 0.2s ease;
+    }
+
+    .enroll-link a:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
 
     /* IN-FLOW BOTTOM FOOTER */
     .auth-footer-simple {
@@ -256,54 +727,186 @@
       gap: 1.25rem;
       font-size: 0.82rem;
       color: var(--text-muted);
-      margin-top: auto; /* Pushes to bottom */
+      margin-top: auto;
       padding-top: 3rem;
     }
-    .auth-footer-simple a { color: var(--text-main); font-weight: 600; transition: color 0.2s ease; }
-    .auth-footer-simple a:hover { color: var(--heading-green); }
-    .footer-divider { display: inline-block; width: 4px; height: 4px; background: var(--border-color); border-radius: 50%; }
 
-    /* FLOATING THEME TOGGLE */
-    .float-theme-btn { position: fixed; bottom: 2rem; left: 2rem; width: 3.5rem; height: 3.5rem; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); box-shadow: var(--shadow-lg); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; z-index: 9990; transition: all 0.2s ease; }
-    .float-theme-btn:hover { background: var(--primary-green); color: #FFFFFF; border-color: var(--primary-green); transform: scale(1.08); }
+    .auth-footer-simple a {
+      color: var(--text-main);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
 
-    .toast-notification { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%) translateY(-150%); background: #10241A; color: #FFFFFF; padding: 1rem 1.5rem; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 11000; display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 0.9rem; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; opacity: 0; pointer-events: none; }
-    .toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast-icon { display: inline-flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; color: #34D399; }
+    .auth-footer-simple a:hover {
+      color: var(--heading-green);
+    }
 
-    /* ==========================================
-       MOBILE RESPONSIVE
-       ========================================== */
+    .footer-divider {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 50%;
+    }
+
+    .float-theme-btn {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      box-shadow: var(--shadow-lg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 9990;
+      transition: all 0.2s ease;
+    }
+
+    .float-theme-btn:hover {
+      background: var(--primary-green);
+      color: #FFFFFF;
+      border-color: var(--primary-green);
+      transform: scale(1.08);
+    }
+
+    .toast-notification {
+      position: fixed;
+      top: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(-150%);
+      background: #10241A;
+      color: #FFFFFF;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 11000;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toast-notification.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #34D399;
+    }
+
     @media (max-width: 64rem) {
-      /* Unlock body scroll for mobile stacking */
-      html, body { height: auto; overflow: auto; }
-      
-      .auth-layout { flex-direction: column; align-items: center; height: auto; overflow: visible; }
-      .auth-visual { display: none; }
-      .auth-panel { width: 100%; height: auto; overflow-y: visible; padding: 2rem 1.5rem 5rem 1.5rem; justify-content: flex-start; }
-      
-      .auth-panel-header { justify-content: center; margin-bottom: 1.5rem; }
-      .form-container { max-width: 100%; padding: 0; }
-      .auth-card { padding: 2rem 1.5rem; border: none; box-shadow: none; background: transparent; }
+      html,
+      body {
+        height: auto;
+        overflow: auto;
+      }
 
-      .desktop-lock-icon { display: none !important; }
-      .mobile-logo-icon { display: block !important; width: 4.5rem; height: 4.5rem; border-radius: 0.65rem; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 1.5rem; background: #FFFFFF; padding: 0.2rem; margin-left: auto; margin-right: auto; }
-      .mobile-welcome-strip { display: flex !important; flex-direction: column; align-items: center; gap: 0.75rem; margin-bottom: 1.75rem; text-align: center; }
-      
-      .auth-footer-simple { flex-direction: column; gap: 0.65rem; margin-top: 3rem; text-align: center; }
-      .footer-divider { display: none; }
+      .auth-layout {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        overflow: visible;
+      }
 
-      .float-theme-btn { bottom: 1.5rem; left: 1.5rem; width: 3rem; height: 3rem; }
+      .auth-visual {
+        display: none;
+      }
+
+      .auth-panel {
+        width: 100%;
+        height: auto;
+        overflow-y: visible;
+        padding: 2rem 1.5rem 5rem 1.5rem;
+        justify-content: flex-start;
+      }
+
+      .auth-panel-header {
+        justify-content: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-container {
+        max-width: 100%;
+        padding: 0;
+      }
+
+      .auth-card {
+        padding: 2rem 1.5rem;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+      }
+
+      .desktop-lock-icon {
+        display: none !important;
+      }
+
+      .mobile-logo-icon {
+        display: block !important;
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 0.65rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        background: #FFFFFF;
+        padding: 0.2rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mobile-welcome-strip {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.75rem;
+        text-align: center;
+      }
+
+      .auth-footer-simple {
+        flex-direction: column;
+        gap: 0.65rem;
+        margin-top: 3rem;
+        text-align: center;
+      }
+
+      .footer-divider {
+        display: none;
+      }
+
+      .float-theme-btn {
+        bottom: 1.5rem;
+        left: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div id="toastNotification" class="toast-notification"></div>
 
   <main class="auth-layout">
-    
-    <!-- LEFT SIDE: CSS TRUST WIDGET (STATIC) -->
+
     <section class="auth-visual">
       <div class="auth-visual-content">
         <a href="{% url 'home' %}" class="auth-logo">
@@ -312,125 +915,106 @@
         </a>
 
         <div class="css-trust-widget">
-          <div class="trust-eyebrow">Zero-Trust Security Portal</div>
+          <div class="trust-eyebrow">Member Security First</div>
           <h2>Bank-grade protection for your <span>share capital.</span></h2>
-          <p>End-to-end encrypted identity verification. Maker-Checker sign-off controls for all disbursements. Full CUA Loan Protection Plan (LPP) privacy guaranteed.</p>
-          
+
+          <p>Strict CUA-compliant verification protocols. Maker-Checker sign-off controls for all disbursements. Full
+            CUA Loan Protection Plan (LPP) privacy guaranteed.</p>
+
           <div class="security-badges">
             <div class="badge-item">
               <div class="badge-icon">
-                <!-- Premium Outline Shield Check -->
                 <span class="material-symbols-outlined">gpp_good</span>
               </div>
               <span>100% CUA Insured</span>
             </div>
             <div class="badge-item">
               <div class="badge-icon">
-                <!-- Premium Outline Biometric Fingerprint -->
-                <span class="material-symbols-outlined">fingerprint</span>
+                <span class="material-symbols-outlined">lock</span>
               </div>
-              <span>Biometric Sign-Off</span>
+              <span>Data Privacy</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- RIGHT SIDE: FORM PORTAL (SCROLLABLE) -->
     <section class="auth-panel">
-      
+
       <div class="auth-panel-header">
         <a href="{% url 'home' %}" class="back-btn">
+          <span class="icon-svg"><span class="material-symbols-outlined"
+              style="font-size:1.1rem;">arrow_back</span></span>
           Back to Main Site
-          <!-- Premium Outline Arrow Right -->
-          <span class="icon-svg"><span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_forward</span></span>
         </a>
       </div>
 
       <div class="form-container">
-        
+
         <div class="auth-card">
           <div class="form-header">
             <div class="desktop-lock-icon">
               <!-- Premium Outline Lock -->
               <span class="material-symbols-outlined">lock</span>
             </div>
-            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="mobile-logo-icon" onerror="this.style.display='none';">
+            <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo" class="mobile-logo-icon"
+              onerror="this.style.display='none';">
 
             <div class="mobile-welcome-strip">
               <span class="mobile-welcome-text">Welcome back — glad to see you.</span>
               <div class="mobile-welcome-badges">
-                <span class="mobile-mini-badge"><span class="material-symbols-outlined">gpp_good</span>100% CUA Insured</span>
-                <span class="mobile-mini-badge"><span class="material-symbols-outlined">fingerprint</span>Biometric Sign-Off</span>
+                <span class="mobile-mini-badge"><span class="material-symbols-outlined">gpp_good</span>100% CUA
+                  Insured</span>
+                <span class="mobile-mini-badge"><span class="material-symbols-outlined">lock</span>Data Privacy</span>
               </div>
             </div>
-            
-            <h2>Member Login</h2>
-            <p>Access your financial dashboard</p>
+
+            <span class="coming-soon-badge"><span class="material-symbols-outlined">schedule</span>Launching Soon</span>
+            <h2>Member Portal — On Its Way</h2>
+            <p>We're building a secure digital dashboard for your savings, loans, and dividends. Leave your email and
+              we'll notify you the moment it opens.</p>
           </div>
 
-          <form id="loginForm" onsubmit="handleLogin(event)">
-            
-            <div class="form-group">
-              <label for="memberId">Member ID or Phone Number</label>
-              <div class="input-wrapper">
-                <!-- Premium Outline User -->
-                <span class="icon-svg input-icon"><span class="material-symbols-outlined">person</span></span>
-                <input type="text" id="memberId" class="form-control" placeholder="e.g. GCP-1045" required autocomplete="username">
-              </div>
-            </div>
-
+          <form id="notifyForm"
+            onsubmit="event.preventDefault(); showToast('Thanks — we\'ll email you the moment the portal launches.', 'success'); this.reset();">
             <div class="form-group" style="margin-bottom: 0;">
-              <label for="password">Secure PIN / Password</label>
-              <div class="input-wrapper">
-                <!-- Premium Outline Lock -->
-                <span class="icon-svg input-icon"><span class="material-symbols-outlined">lock</span></span>
-                <input type="password" id="password" class="form-control mono" placeholder="••••••••" required autocomplete="current-password">
-                <button type="button" class="password-toggle" id="togglePasswordBtn" aria-label="Toggle password visibility">
-                  <!-- JS sets this to Eye Closed Outline on load -->
-                  <span class="icon-svg" id="eyeIcon"></span>
-                </button>
+              <label for="notifyEmail">Email address</label>
+              <div class="notify-form">
+                <div class="input-wrapper" style="flex:1;">
+                  <span class="icon-svg input-icon"><span class="material-symbols-outlined">mail</span></span>
+                  <input type="email" id="notifyEmail" class="form-control" placeholder="you@example.com" required
+                    autocomplete="email">
+                </div>
+                <button type="submit" class="notify-btn">Notify Me</button>
               </div>
-              <div class="caps-warning" id="capsWarning">
-                <!-- Premium Outline Warning -->
-                <span class="icon-svg"><span class="material-symbols-outlined">warning</span></span>
-                Caps Lock is ON
-              </div>
-            </div>
-
-            <div class="form-options">
-              <label class="checkbox-wrap">
-                <input type="checkbox" id="rememberMe">
-                <span>Remember me</span>
-              </label>
-              <a href="#" class="forgot-link" onclick="showToast('Password reset instructions sent.', 'success'); return false;">Forgot PIN?</a>
-            </div>
-
-            <div class="auth-button-stack">
-              <button type="submit" class="btn-submit" id="submitBtn">
-                Sign In Securely
-              </button>
-              
-              <button type="button" class="btn-ghana-card" onclick="showToast('Connecting to Smile Identity...', 'success')">
-                <!-- Premium Outline ID Card -->
-                <span class="icon-svg"><span class="material-symbols-outlined">badge</span></span>
-                Sign in with Ghana Card
-              </button>
             </div>
           </form>
+
+          <div class="help-divider">Need something before then?</div>
+          <div class="help-actions">
+            <a href="https://wa.me/233548685362" target="_blank" class="btn-help-action whatsapp">
+              <span class="material-symbols-outlined">chat</span>
+              Chat with a Member Officer
+            </a>
+            <a href="{% url 'downloads' %}" class="btn-help-action">
+              <span class="material-symbols-outlined">description</span>
+              Download Paper Application Forms
+            </a>
+          </div>
 
           <div class="enroll-link">
             Not a member yet? <a href="{% url 'downloads' %}#membership-form">Apply for Membership</a>
           </div>
 
-        </div> 
-      </div> 
-      
-      <!-- RESTORED: IN-FLOW BOTTOM FOOTER -->
+        </div>
+      </div>
+
       <div class="auth-footer-simple">
         <span>Need Help? <a href="https://wa.me/233548685362" target="_blank">Chat with Support</a></span>
         <span class="footer-divider"></span>
-        <span>Powered by <a href="https://wa.me/+233245641987?text=Hello%20Wiselyn%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services." target="_blank" style="color: var(--coop-gold); font-weight: 800;">Wiselyn Spear Solutions</a></span>
+        <span>Powered by <a
+            href="https://wa.me/+233245641987?text=Hello%20Wiselyn%20Spear%20Solutions!%20I%20saw%20the%20GCPCUL%20web%20portal%20and%20I'm%20interested%20in%20your%20software%20development%20and%20IT%20services."
+            target="_blank" style="color: var(--coop-gold); font-weight: 800;">Wiselyn Spear Solutions</a></span>
       </div>
 
     </section>
@@ -438,77 +1022,30 @@
 
   <button class="float-theme-btn" id="floatThemeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Theme">
     <span class="icon-svg" id="floatThemeIcon">
-      <!-- Default Moon Icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+      </svg>
     </span>
   </button>
 
   <script>
-    // --- Outline Eye Icons ---
-    const eyeOpen = '<span class="material-symbols-outlined">visibility</span>';
-    const eyeClosed = '<span class="material-symbols-outlined">visibility_off</span>';
-
-    // Set initial eye icon
-    const eyeIcon = document.getElementById('eyeIcon');
-    if (eyeIcon) eyeIcon.innerHTML = eyeClosed;
-
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toastNotification');
-      const iconSvg = type === 'success' 
+      const iconSvg = type === 'success'
         ? '<span class="material-symbols-outlined">gpp_good</span>'
         : '<span class="material-symbols-outlined">warning</span>';
-      
+
       toast.className = `toast-notification toast-${type} show`;
       toast.innerHTML = `<span class="icon-svg toast-icon">${iconSvg}</span><span>${message}</span>`;
       setTimeout(() => { toast.classList.remove('show'); }, 3500);
     }
 
-    const passwordInput = document.getElementById('password');
-    const capsWarning = document.getElementById('capsWarning');
-    
-    if(passwordInput && capsWarning) {
-      passwordInput.addEventListener('keyup', function(e) {
-        if (e.getModifierState('CapsLock')) {
-          capsWarning.classList.add('active');
-        } else {
-          capsWarning.classList.remove('active');
-        }
-      });
-      passwordInput.addEventListener('blur', function() {
-          capsWarning.classList.remove('active');
-      });
-    }
-
-    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    
-    if (togglePasswordBtn && passwordInput && eyeIcon) {
-      togglePasswordBtn.addEventListener('click', () => {
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        eyeIcon.innerHTML = type === 'password' ? eyeOpen : eyeClosed;
-      });
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      const originalText = btn.innerHTML;
-      
-      btn.innerHTML = '<span class="icon-svg spin-icon"><span class="material-symbols-outlined">progress_activity</span></span>';
-      btn.disabled = true;
-
-      setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        showToast('Connecting to Portal...', 'success');
-      }, 1500);
-    }
-
     const floatThemeBtn = document.getElementById('floatThemeToggleBtn');
     const savedTheme = localStorage.getItem('gcpcul-theme') || 'light';
-    
-    if (savedTheme === 'dark') { 
-      document.documentElement.setAttribute('data-theme', 'dark'); 
+
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
     }
 
     if (floatThemeBtn) {
@@ -525,4 +1062,5 @@
     }
   </script>
 </body>
+
 </html>

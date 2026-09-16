@@ -5,11 +5,6 @@
 
 {% block extra_css %}
 <style>
-  /* ==========================================
-       GALLERY PAGE SPECIFIC STYLES
-       ========================================== */
-
-  /* CINEMATIC KEN BURNS HERO SECTION */
   .gallery-hero {
     position: relative;
     padding: clamp(4.5rem, 7vw, 6.5rem) 0;
@@ -166,22 +161,15 @@
     align-items: center;
     gap: 0.5rem;
     flex-wrap: nowrap;
-    /* Forces a single line */
     overflow-x: auto;
-    /* Enables horizontal swiping */
     -webkit-overflow-scrolling: touch;
-    /* Momentum scrolling for iOS */
     scrollbar-width: none;
-    /* Hides scrollbar in Firefox */
     -ms-overflow-style: none;
-    /* Hides scrollbar in IE/Edge */
     padding-bottom: 4px;
-    /* Prevents shadow clipping */
   }
 
   .filter-tabs::-webkit-scrollbar {
     display: none;
-    /* Hides scrollbar in Chrome/Safari/Brave */
   }
 
   .filter-tab-btn {
@@ -196,9 +184,7 @@
     transition: all 0.2s ease;
     font-family: inherit;
     flex-shrink: 0;
-    /* Prevents buttons from squishing */
     white-space: nowrap;
-    /* Keeps text on one line */
   }
 
   .filter-tab-btn:hover,
@@ -231,7 +217,6 @@
     border-color: var(--coop-gold);
   }
 
-  /* LEVEL 1: ALBUM DIRECTORY (PHYSICAL STACK) */
   .albums-section {
     padding: clamp(4.5rem, 6vw, 6.5rem) 0;
     background: var(--bg-section-alt);
@@ -400,7 +385,6 @@
     margin-bottom: 0.5rem;
   }
 
-  /* LEVEL 2: DETAILED PHOTO/VIDEO GRID */
   .photo-grid-view {
     display: none;
     padding: clamp(3rem, 5vw, 5rem) 0;
@@ -559,7 +543,6 @@
     display: none;
   }
 
-  /* STICKY BATCH DOWNLOAD BAR */
   .batch-action-bar {
     position: fixed;
     bottom: 2rem;
@@ -582,7 +565,6 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* HYBRID FULL-SCREEN LIGHTBOX MODAL */
   .carousel-lightbox {
     position: fixed;
     inset: 0;
@@ -779,7 +761,6 @@
     border-color: #FFFFFF;
   }
 
-  /* GALLERY SPECIFIC TOAST (Inherited from original gallery logic) */
   .toast-notification {
     position: fixed;
     top: 2rem;
@@ -871,10 +852,9 @@
 {% endblock %}
 
 {% block content %}
-<!-- TOAST NOTIFICATION CONTAINER (Specific to Gallery Logic) -->
 <div id="toastNotification" class="toast-notification"></div>
 
-<!-- CINEMATIC KEN BURNS HERO SECTION -->
+<!-- HERO SECTION -->
 <section class="gallery-hero">
   <img src="{% static 'assets/images/gallery-backdrop.png' %}" alt="Gallery Hero Background" class="hero-bg-anim">
   <div class="hero-bg-overlay"></div>
@@ -931,7 +911,6 @@
   </div>
 </div>
 
-<!-- LEVEL 1: ALBUMS DIRECTORY -->
 <section class="albums-section" id="albumsDirectorySection">
   <div class="container">
 
@@ -1037,7 +1016,6 @@
   </div>
 </section>
 
-<!-- LEVEL 2: DETAILED PHOTO/VIDEO GRID -->
 <section class="photo-grid-view" id="photoGridViewSection">
   <div class="container">
     <div class="album-breadcrumb-bar">
@@ -1058,7 +1036,6 @@
   </div>
 </section>
 
-<!-- STICKY MULTI-SELECT BATCH DOWNLOAD ACTION BAR -->
 <div class="batch-action-bar" id="batchActionBar">
   <div>
     <strong id="batchSelectedCountText"
@@ -1071,7 +1048,6 @@
   </button>
 </div>
 
-<!-- HYBRID FULL-SCREEN LIGHTBOX MODAL -->
 <div class="carousel-lightbox" id="carouselLightboxModal">
   <div class="lightbox-top-bar">
     <div class="lightbox-top-title-wrap">
@@ -1108,7 +1084,6 @@
 
 {% block extra_js %}
 <script>
-  /* CUSTOM PREMIUM TOAST NOTIFICATION FOR GALLERY */
   function showToast(message, type = 'success') {
     const toast = document.getElementById('toastNotification');
     const iconSvg = type === 'success'
@@ -1165,7 +1140,6 @@
   let isBatchMode = false;
   let selectedPhotoSet = new Set();
 
-  /* FORCE DOWNLOAD VIA BLOB */
   async function forceDownload(e, url, filename, btnElement, btnId) {
     e.preventDefault();
     const originalText = document.getElementById(btnId).textContent;
