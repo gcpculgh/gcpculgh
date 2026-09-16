@@ -1,6 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import * 
-from administrator.models import NewsArticle
+from administrator.models import *
+from django.contrib import messages
+from administrator.forms import * 
+
 
 # Create your views here.
 def home(request):
@@ -75,3 +78,26 @@ def contact(request):
 
 def email_image(request):
     return render(request, "email-image.html")
+
+def handle_waitlist_signup(request):
+    if request.method == 'POST':
+        form = PortalWaitlistForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "You're on the list! We'll email you the moment the portal opens.")
+        else:
+            error_msg = form.errors.get('email', ['Invalid email address.'])[0]
+            messages.error(request, error_msg)
+    return redirect('home')  # Or change to your landing page name if different
+
+
+def handle_newsletter_signup(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Thanks for subscribing to GCPCUL financial updates.")
+        else:
+            error_msg = form.errors.get('email', ['Invalid email address.'])[0]
+            messages.error(request, error_msg)
+    return redirect('home')  # Or your relevant view/page name
