@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # DEBUG = config("DEBUG", default=False, cast=bool)
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST_1"), os.getenv("ALLOWED_HOST_2"), os.getenv("ALLOWED_HOST_3"), os.getenv("ALLOWED_HOST_4")]
-
+# ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST_1"), os.getenv("ALLOWED_HOST_2"), os.getenv("ALLOWED_HOST_3"), os.getenv("ALLOWED_HOST_4")]
+ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

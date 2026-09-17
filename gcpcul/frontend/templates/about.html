@@ -545,15 +545,16 @@
     }
   }
 
-  /* MODAL ARCHITECTURE FOR BIOS */
+  /* MODAL ARCHITECTURE FOR BIOS - PREMIUM FINTECH UPGRADE */
   .bio-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(16, 36, 26, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(10, 25, 18, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -561,7 +562,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .bio-modal-overlay.active {
@@ -572,83 +573,140 @@
   .bio-modal-content {
     background: var(--bg-card);
     width: 100%;
-    max-width: 42rem;
-    max-height: 85vh;
+    max-width: 44rem;
+    max-height: 88vh;
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
     overflow-y: auto;
     position: relative;
-    transform: translateY(20px) scale(0.98);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    padding: 2.5rem;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 3rem;
   }
 
   .bio-modal-overlay.active .bio-modal-content {
     transform: translateY(0) scale(1);
   }
 
+  /* The Close Button - Floating & Interactive */
   .bio-modal-close {
     position: absolute;
-    top: 1.25rem;
-    right: 1.25rem;
+    top: 1.5rem;
+    right: 1.5rem;
     background: var(--bg-section-alt);
     border: 1px solid var(--border-color);
     color: var(--text-muted);
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 10;
   }
 
   .bio-modal-close:hover {
     background: #FEE2E2;
     color: #DC2626;
     border-color: #FCA5A5;
+    transform: rotate(90deg);
   }
 
+  /* Desktop Header Layout */
   .bio-modal-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
+    gap: 1.75rem;
+    margin-bottom: 2.25rem;
+    padding-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
   }
 
   .bio-modal-header img {
-    width: 5rem;
-    height: 5rem;
+    width: 6.5rem;
+    height: 6.5rem;
     border-radius: 50%;
     object-fit: cover;
-    object-position: top; /* Anchors the crop to the face */
-    border: 3px solid var(--primary-light);
+    object-position: top;
+    border: 4px solid var(--bg-page);
+    box-shadow: 0 0 0 2px var(--primary-light); /* Premium double-ring effect */
+    flex-shrink: 0; 
   }
 
   .bio-modal-header h3 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 800;
     color: var(--text-main);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
   }
 
+  /* Title Badge */
   .bio-modal-header span {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--coop-gold);
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    display: inline-block;
+    background: rgba(184, 134, 46, 0.1);
+    padding: 0.4rem 0.85rem;
+    border-radius: 50px;
   }
 
+  /* Typography */
   .bio-modal-body p {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
-    line-height: 1.7;
-    margin-bottom: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  
+  .bio-modal-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* THE MOBILE ARCHITECTURE (Fixes the Squish) */
+  @media (max-width: 48rem) {
+    .bio-modal-content {
+      padding: 3.5rem 1.5rem 1.5rem 1.5rem;
+      max-height: 92vh;
+    }
+    
+    /* Flip from row to column and center everything */
+    .bio-modal-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .bio-modal-header img {
+      width: 6rem;
+      height: 6rem;
+    }
+    
+    /* Scale the font down slightly so long names don't break */
+    .bio-modal-header h3 {
+      font-size: 1.4rem; 
+      margin-bottom: 0.35rem;
+    }
+
+    .bio-modal-close {
+      top: 1rem;
+      right: 1rem;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .bio-modal-body p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
   }
 </style>
 {% endblock %}
@@ -1180,6 +1238,7 @@
 </section>
 
 <!-- THE MODALS -->
+<!-- THE MODALS -->
 <div class="bio-modal-overlay" id="modal-eric" onclick="closeBio(event, 'modal-eric')">
   <div class="bio-modal-content">
     <button class="bio-modal-close" onclick="forceClose('modal-eric')"><span class="material-symbols-outlined">close</span></button>
@@ -1191,9 +1250,11 @@
       </div>
     </div>
     <div class="bio-modal-body">
-      <p>Eric Adjei-Yeboah is a professional Finance and Investment Banker with over twenty-one (21) years of experience. He is a results-driven Financial Service Professional, Investment Banker, and Legal Student. Prior to GCPCUL, Eric was the Head of Wealth Management Department at UMB Investment Holdings Limited (now Merban Capital Ltd), where he managed Collective Investment Schemes, Trustee Business, and High Net Worth Portfolio Management.</p>
-      <p>He began his investment banking career with Merchant Bank's Ghana Limited in 2004 and rose through the ranks, acquiring deep knowledge in Banking, Finance, and Products Development. He also formerly served as the CEO for ASN Investment Holdings Limited from 2015 to 2017.</p>
-      <p>Eric holds a Bachelor of Laws (LLB), a Professional Executive Master in Alternative Dispute Resolution (ADR), an MSc (Finance Option) from GIMPA, a Master of Art in Ministry (MAM), and a Bachelor of Business Administration (BBA). He is a licensed Fund Manager Representative and holds certificates in Capital Market and Securities Analysis.</p>
+      <p>Eric Adjei – Yeboah, is a professional Finance and Investment Banker with over twenty (21) years of experience. Eric is results-driven Financial Service Professional, Investment Banker and a Legal Student. Currently working with Ghana Co-operative Pharmacists Credit Union Limited as the Chief Executive Officer.</p>
+      <p>Prior to this position, Eric was the Head of Wealth Management Department at UMB Investment Holdings Limited now Merban Capital Ltd. Eric was in charge of Collective Investment Schemes, Trustee Business, High Net Worth Portfolio Management and a Legal Deponent for the company.</p>
+      <p>Eric began his investment banking career with Merchant Bank’s Ghana Limited now Universal Merchant Bank (UMB) in the year 2004 and was elevated through the ranks of the bank over the years. Eric has a good knowledge in Banking, Finance and Investment, Marketing and Products Developments. He also worked with Cocoa Processing Company as an account trainee at the Finished Products Stores at Tema Industrial Area.</p>
+      <p>Eric was formerly the Chief Executive Officer for ASN Investment Holdings Limited as of late 2015 till early 2017.</p>
+      <p>Eric holds Bachelor of Laws (LLB), Professional Executive Master in Alternative Dispute Resolution (ADR) and a Certified Member of Ghana National Association of ADR Practitioners (GNAAP), MSc. (Finance Option) from the Ghana Institute of Management and Public Administration (GIMPA), Master of Art in Ministry ((MAM), Trinity Theological Seminary- Legon), Bachelor of Business Administration (BBA) from Methodist University College, Ghana Stock Exchange Course and as a licensed Fund Manager Representative, Level Three (3) at Chartered Institute of Bankers. Certificates in Money Market and Practices, Capital Market and Securities Analysis and Portfolio Structuring.</p>
     </div>
   </div>
 </div>
@@ -1209,9 +1270,9 @@
       </div>
     </div>
     <div class="bio-modal-body">
-      <p>Yompab Joseph Nanoni Baaman (C.A.) possesses an extensive 18-year career in Accounting and Finance, including 6 years of experience as a Chartered Accountant. He is a qualified Chartered Accountant and a member of The Institute of Chartered Accountants, Ghana (ICAG).</p>
-      <p>He holds a Master of Science in Accounting and Finance and a Bachelor of Science in Business Administration (Accounting) from the Kwame Nkrumah University of Science and Technology (KNUST) Business School. He is currently pursuing final-level professional courses with the Chartered Institute of Bankers Ghana and the Chartered Institute of Taxation Ghana.</p>
-      <p>His professional experience includes significant roles within the Rural and Community Banking and Financial Services sectors before taking on his current role managing GCPCUL's finances.</p>
+      <p>Yompab Joseph Nanoni Baaman-C. A possesses an extensive 18-year career in Accounting and Finance, including 6 years of experience as a Chartered Accountant. He is a qualified Chartered Accountant and a member of The Institute of Chartered Accountants, Ghana (ICAG).</p>
+      <p>He holds a Master of Science in Accounting and Finance and a Bachelor of Science in Business Administration with a concentration in Accounting, both from the Kwame Nkrumah University of Science and Technology (KNUST) Business School. Currently, he is pursuing final-level professional courses with the Chartered Institute of Bankers Ghana and the Chartered Institute of Taxation Ghana.</p>
+      <p>His professional experience includes significant roles within the Rural and Community Banking and Financial Services sectors. He is currently serving as the Senior Accountant at the Ghana Cooperative Pharmacists’ Credit Union.</p>
     </div>
   </div>
 </div>
@@ -1227,9 +1288,11 @@
       </div>
     </div>
     <div class="bio-modal-body">
-      <p>Okyere Michael Owusu is a Business Development and Account Management professional with over 15 years of experience in sales, client relationship management, and revenue growth across the financial and development sectors.</p>
-      <p>At GCPCUL, he drives business development initiatives, manages member relationships across all branches, spearheads deposits and loan portfolio growth, and identifies opportunities for membership expansion. He has managed extensive client engagements, including outbound engagement with over 5,000 clients across five regions.</p>
+      <p>Okyere Michael Owusu is a Business Development and Account Management professional with over 15 years of experience in sales, business development, client relationship management and revenue growth across the financial, services and development sectors.</p>
+      <p>At Ghana Co-operative Pharmacists’ Credit Union Limited (GCPCUL), he is responsible for driving business development initiatives, managing member relationships across all branches, spearheading deposits and loan portfolio growth, and identifying opportunities for membership and business expansion. He also coordinates sales activities, relationship management and market engagement through various channels.</p>
+      <p>His professional experience also includes regional sales leadership, client engagement, account and operations support, market research and business development. He has managed extensive client engagements, including outbound engagement with over 5,000 clients across five regions.</p>
       <p>Okyere holds a Bachelor of Business Administration (BBA) from the University of Professional Studies, Accra, a Certificate in Entrepreneurship and Small Business Management from GIMPA, and a Diploma in Business Studies (Accounting) from Koforidua Polytechnic.</p>
+      <p>His professional strength lies in combining account management, business development, sales strategy and relationship management to drive sustainable business growth and deliver value to members and stakeholders.</p>
     </div>
   </div>
 </div>
