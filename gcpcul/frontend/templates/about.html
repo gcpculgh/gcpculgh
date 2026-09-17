@@ -669,11 +669,20 @@
     margin-bottom: 0;
   }
 
-  /* THE MOBILE ARCHITECTURE (Fixes the Squish) */
+  /* THE MOBILE ARCHITECTURE (Premium Safe Zones) */
   @media (max-width: 48rem) {
+    .bio-modal-overlay {
+      padding: 1.5rem; /* Forces space between the modal and the phone screen edges */
+    }
+
     .bio-modal-content {
-      padding: 3.5rem 1.5rem 1.5rem 1.5rem;
-      max-height: 92vh;
+      /* TOP: 3.5rem (leaves room for the close button) 
+         SIDES: 1.5rem (clean text margins)
+         BOTTOM: 6rem (Forces the text to scroll high above the WhatsApp widget) */
+      padding: 3.5rem 1.5rem 6rem 1.5rem;
+      
+      /* Restricts the card height so it floats nicely in the center of the screen */
+      max-height: 75vh; 
     }
     
     /* Flip from row to column and center everything */
@@ -696,9 +705,10 @@
       margin-bottom: 0.35rem;
     }
 
+    /* Bring the close button slightly inward so it doesn't touch the screen edge */
     .bio-modal-close {
-      top: 1rem;
-      right: 1rem;
+      top: 1.25rem;
+      right: 1.25rem;
       width: 2.25rem;
       height: 2.25rem;
     }
@@ -1254,7 +1264,7 @@
       <p>Prior to this position, Eric was the Head of Wealth Management Department at UMB Investment Holdings Limited now Merban Capital Ltd. Eric was in charge of Collective Investment Schemes, Trustee Business, High Net Worth Portfolio Management and a Legal Deponent for the company.</p>
       <p>Eric began his investment banking career with Merchant Bank’s Ghana Limited now Universal Merchant Bank (UMB) in the year 2004 and was elevated through the ranks of the bank over the years. Eric has a good knowledge in Banking, Finance and Investment, Marketing and Products Developments. He also worked with Cocoa Processing Company as an account trainee at the Finished Products Stores at Tema Industrial Area.</p>
       <p>Eric was formerly the Chief Executive Officer for ASN Investment Holdings Limited as of late 2015 till early 2017.</p>
-      <p>Eric holds Bachelor of Laws (LLB), Professional Executive Master in Alternative Dispute Resolution (ADR) and a Certified Member of Ghana National Association of ADR Practitioners (GNAAP), MSc. (Finance Option) from the Ghana Institute of Management and Public Administration (GIMPA), Master of Art in Ministry ((MAM), Trinity Theological Seminary- Legon), Bachelor of Business Administration (BBA) from Methodist University College, Ghana Stock Exchange Course and as a licensed Fund Manager Representative, Level Three (3) at Chartered Institute of Bankers. Certificates in Money Market and Practices, Capital Market and Securities Analysis and Portfolio Structuring.</p>
+      <p>Eric holds Bachelor of Laws (LLB), Professional Executive Master in Alternative Dispute Resolution (ADR) and a Certified Member of Ghana National Association of ADR Practitioners (GNAAP), MSc. (Finance Option) from the Ghana Institute of Management and Public Administration (GIMPA), Master of Art in Ministry (MAM), Trinity Theological Seminary- Legon), Bachelor of Business Administration (BBA) from Methodist University College, Ghana Stock Exchange Course and as a licensed Fund Manager Representative, Level Three (3) at Chartered Institute of Bankers. Certificates in Money Market and Practices, Capital Market and Securities Analysis and Portfolio Structuring.</p>
     </div>
   </div>
 </div>
