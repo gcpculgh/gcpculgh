@@ -544,6 +544,111 @@
       gap: 2.5rem;
     }
   }
+
+  /* MODAL ARCHITECTURE FOR BIOS */
+  .bio-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(16, 36, 26, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 1.5rem;
+  }
+
+  .bio-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .bio-modal-content {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 42rem;
+    max-height: 85vh;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    position: relative;
+    transform: translateY(20px) scale(0.98);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 2.5rem;
+  }
+
+  .bio-modal-overlay.active .bio-modal-content {
+    transform: translateY(0) scale(1);
+  }
+
+  .bio-modal-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: var(--bg-section-alt);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .bio-modal-close:hover {
+    background: #FEE2E2;
+    color: #DC2626;
+    border-color: #FCA5A5;
+  }
+
+  .bio-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .bio-modal-header img {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-light);
+  }
+
+  .bio-modal-header h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.25rem;
+  }
+
+  .bio-modal-header span {
+    font-size: 0.9rem;
+    color: var(--coop-gold);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .bio-modal-body p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
 </style>
 {% endblock %}
 
@@ -614,7 +719,7 @@
       <div class="founder-card">
         <img class="founder-photo"
           src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=200"
-          alt="Mr. E.Y Sese".>
+          alt="Mr. E.Y Sese">
         <div class="founder-info">
           <h4>Mr. E.Y Sese</h4>
           <p>Chairman</p>
@@ -697,65 +802,83 @@
   </div>
 </section>
 
+<!-- MISSION & VISION -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span>Our Core Purpose</span>
+      <h2>Mission, Vision & Core Values</h2>
+      <p style="color: var(--primary-green); font-weight: 700; font-style: italic; margin-top: 1rem;">"In our hands you are safe!"</p>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-card">
+        <div class="icon-svg"><span class="material-symbols-outlined">flag</span></div>
+        <h3>Our Mission</h3>
+        <p>To serve registered Pharmacists, other health professionals, and prequalified members by offering affordable and accessible financial services while promoting financial well-being, community development, and social responsibility.</p>
+      </div>
+      <div class="mission-card">
+        <div class="icon-svg"><span class="material-symbols-outlined">visibility</span></div>
+        <h3>Our Vision</h3>
+        <p>To become a financial partner of choice responding to all member needs whilst maintaining the Co-operative identity.</p>
+      </div>
+      <div class="mission-card">
+        <div class="icon-svg"><span class="material-symbols-outlined">verified</span></div>
+        <h3>Core Values</h3>
+        <ul style="color: var(--text-muted); line-height: 1.75; font-size: 1.05rem; padding-left: 1.5rem;">
+          <li><strong>Member centered:</strong> Focused entirely on your growth.</li>
+          <li><strong>Honesty & integrity:</strong> Complete transparency in all dealings.</li>
+          <li><strong>Professionalism:</strong> Expert management of your wealth.</li>
+          <li><strong>Community development:</strong> Uplifting our shared ecosystem.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE MANAGEMENT TEAM -->
 <section class="section" id="team" style="background: var(--bg-section-alt);">
   <div class="container">
     <div class="section-header">
-      <span>Executive Board</span>
-      <h2>Meet Our Leadership</h2>
+      <span>Operational Leadership</span>
+      <h2>Meet the Management Team</h2>
+      <p style="color: var(--text-muted); max-width: 48rem; margin: 1rem auto 0;">
+        Guided by decades of financial expertise, our operational leadership is dedicated to growing your wealth and protecting your cooperative identity.
+      </p>
     </div>
-    <div class="team-grid">
 
-      <div class="team-card">
-        <div class="team-photo-wrap">
-          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80"
-            alt="Dr. Richard K. Awuah">
-          <div class="team-overlay">
-            <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18"
-                viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg></a>
-          </div>
-        </div>
-        <div class="team-info">
-          <h4>Dr. Richard K. Awuah</h4>
-          <p>Board Chairman</p>
-        </div>
+    <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem;">
+      
+      <!-- CEO Card -->
+      <div class="team-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2.5rem 2rem; text-align: center; box-shadow: var(--shadow-sm);">
+        <img src="{% static 'assets/images/team/eric-adjei-yeboah.jpeg' %}" alt="Eric Adjei-Yeboah" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem auto; border: 4px solid var(--primary-light); display: block;">
+        <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">Eric Adjei-Yeboah</h4>
+        <span style="display: block; font-size: 0.85rem; color: var(--coop-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Chief Executive Officer</span>
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+          A professional Finance and Investment Banker with over 21 years of experience driving wealth management.
+        </p>
+        <button class="btn btn-outline btn-sm" onclick="openBio('modal-eric')">Read Full Profile</button>
       </div>
 
-      <div class="team-card">
-        <div class="team-photo-wrap">
-          <img src="{% static 'assets/images/enoch-apratum-landing.png' %}" alt="Michael Owusu">
-          <div class="team-overlay">
-            <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18"
-                viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg></a>
-          </div>
-        </div>
-        <div class="team-info">
-          <h4>Michael Owusu</h4>
-          <p>General Manager</p>
-        </div>
+      <!-- Senior Accountant Card -->
+      <div class="team-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2.5rem 2rem; text-align: center; box-shadow: var(--shadow-sm);">
+        <img src="{% static 'assets/images/team/yompab-joseph.jpeg' %}" alt="Yompab Joseph Nanoni Baaman" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem auto; border: 4px solid var(--primary-light); display: block;">
+        <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">Yompab Joseph Nanoni Baaman</h4>
+        <span style="display: block; font-size: 0.85rem; color: var(--coop-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Senior Accountant</span>
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+          A Chartered Accountant with an 18-year career in Accounting, Finance, and Rural Banking sectors.
+        </p>
+        <button class="btn btn-outline btn-sm" onclick="openBio('modal-joseph')">Read Full Profile</button>
       </div>
 
-      <div class="team-card">
-        <div class="team-photo-wrap">
-          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
-            alt="Pharm. Sarah Asiamah">
-          <div class="team-overlay">
-            <a href="#" class="team-social-btn" aria-label="LinkedIn Profile"><svg width="18" height="18"
-                viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg></a>
-          </div>
-        </div>
-        <div class="team-info">
-          <h4>Pharm. Sarah Asiamah</h4>
-          <p>Head of Loans Committee</p>
-        </div>
+      <!-- Business Dev Executive Card -->
+      <div class="team-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2.5rem 2rem; text-align: center; box-shadow: var(--shadow-sm);">
+        <img src="{% static 'assets/images/team/okyere-michael.jpeg' %}" alt="Okyere Michael Owusu" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; margin: 0 auto 1.5rem auto; border: 4px solid var(--primary-light); display: block;">
+        <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">Okyere Michael Owusu</h4>
+        <span style="display: block; font-size: 0.85rem; color: var(--coop-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Business Dev. Executive</span>
+        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+          Over 15 years of experience in sales strategy, relationship management, and sustainable business growth.
+        </p>
+        <button class="btn btn-outline btn-sm" onclick="openBio('modal-michael')">Read Full Profile</button>
       </div>
 
     </div>
@@ -980,36 +1103,6 @@
   </div>
 </section>
 
-<!-- MISSION & VISION -->
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <span>Our Core Purpose</span>
-      <h2>Mission, Vision & Core Values</h2>
-    </div>
-    <div class="mission-grid">
-      <div class="mission-card">
-        <div class="icon-svg"><span class="material-symbols-outlined">flag</span></div>
-        <h3>Our Mission</h3>
-        <p>To cultivate a robust savings culture and provide timely, affordable credit facilities that drive the
-          socioeconomic advancement of all our members.</p>
-      </div>
-      <div class="mission-card">
-        <div class="icon-svg"><span class="material-symbols-outlined">visibility</span></div>
-        <h3>Our Vision</h3>
-        <p>To be the premier, most trusted co-operative financial institution delivering unparalleled economic
-          empowerment to healthcare professionals in Ghana.</p>
-      </div>
-      <div class="mission-card">
-        <div class="icon-svg"><span class="material-symbols-outlined">verified</span></div>
-        <h3>Core Values</h3>
-        <p>Integrity, Transparency, Member-Centricity, and Absolute Confidentiality. We manage your wealth with zero
-          administrative traps and total accountability.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ORGANOGRAM -->
 <section class="section" id="organogram" style="background: var(--bg-section-alt);">
   <div class="container">
@@ -1084,6 +1177,61 @@
     </div>
   </div>
 </section>
+
+<!-- THE MODALS -->
+<div class="bio-modal-overlay" id="modal-eric" onclick="closeBio(event, 'modal-eric')">
+  <div class="bio-modal-content">
+    <button class="bio-modal-close" onclick="forceClose('modal-eric')"><span class="material-symbols-outlined">close</span></button>
+    <div class="bio-modal-header">
+      <img src="{% static 'assets/images/team/eric-adjei-yeboah.jpeg' %}" alt="Eric Adjei-Yeboah">
+      <div>
+        <h3>Eric Adjei-Yeboah</h3>
+        <span>Chief Executive Officer</span>
+      </div>
+    </div>
+    <div class="bio-modal-body">
+      <p>Eric Adjei-Yeboah is a professional Finance and Investment Banker with over twenty-one (21) years of experience. He is a results-driven Financial Service Professional, Investment Banker, and Legal Student. Prior to GCPCUL, Eric was the Head of Wealth Management Department at UMB Investment Holdings Limited (now Merban Capital Ltd), where he managed Collective Investment Schemes, Trustee Business, and High Net Worth Portfolio Management.</p>
+      <p>He began his investment banking career with Merchant Bank's Ghana Limited in 2004 and rose through the ranks, acquiring deep knowledge in Banking, Finance, and Products Development. He also formerly served as the CEO for ASN Investment Holdings Limited from 2015 to 2017.</p>
+      <p>Eric holds a Bachelor of Laws (LLB), a Professional Executive Master in Alternative Dispute Resolution (ADR), an MSc (Finance Option) from GIMPA, a Master of Art in Ministry (MAM), and a Bachelor of Business Administration (BBA). He is a licensed Fund Manager Representative and holds certificates in Capital Market and Securities Analysis.</p>
+    </div>
+  </div>
+</div>
+
+<div class="bio-modal-overlay" id="modal-joseph" onclick="closeBio(event, 'modal-joseph')">
+  <div class="bio-modal-content">
+    <button class="bio-modal-close" onclick="forceClose('modal-joseph')"><span class="material-symbols-outlined">close</span></button>
+    <div class="bio-modal-header">
+      <img src="{% static 'assets/images/team/yompab-joseph.jpeg' %}" alt="Yompab Joseph Nanoni Baaman">
+      <div>
+        <h3>Yompab Joseph Nanoni Baaman</h3>
+        <span>Senior Accountant</span>
+      </div>
+    </div>
+    <div class="bio-modal-body">
+      <p>Yompab Joseph Nanoni Baaman (C.A.) possesses an extensive 18-year career in Accounting and Finance, including 6 years of experience as a Chartered Accountant. He is a qualified Chartered Accountant and a member of The Institute of Chartered Accountants, Ghana (ICAG).</p>
+      <p>He holds a Master of Science in Accounting and Finance and a Bachelor of Science in Business Administration (Accounting) from the Kwame Nkrumah University of Science and Technology (KNUST) Business School. He is currently pursuing final-level professional courses with the Chartered Institute of Bankers Ghana and the Chartered Institute of Taxation Ghana.</p>
+      <p>His professional experience includes significant roles within the Rural and Community Banking and Financial Services sectors before taking on his current role managing GCPCUL's finances.</p>
+    </div>
+  </div>
+</div>
+
+<div class="bio-modal-overlay" id="modal-michael" onclick="closeBio(event, 'modal-michael')">
+  <div class="bio-modal-content">
+    <button class="bio-modal-close" onclick="forceClose('modal-michael')"><span class="material-symbols-outlined">close</span></button>
+    <div class="bio-modal-header">
+      <img src="{% static 'assets/images/team/okyere-michael.jpeg' %}" alt="Okyere Michael Owusu">
+      <div>
+        <h3>Okyere Michael Owusu</h3>
+        <span>Business Development Executive</span>
+      </div>
+    </div>
+    <div class="bio-modal-body">
+      <p>Okyere Michael Owusu is a Business Development and Account Management professional with over 15 years of experience in sales, client relationship management, and revenue growth across the financial and development sectors.</p>
+      <p>At GCPCUL, he drives business development initiatives, manages member relationships across all branches, spearheads deposits and loan portfolio growth, and identifies opportunities for membership expansion. He has managed extensive client engagements, including outbound engagement with over 5,000 clients across five regions.</p>
+      <p>Okyere holds a Bachelor of Business Administration (BBA) from the University of Professional Studies, Accra, a Certificate in Entrepreneurship and Small Business Management from GIMPA, and a Diploma in Business Studies (Accounting) from Koforidua Polytechnic.</p>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -1113,5 +1261,22 @@
       committeeEmptyState.classList.toggle('active', visibleCount === 0);
     });
   });
+
+  // MODAL LOGIC
+  function openBio(modalId) {
+    document.getElementById(modalId).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function forceClose(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  function closeBio(event, modalId) {
+    if (event.target.id === modalId) {
+      forceClose(modalId);
+    }
+  }
 </script>
 {% endblock %}

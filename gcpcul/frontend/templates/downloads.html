@@ -823,7 +823,7 @@
     <div class="doc-grid" id="docGrid">
 
       {% for form in forms %}
-      <div class="doc-card{% if not form.document %} is-pending{% endif %}" data-category="form">
+      <div class="doc-card{% if not form.document %} is-pending{% endif %}" data-category="form" id="{{ form.title|slugify }}">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{form.icon_name}}</span></span></div>
         <div class="doc-info">
           <span class="doc-meta">
@@ -887,9 +887,8 @@
         </div>
       </div>
 
-      <!--AGM REPORTS -->
       {% for report in reports %}
-      <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="agm">
+      <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="agm" id="{{ report.title|slugify }}">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
 
         <div class="doc-info">
