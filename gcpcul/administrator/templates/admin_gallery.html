@@ -1,0 +1,332 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block admin_title %}Gallery{% endblock %}
+{% block nav_gallery %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+  .page-head h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; }
+  .page-head p { color: var(--text-muted); font-size: .88rem; margin-top: .25rem; }
+  .btn-primary-admin { display: inline-flex; align-items: center; gap: .5rem; background: var(--primary-green); color: #fff; font-weight: 700; font-size: .87rem; padding: .68rem 1.25rem; border-radius: .6rem; border: none; cursor: pointer; }
+  .btn-primary-admin:hover { background: var(--accent-green); }
+  .btn-outline-admin { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); font-weight: 700; font-size: .85rem; padding: .6rem 1.1rem; border-radius: .6rem; cursor: pointer; }
+  .btn-outline-admin:hover { border-color: var(--primary-green); }
+
+  .gallery-alert { display: flex; align-items: flex-start; gap: .85rem; background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .gallery-alert .material-symbols-outlined { color: var(--warn); font-size: 1.3rem; flex-shrink: 0; }
+  .gallery-alert p { font-size: .85rem; color: var(--text-main); line-height: 1.55; }
+  .gallery-alert strong { font-weight: 700; }
+
+  /* ---- Album grid ---- */
+  .album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); gap: 1.25rem; }
+  .album-admin-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .album-admin-thumb { height: 9.5rem; background-size: cover; background-position: center; position: relative; background-color: var(--bg-section-alt); }
+  .stock-tag { position: absolute; top: .65rem; left: .65rem; background: rgba(180,83,9,.92); color: #fff; font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: .22rem .55rem; border-radius: 50px; display: flex; align-items: center; gap: .25rem; }
+  .stock-tag .material-symbols-outlined { font-size: .8rem; }
+  .album-media-count { position: absolute; bottom: .65rem; right: .65rem; background: rgba(16,36,26,.85); color: #fff; font-size: .72rem; font-weight: 700; padding: .2rem .55rem; border-radius: 50px; font-family: var(--font-mono); }
+  .album-admin-body { padding: 1.15rem 1.25rem; }
+  .album-cat-chip { display: inline-block; font-size: .66rem; font-weight: 700; padding: .18rem .55rem; border-radius: 50px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .03em; background: var(--primary-light); color: var(--heading-green); margin-bottom: .55rem; }
+  .album-admin-body h4 { font-size: .96rem; font-weight: 800; margin-bottom: .75rem; line-height: 1.35; }
+  .album-admin-actions { display: flex; gap: .5rem; }
+  .album-admin-actions button { flex: 1; }
+
+  /* "New Album" tile matches card shape but reads as an action */
+  .new-album-card { border: 1.5px dashed var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; min-height: 15.5rem; cursor: pointer; color: var(--text-muted); background: var(--bg-card); }
+  .new-album-card:hover { border-color: var(--primary-green); color: var(--heading-green); }
+  .new-album-card .material-symbols-outlined { font-size: 2rem; }
+  .new-album-card span.label { font-weight: 700; font-size: .9rem; }
+
+  /* ============ EDITOR VIEW ============ */
+  #editorView { display: none; max-width: 52rem; }
+  #editorView.active { display: block; }
+  #listView.hidden { display: none; }
+
+  .back-to-list { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); border: 1.5px solid var(--border-color); padding: .55rem 1rem; border-radius: 50px; cursor: pointer; margin-bottom: 1.5rem; }
+  .back-to-list:hover { color: var(--text-main); }
+
+  .form-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 1.75rem; display: flex; flex-direction: column; gap: 1.35rem; }
+  .field-group label { display: block; font-size: .82rem; font-weight: 700; margin-bottom: .5rem; }
+  .field-control { width: 100%; box-sizing: border-box; padding: .68rem .9rem; border: 1.5px solid var(--border-color); border-radius: .55rem; background: var(--bg-page); font-family: inherit; font-size: .9rem; color: var(--text-main); outline: none; }
+  .field-control:focus { border-color: var(--primary-green); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* Multi-file dropzone */
+  .media-drop { border: 1.5px dashed var(--border-color); border-radius: .7rem; padding: 2rem 1.25rem; text-align: center; cursor: pointer; background: var(--bg-page); position: relative; }
+  .media-drop:hover { border-color: var(--primary-green); }
+  .media-drop .material-symbols-outlined { font-size: 2rem; color: var(--text-muted); margin-bottom: .5rem; }
+  .media-drop-label { font-size: .9rem; font-weight: 700; }
+  .media-drop-sub { font-size: .76rem; color: var(--text-muted); margin-top: .2rem; }
+  .media-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  .media-grid-header { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; margin-bottom: .75rem; }
+  .media-grid-header span { font-size: .82rem; font-weight: 700; color: var(--text-main); }
+  .media-grid-header span.mono { color: var(--text-muted); font-weight: 600; }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 1rem; }
+  .media-item { border: 1px solid var(--border-color); border-radius: .65rem; overflow: hidden; background: var(--bg-page); }
+  .media-item-thumb-wrap { position: relative; aspect-ratio: 4/3; }
+  .media-item-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .media-item-remove { position: absolute; top: .4rem; right: .4rem; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: rgba(16,36,26,.75); color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .media-item-remove .material-symbols-outlined { font-size: 1rem; }
+  .media-item-cover-btn { position: absolute; top: .4rem; left: .4rem; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: rgba(16,36,26,.6); color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .media-item-cover-btn .material-symbols-outlined { font-size: 1rem; }
+  .media-item.is-cover .media-item-cover-btn { background: var(--coop-gold); }
+  .cover-ribbon { position: absolute; bottom: 0; left: 0; right: 0; background: var(--coop-gold); color: #fff; font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; text-align: center; padding: .18rem; display: none; }
+  .media-item.is-cover .cover-ribbon { display: block; }
+  .media-item-body { padding: .55rem; display: flex; flex-direction: column; gap: .4rem; }
+  .media-caption-input { width: 100%; box-sizing: border-box; border: 1px solid var(--border-color); border-radius: .4rem; padding: .35rem .5rem; font-size: .74rem; font-family: inherit; background: var(--bg-card); }
+  .media-type-select { width: 100%; box-sizing: border-box; border: 1px solid var(--border-color); border-radius: .4rem; padding: .3rem .4rem; font-size: .7rem; font-family: inherit; background: var(--bg-card); }
+
+  .empty-media-note { grid-column: 1/-1; text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: .85rem; }
+
+  .form-footer { display: flex; justify-content: flex-end; gap: .75rem; padding-top: .5rem; border-top: 1px solid var(--border-color); }
+
+  @media (max-width: 52rem) { .field-row { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+
+  <!-- ============ LIST VIEW ============ -->
+  <div id="listView">
+    <div class="page-head">
+      <div>
+        <h1>Gallery</h1>
+        <p>4 albums, 26 media items.</p>
+      </div>
+      <button class="btn-primary-admin" onclick="openEditor()">
+        <span class="material-symbols-outlined" style="font-size:1.05rem;">add_photo_alternate</span>
+        New Album
+      </button>
+    </div>
+
+    <div class="gallery-alert">
+      <span class="material-symbols-outlined">info</span>
+      <p><strong>All 4 albums below currently use stock photography</strong> as placeholders. Replace each with real event photos before the Gallery goes live publicly — click into an album to swap its media.</p>
+    </div>
+
+    <div class="album-grid">
+
+      <div class="album-admin-card">
+        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=600');">
+          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
+          <span class="album-media-count">8 items</span>
+        </div>
+        <div class="album-admin-body">
+          <span class="album-cat-chip">Hospital Visits</span>
+          <h4>Visit to KATH</h4>
+          <div class="album-admin-actions">
+            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
+            <button class="btn-outline-admin" style="flex:0;">
+              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="album-admin-card">
+        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=600');">
+          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
+          <span class="album-media-count">12 items</span>
+        </div>
+        <div class="album-admin-body">
+          <span class="album-cat-chip">AGM Meetings</span>
+          <h4>38th Annual General Meeting</h4>
+          <div class="album-admin-actions">
+            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
+            <button class="btn-outline-admin" style="flex:0;">
+              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="album-admin-card">
+        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=600');">
+          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
+          <span class="album-media-count">10 items</span>
+        </div>
+        <div class="album-admin-body">
+          <span class="album-cat-chip">Community Outreach</span>
+          <h4>Kumasi Community Health Screening</h4>
+          <div class="album-admin-actions">
+            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
+            <button class="btn-outline-admin" style="flex:0;">
+              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="album-admin-card">
+        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=600');">
+          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
+          <span class="album-media-count">6 items</span>
+        </div>
+        <div class="album-admin-body">
+          <span class="album-cat-chip">AGM Meetings</span>
+          <h4>CUA Leadership Excellence Awards</h4>
+          <div class="album-admin-actions">
+            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
+            <button class="btn-outline-admin" style="flex:0;">
+              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="new-album-card" onclick="openEditor()">
+        <span class="material-symbols-outlined">add_photo_alternate</span>
+        <span class="label">Create New Album</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ EDITOR VIEW ============ -->
+  <div id="editorView">
+    <button class="back-to-list" onclick="closeEditor()">
+      <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
+      Back to Gallery
+    </button>
+
+    <div class="form-panel">
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="albumTitle">Album Title</label>
+          <input type="text" id="albumTitle" class="field-control" placeholder="e.g. Visit to KATH">
+        </div>
+        <div class="field-group">
+          <label for="albumCategory">Category</label>
+          <select id="albumCategory" class="field-control">
+            <option value="agm">AGM Meetings</option>
+            <option value="outreach">Community Outreach</option>
+            <option value="hospital">Hospital Visits</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="albumSubtitle">Subtitle</label>
+        <input type="text" id="albumSubtitle" class="field-control" placeholder="One line describing this album.">
+      </div>
+
+      <div class="field-group">
+        <label>Photos &amp; Video</label>
+        <div class="media-drop" onclick="document.getElementById('mediaFiles').click()">
+          <span class="material-symbols-outlined">perm_media</span>
+          <div class="media-drop-label">Click or drag photos here</div>
+          <div class="media-drop-sub">Select multiple files at once — JPG, PNG up to 8MB each</div>
+          <input type="file" id="mediaFiles" accept="image/*" multiple onchange="handleMediaUpload(event)">
+        </div>
+
+        <div class="media-grid-header">
+          <span id="mediaCountLabel">0 media items</span>
+          <span class="mono" style="font-size:.74rem;">Click <span class="material-symbols-outlined" style="font-size:.85rem; vertical-align:middle;">star</span> to set the album cover</span>
+        </div>
+        <div class="media-grid" id="mediaGrid">
+          <div class="empty-media-note" id="emptyMediaNote">No photos added yet — drop some above to get started.</div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-outline-admin" onclick="closeEditor()">Cancel</button>
+        <button class="btn-primary-admin" onclick="saveAlbum()">
+          <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
+          Save Album
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function openEditor() {
+    document.getElementById('listView').classList.add('hidden');
+    document.getElementById('editorView').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function closeEditor() {
+    document.getElementById('editorView').classList.remove('active');
+    document.getElementById('listView').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  let mediaItems = [];
+  let coverIndex = null;
+
+  function handleMediaUpload(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        mediaItems.push({ src: ev.target.result, caption: '', type: 'image' });
+        if (coverIndex === null) coverIndex = 0;
+        renderMediaGrid();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderMediaGrid() {
+    const grid = document.getElementById('mediaGrid');
+    const emptyNote = document.getElementById('emptyMediaNote');
+    document.getElementById('mediaCountLabel').textContent = mediaItems.length + ' media item' + (mediaItems.length === 1 ? '' : 's');
+
+    if (mediaItems.length === 0) {
+      grid.innerHTML = '';
+      grid.appendChild(emptyNote);
+      return;
+    }
+
+    grid.innerHTML = mediaItems.map((item, i) => `
+      <div class="media-item ${i === coverIndex ? 'is-cover' : ''}">
+        <div class="media-item-thumb-wrap">
+          <img src="${item.src}" alt="">
+          <button type="button" class="media-item-cover-btn" onclick="setCover(${i})" title="Set as album cover">
+            <span class="material-symbols-outlined">star</span>
+          </button>
+          <button type="button" class="media-item-remove" onclick="removeMedia(${i})" title="Remove">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+          <div class="cover-ribbon">Cover</div>
+        </div>
+        <div class="media-item-body">
+          <input type="text" class="media-caption-input" placeholder="Caption…" value="${item.caption}" oninput="updateCaption(${i}, this.value)">
+          <select class="media-type-select" onchange="updateType(${i}, this.value)">
+            <option value="image" ${item.type === 'image' ? 'selected' : ''}>Photo</option>
+            <option value="video" ${item.type === 'video' ? 'selected' : ''}>Video</option>
+          </select>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function setCover(i) { coverIndex = i; renderMediaGrid(); }
+  function removeMedia(i) {
+    mediaItems.splice(i, 1);
+    if (coverIndex === i) coverIndex = mediaItems.length > 0 ? 0 : null;
+    else if (coverIndex > i) coverIndex--;
+    renderMediaGrid();
+  }
+  function updateCaption(i, val) { mediaItems[i].caption = val; }
+  function updateType(i, val) { mediaItems[i].type = val; }
+
+  function saveAlbum() {
+    const title = document.getElementById('albumTitle').value || 'Untitled Album';
+    if (mediaItems.length === 0) {
+      alert('Add at least one photo before saving.');
+      return;
+    }
+    alert('"' + title + '" saved with ' + mediaItems.length + ' media item(s) — wire this to your save endpoint when the backend is ready.');
+    closeEditor();
+  }
+
+  renderMediaGrid();
+</script>
+{% endblock %}
