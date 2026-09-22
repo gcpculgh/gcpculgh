@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Access | GCPCUL Console</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #0A5C36; --bg-page: #F7F5F0; --bg-card: #FFFFFF;
+      --text-main: #10241A; --text-muted: #6B6456; --border-color: #E4DFD1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg-page); color: var(--text-main); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    
+    .login-wrapper { width: 100%; max-width: 26rem; padding: 2rem; }
+    .login-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; box-shadow: 0 10px 25px -5px rgba(16, 36, 26, 0.1); }
+    
+    .brand-header { text-align: center; margin-bottom: 2rem; }
+    .brand-header img { width: 4rem; height: 4rem; border-radius: 0.75rem; margin-bottom: 1rem; border: 1px solid var(--border-color); }
+    .brand-header h1 { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
+    .brand-header p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .form-control { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 0.5rem; font-family: inherit; font-size: 1rem; outline: none; }
+    .form-control:focus { border-color: var(--primary-green); }
+
+    .btn-submit { width: 100%; padding: 0.85rem; background: var(--primary-green); color: #fff; border: none; border-radius: 0.5rem; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .btn-submit:hover { background: #084a2b; }
+
+    .error-msg { background: #FEF2F2; color: #DC2626; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem; border: 1px solid #FCA5A5; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="brand-header">
+        <img src="{% static 'assets/images/logo.jpg' %}" alt="GCPCUL Logo">
+        <h1>GCPCUL Workspace</h1>
+        <p>Restricted Admin Access</p>
+      </div>
+
+      <!-- Posts directly to Django's built-in authentication system -->
+      <form method="POST" action="{% url 'admin_login' %}">
+        {% csrf_token %}
+        
+        <!-- Django handles the error rendering automatically -->
+        {% if form.errors %}
+          <div class="error-msg">Invalid username or password.</div>
+        {% endif %}
+
+        <div class="form-group">
+          <label>Staff Username</label>
+          <input type="text" name="username" class="form-control" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" class="form-control" required autocomplete="current-password">
+        </div>
+
+        <!-- Tells Django to route them to the dashboard after a successful login -->
+        <input type="hidden" name="next" value="{% url 'cms:dashboard' %}">
+
+        <button type="submit" class="btn-submit">
+          <span class="material-symbols-outlined" style="font-size: 1.1rem;">lock_open</span>
+          Authenticate
+        </button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -9,10 +9,10 @@ from administrator.forms import *
 def home(request):
     context = {
         # Grabs the 3 newest articles flagged for the top section
-        'happenings': NewsArticle.objects.filter(is_recent_happening=True)[:3],
+        'happenings': NewsArticle.objects.filter(status='published').order_by('-published_at')[:3],
         
         # Grabs the 3 newest articles flagged for the bottom section
-        'blogs': NewsArticle.objects.filter(is_blog_post=True)[:3],
+        'blogs': NewsArticle.objects.filter(status='published', category='guide').order_by('-published_at')[:3],
     }
     return render(request, 'index.html', context)
 
@@ -45,14 +45,17 @@ def downloads(request):
 
 
 def news(request):
-    # Grabs the featured article for the Hero (Must be published)
-    featured_article = NewsArticle.objects.filter(is_featured=True, status='published').first()
+    # Fetch all published articles once, ordered by newest first
+    published_articles = NewsArticle.objects.filter(status='published').order_by('-created_at')
+    
+    # Grab the newest one for the hero section
+    featured_article = published_articles.first()
 
-    # Grabs ALL articles (Must be published)
+    # Exclude the featured article from the grid below so it doesn't appear twice
     if featured_article:
-        articles = NewsArticle.objects.filter(is_blog_post=True, status='published').exclude(id=featured_article.id)
+        articles = published_articles.exclude(pk=featured_article.pk)
     else:
-        articles = NewsArticle.objects.filter(is_blog_post=True, status='published')
+        articles = published_articles
 
     context = {
         'featured': featured_article,
@@ -70,8 +73,8 @@ def article_detail_view(request, article_id):
     return render(request, 'article_detail.html', {'article': article, 'related': related})
 
 
-def login(request):
-    return render(request, 'login.html')
+def member_portal(request):
+    return render(request, 'member_portal.html')
 
 def contact(request):
     return render(request, 'contact.html')

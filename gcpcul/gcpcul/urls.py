@@ -1,22 +1,7 @@
-"""
-URL configuration for gcpcul project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from django.contrib.auth import views as auth_views  
 
 from frontend import urls as frontend_urls
 from users import urls as users_urls
@@ -24,6 +9,12 @@ from administrator import urls as admin_urls
 
 urlpatterns = [
     path('src/auth/sec/admin/', admin.site.urls),
+    path('src/auth/admin/admin-access/', auth_views.LoginView.as_view(
+        template_name='admin_login.html', 
+        redirect_authenticated_user=True
+    ), name='admin_login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+
     path('', include(frontend_urls)),
     path('', include(users_urls)),
     path("", include(admin_urls)),

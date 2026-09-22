@@ -103,6 +103,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gcpcul.wsgi.application'
 
+LOGIN_URL = 'admin_login'
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
