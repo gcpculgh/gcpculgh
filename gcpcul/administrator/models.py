@@ -1,9 +1,13 @@
-
 import re
 
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
+from .utils import optimize_and_convert_to_webp
+
+import bleach
+from bleach.linkifier import Linker
+import markdown
 
 
 class NewsArticle(models.Model):
@@ -38,11 +42,14 @@ class NewsArticle(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
+        # Automatically compress & convert featured image to WebP if newly uploaded
+        if self.featured_image and not self.featured_image.name.endswith('.webp'):
+            self.featured_image = optimize_and_convert_to_webp(self.featured_image)
+
         if not self.slug:
             base_slug = slugify(self.title)[:230] or "article"
             slug_candidate = base_slug
             i = 2
-            # Guard against two articles slugifying to the same value.
             while NewsArticle.objects.filter(slug=slug_candidate).exclude(pk=self.pk).exists():
                 slug_candidate = f"{base_slug}-{i}"
                 i += 1
@@ -199,23 +206,47 @@ class NewsletterSubscriber(models.Model):
     def __str__(self):
         return self.email
 
+
 class Announcement(models.Model):
-    ALERT_TYPES = (
-        ('info', 'Information (Blue)'),
-        ('warning', 'Warning/Reminder (Yellow)'),
-        ('urgent', 'Urgent/Critical (Red)'),
-    )
-    
-    # Upgraded to TextField and updated help_text to guide the admin
     message = models.TextField(
-        help_text='Use HTML for inline links. Example: Join tomorrow\'s AGM <a href="https://zoom.us/...">via this link</a>.'
+        help_text="Keep it brief. Paste URLs normally (defaults to 'View Link'), or use Markdown for custom text: [Click Here](https://example.com)"
     )
-    alert_type = models.CharField(max_length=10, choices=ALERT_TYPES, default='warning')
-    is_active = models.BooleanField(default=True, help_text="Uncheck to hide this announcement globally.")
-    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(
+        default=False,
+        help_text="Check this to display the announcement site-wide. Uncheck to hide it."
+    )
 
-    class Meta:
-        ordering = ['-created_at']
+    def save(self, *args, **kwargs):
+        if self.message:
+            # 1. Parse custom Markdown tags first
+            html_content = markdown.markdown(self.message)
 
-    def __str__(self):
-        return self.message[:50]
+            # 2. Sanitize and destroy any raw malicious HTML
+            clean_html = bleach.clean(
+                html_content,
+                tags=['a', 'p', 'strong', 'em', 'br'],
+                attributes={'a': ['href']},
+                protocols=['http', 'https', 'mailto'],
+                strip=True
+            )
+
+            # 3. Intercept all links to enforce security and UX standards
+            def secure_link_attributes(attrs, new=False):
+                href = attrs.get((None, 'href'), '')
+                if not href.startswith(('http:', 'https:', 'mailto:')):
+                    return None
+
+                # Enforce anti-tabnabbing
+                attrs[(None, 'target')] = '_blank'
+                attrs[(None, 'rel')] = 'noopener noreferrer'
+
+                # THE UX FIX: If this is a raw URL (new=True), replace the long text with a clean default
+                if new:
+                    attrs['_text'] = 'View Link'
+
+                return attrs
+
+            linker = Linker(callbacks=[secure_link_attributes])
+            self.message = linker.linkify(clean_html)
+
+        super().save(*args, **kwargs)

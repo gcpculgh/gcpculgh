@@ -9,16 +9,24 @@ contracts explicit and easy to trace back to the template JS that submits
 them.
 """
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import DocumentForm, GalleryAlbumForm, NewsArticleForm
 from .models import Document, GalleryAlbum, GalleryMedia, NewsArticle
+from .utils import optimize_and_convert_to_webp
 
+# Every view below is content-management, not member-facing — staff_member_required
+# (checks request.user.is_staff) is deliberate here instead of login_required, which
+# only checks "is someone logged in." Once the public Member Portal is live, an
+# ordinary authenticated member must NOT be able to reach these views.
 
+# Checks if user is logged in AND has staff privileges
+staff_required = user_passes_test(lambda u: u.is_active and u.is_staff)
 
-@login_required
+@staff_required
 def dashboard(request):
     published_count = NewsArticle.objects.filter(status="published").count()
     draft_count = NewsArticle.objects.filter(status="draft").count()
@@ -88,7 +96,7 @@ def dashboard(request):
 
 # NEWS & BLOG
 
-@login_required
+@staff_required
 def news_list(request):
     articles = NewsArticle.objects.all()
 
@@ -110,7 +118,7 @@ def news_list(request):
     return render(request, "cms/admin_news.html", context)
 
 
-@login_required
+@staff_required
 def news_create(request):
     if request.method == "POST":
         form = NewsArticleForm(request.POST, request.FILES)
@@ -123,7 +131,7 @@ def news_create(request):
     return render(request, "cms/admin_news.html", {"form": form, "editing": None, "open_editor": True})
 
 
-@login_required
+@staff_required
 def news_update(request, pk):
     article = get_object_or_404(NewsArticle, pk=pk)
     if request.method == "POST":
@@ -138,7 +146,7 @@ def news_update(request, pk):
 
 
 @require_POST
-@login_required
+@staff_required
 def news_delete(request, pk):
     article = get_object_or_404(NewsArticle, pk=pk)
     title = article.title
@@ -151,7 +159,7 @@ def news_delete(request, pk):
 # DOCUMENT VAULT
 # ============================================================
 
-@login_required
+@staff_required
 def document_list(request):
     documents = Document.objects.all()
 
@@ -173,7 +181,7 @@ def document_list(request):
     return render(request, "cms/admin_downloads.html", context)
 
 
-@login_required
+@staff_required
 def document_create(request):
     if request.method == "POST":
         form = DocumentForm(request.POST, request.FILES)
@@ -186,7 +194,7 @@ def document_create(request):
     return render(request, "cms/admin_downloads.html", {"form": form, "editing": None, "open_upload": True})
 
 
-@login_required
+@staff_required
 def document_update(request, pk):
     document = get_object_or_404(Document, pk=pk)
     if request.method == "POST":
@@ -201,7 +209,7 @@ def document_update(request, pk):
 
 
 @require_POST
-@login_required
+@staff_required
 def document_delete(request, pk):
     document = get_object_or_404(Document, pk=pk)
     title = document.title
@@ -214,7 +222,7 @@ def document_delete(request, pk):
 # GALLERY
 # ============================================================
 
-@login_required
+@staff_required
 def gallery_list(request):
     albums = GalleryAlbum.objects.all()
     context = {
@@ -225,19 +233,12 @@ def gallery_list(request):
     }
     return render(request, "cms/admin_gallery.html", context)
 
-
 def _save_gallery_media(request, album):
     """
     Shared by create/update. Expects, per new item i:
       media_files       -> request.FILES.getlist (the uploaded files themselves)
       captions           -> request.POST.getlist (parallel to media_files)
       media_types         -> request.POST.getlist ('image' | 'video', parallel to media_files)
-    Plus one shared field:
-      cover_index         -> index (into the *combined* existing+new list, see template JS)
-                              of whichever item should become the album cover.
-    Existing media (when editing) are updated separately via
-    existing_media_id[] / existing_caption[] / existing_media_type[] —
-    handled by _update_existing_media below.
     """
     files = request.FILES.getlist("media_files")
     captions = request.POST.getlist("captions")
@@ -248,6 +249,11 @@ def _save_gallery_media(request, album):
     for i, f in enumerate(files):
         caption = captions[i] if i < len(captions) else ""
         media_type = media_types[i] if i < len(media_types) else "image"
+        
+        # ZERO-TRUST COMPRESSION: Intercept image files and optimize them before saving
+        if media_type == 'image':
+            f = optimize_and_convert_to_webp(f, max_width=1600, quality=80)
+
         new_items.append(
             GalleryMedia(
                 album=album, file=f, caption=caption,
@@ -255,7 +261,6 @@ def _save_gallery_media(request, album):
             )
         )
     GalleryMedia.objects.bulk_create(new_items)
-
 
 def _update_existing_media(request):
     ids = request.POST.getlist("existing_media_id")
@@ -285,7 +290,7 @@ def _apply_cover_selection(request, album):
             ordered_new[new_index].save()
 
 
-@login_required
+@staff_required
 def gallery_create(request):
     if request.method == "POST":
         form = GalleryAlbumForm(request.POST)
@@ -305,7 +310,7 @@ def gallery_create(request):
     return render(request, "cms/admin_gallery.html", {"form": form, "editing": None, "open_editor": True})
 
 
-@login_required
+@staff_required
 def gallery_update(request, pk):
     album = get_object_or_404(GalleryAlbum, pk=pk)
     if request.method == "POST":
@@ -326,7 +331,7 @@ def gallery_update(request, pk):
 
 
 @require_POST
-@login_required
+@staff_required
 def gallery_delete(request, pk):
     album = get_object_or_404(GalleryAlbum, pk=pk)
     title = album.title
@@ -336,7 +341,7 @@ def gallery_delete(request, pk):
 
 
 @require_POST
-@login_required
+@staff_required
 def gallery_media_delete(request, pk):
     """Removes a single already-saved photo/video from an album without
     resubmitting the whole album form — the 'x' button on an existing

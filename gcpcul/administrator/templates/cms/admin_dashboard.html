@@ -12,9 +12,6 @@
   .page-head .btn { display: inline-flex; align-items: center; gap: .45rem; background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); font-weight: 700; font-size: .85rem; padding: .6rem 1.1rem; border-radius: .6rem; }
   .page-head .btn:hover { border-color: var(--primary-green); }
 
-  /* KPI row — deliberately NOT four identical grey cards; each is color-coded
-     by what it actually means, per the "differentiate through status, not
-     decoration" principle. */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: 1.1rem; margin-bottom: 1.75rem; }
   .kpi-card { background: var(--bg-card); border: 1px solid var(--border-color); border-left: 3px solid var(--border-color); border-radius: var(--radius-md); padding: 1.3rem 1.4rem; box-shadow: var(--shadow-sm); }
   .kpi-card.ok { border-left-color: var(--ok); }
@@ -28,7 +25,6 @@
   .kpi-sub { font-size: .78rem; color: var(--text-muted); font-weight: 600; }
   .kpi-label { font-size: .85rem; font-weight: 700; color: var(--text-main); margin-top: .5rem; }
 
-  /* Two-column body */
   .dash-grid { display: grid; grid-template-columns: 1.35fr .95fr; gap: 1.5rem; align-items: start; }
   .dash-grid > div { min-width: 0; }
   .panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -36,7 +32,6 @@
   .panel-head h3 { font-size: .98rem; font-weight: 800; }
   .panel-head span { font-family: var(--font-mono); font-size: .74rem; color: var(--text-muted); }
 
-  /* Needs Attention — the real, project-grounded piece */
   .attn-item { display: flex; gap: 1rem; align-items: flex-start; padding: 1.05rem 1.4rem; border-bottom: 1px solid var(--border-color); }
   .attn-item:last-child { border-bottom: none; }
   .attn-badge { width: 2.15rem; height: 2.15rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: .1rem; }
@@ -49,17 +44,18 @@
   .attn-cta { flex-shrink: 0; font-size: .78rem; font-weight: 700; color: var(--heading-green); white-space: nowrap; align-self: center; border: 1.5px solid var(--border-color); padding: .4rem .8rem; border-radius: 50px; transition: all .15s ease; }
   .attn-cta:hover { border-color: var(--primary-green); background: var(--primary-light); }
 
-  /* Activity feed */
   .activity-item { display: flex; gap: .85rem; padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-color); }
   .activity-item:last-child { border-bottom: none; }
-  .activity-avatar { width: 2rem; height: 2rem; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  
+  /* Replaced external image hotlinks with secure, dynamic CSP-safe initials */
+  .activity-avatar { width: 2rem; height: 2rem; border-radius: 50%; background: var(--border-color); color: var(--text-main); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .85rem; flex-shrink: 0; }
+  
   .activity-body p { font-size: .82rem; line-height: 1.5; }
   .activity-body strong { font-weight: 700; }
   .activity-time { font-size: .72rem; color: var(--text-muted); margin-top: .15rem; }
 
-  /* Quick actions */
   .qa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); gap: 1.1rem; margin-top: 1.5rem; }
-  .qa-card { background: var(--bg-card); border: 1.5px dashed var(--border-color); border-radius: var(--radius-lg); padding: 1.6rem; transition: all .18s ease; display: block; }
+  .qa-card { background: var(--bg-card); border: 1.5px dashed var(--border-color); border-radius: var(--radius-lg); padding: 1.6rem; transition: all .18s ease; display: block; text-decoration: none; color: inherit; }
   .qa-card:hover { border-style: solid; border-color: var(--primary-green); box-shadow: var(--shadow-md); transform: translateY(-2px); }
   .qa-icon { width: 2.75rem; height: 2.75rem; border-radius: .7rem; background: var(--primary-light); color: var(--heading-green); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
   .qa-card h4 { font-size: .98rem; font-weight: 800; margin-bottom: .25rem; }
@@ -73,31 +69,33 @@
 
   <div class="page-head">
     <div>
-      <h1>Good afternoon, Michael.</h1>
-      <p>Here's what's happening across the site today — Wednesday, September 16, 2026.</p>
+      <!-- Dynamically pulls the logged-in user's name and the real server date -->
+      <h1>Welcome back, {{ request.user.first_name|default:request.user.username|title }}.</h1>
+      <p>Here's what's happening across the site today — {% now "l, F j, Y" %}.</p>
     </div>
-    <a href="{% url 'home' %}" target="_blank" class="btn">
+    <a href="{% url 'home' %}" target="_blank" class="btn" rel="noopener noreferrer">
       <span class="material-symbols-outlined" style="font-size:1.1rem;">open_in_new</span>
       View Live Site
     </a>
   </div>
 
+  <!-- KPI Grid: Dynamic logic applied -->
   <div class="kpi-grid">
-    <div class="kpi-card ok">
+    <div class="kpi-card {% if draft_count > 0 %}warn{% else %}ok{% endif %}">
       <div class="kpi-top">
         <div class="kpi-icon"><span class="material-symbols-outlined">news</span></div>
       </div>
-      <div class="kpi-value">12</div>
-      <div class="kpi-sub">Published articles</div>
+      <div class="kpi-value">{{ published_count }}</div>
+      <div class="kpi-sub">Published articles ({{ draft_count }} drafts)</div>
       <div class="kpi-label">News &amp; Blog</div>
     </div>
 
-    <div class="kpi-card warn">
+    <div class="kpi-card {% if documents_pending > 0 %}warn{% else %}ok{% endif %}">
       <div class="kpi-top">
         <div class="kpi-icon"><span class="material-symbols-outlined">folder_open</span></div>
       </div>
-      <div class="kpi-value">18<span style="font-size:1rem; color:var(--text-muted);">&nbsp;/&nbsp;21</span></div>
-      <div class="kpi-sub">Documents uploaded</div>
+      <div class="kpi-value">{{ documents_uploaded }}<span style="font-size:1rem; color:var(--text-muted);">&nbsp;/&nbsp;{{ documents_total }}</span></div>
+      <div class="kpi-sub">{{ documents_pending }} pending uploads</div>
       <div class="kpi-label">Document Vault</div>
     </div>
 
@@ -105,144 +103,101 @@
       <div class="kpi-top">
         <div class="kpi-icon"><span class="material-symbols-outlined">photo_library</span></div>
       </div>
-      <div class="kpi-value">4</div>
-      <div class="kpi-sub">Albums, 26 media items</div>
+      <div class="kpi-value">{{ album_count }}</div>
+      <div class="kpi-sub">Albums, {{ media_count }} media items</div>
       <div class="kpi-label">Gallery</div>
     </div>
 
-    <div class="kpi-card warn">
+    <div class="kpi-card {% if attention_count > 0 %}warn{% else %}ok{% endif %}">
       <div class="kpi-top">
         <div class="kpi-icon"><span class="material-symbols-outlined">priority_high</span></div>
       </div>
-      <div class="kpi-value">7</div>
-      <div class="kpi-sub">Across 6 sections</div>
+      <div class="kpi-value">{{ attention_count }}</div>
+      <div class="kpi-sub">Tasks pending action</div>
       <div class="kpi-label">Needs your attention</div>
     </div>
   </div>
 
   <div class="dash-grid">
+    <!-- Dynamic "Needs Attention" Panel -->
     <div class="panel">
       <div class="panel-head">
         <h3>Needs Your Attention</h3>
-        <span>7 OPEN ITEMS</span>
+        <span>{{ attention_count }} OPEN ITEM{{ attention_count|pluralize|upper }}</span>
       </div>
       <div>
-
+        {% for item in attention_items %}
         <div class="attn-item">
-          <div class="attn-badge high"><span class="material-symbols-outlined">description</span></div>
+          <div class="attn-badge {{ item.severity }}"><span class="material-symbols-outlined">{{ item.icon }}</span></div>
           <div class="attn-body">
-            <h4>3 AGM documents awaiting upload</h4>
-            <p>2022, 2023, and 2026 AGM minutes &amp; reports haven't been added to the Vault yet.</p>
+            <h4>{{ item.title }}</h4>
+            <p>{{ item.body }}</p>
           </div>
-          <a href="admin-downloads.html" class="attn-cta">Upload</a>
+          {% if item.url_name %}
+            <!-- Uses proper Django namespace routing -->
+            <a href="{% url item.url_name %}" class="attn-cta">Review</a>
+          {% else %}
+            <!-- Escapes JS to prevent DOM XSS on stub clicks -->
+            <a href="#" class="attn-cta" onclick="return notifyStub('{{ item.title|escapejs }}')">Review</a>
+          {% endif %}
         </div>
-
-        <div class="attn-item">
-          <div class="attn-badge high"><span class="material-symbols-outlined">groups</span></div>
-          <div class="attn-body">
-            <h4>Board &amp; Committee photos are placeholders</h4>
-            <p>All 21 committee members and 9 founding members are using stock photography, not real photos.</p>
-          </div>
-          <a href="#" class="attn-cta" onclick="return notifyStub('Committees &amp; Team')">Review</a>
+        {% empty %}
+        <div class="attn-item" style="justify-content: center; padding: 2rem;">
+          <p style="color: var(--text-muted); text-align: center;">All clear. Your dashboard is up to date.</p>
         </div>
-
-        <div class="attn-item">
-          <div class="attn-badge high"><span class="material-symbols-outlined">image</span></div>
-          <div class="attn-body">
-            <h4>Gallery is 100% stock photography</h4>
-            <p>All 4 albums use placeholder images. Real event photos are needed before this goes live publicly.</p>
-          </div>
-          <a href="admin-gallery.html" class="attn-cta">Review</a>
-        </div>
-
-        <div class="attn-item">
-          <div class="attn-badge med"><span class="material-symbols-outlined">edit_note</span></div>
-          <div class="attn-body">
-            <h4>5 News articles are demo content</h4>
-            <p>Written as realistic examples — need real committee sign-off before publishing as official communication.</p>
-          </div>
-          <a href="admin-news.html" class="attn-cta">Review</a>
-        </div>
-
-        <div class="attn-item">
-          <div class="attn-badge med"><span class="material-symbols-outlined">link_off</span></div>
-          <div class="attn-body">
-            <h4>6 social media links are inactive</h4>
-            <p>Facebook, LinkedIn, X, Instagram, TikTok, and YouTube all point to placeholder URLs in the footer.</p>
-          </div>
-          <a href="#" class="attn-cta" onclick="return notifyStub('Social Links')">Review</a>
-        </div>
-
-        <div class="attn-item">
-          <div class="attn-badge med"><span class="material-symbols-outlined">flag</span></div>
-          <div class="attn-body">
-            <h4>Mission, Vision &amp; Core Values need sign-off</h4>
-            <p>Current wording was drafted for this redesign — needs official Board approval before treating it as final.</p>
-          </div>
-          <a href="#" class="attn-cta" onclick="return notifyStub('Mission &amp; Values')">Review</a>
-        </div>
-
-        <div class="attn-item">
-          <div class="attn-badge med"><span class="material-symbols-outlined">monitoring</span></div>
-          <div class="attn-body">
-            <h4>KPI figures need verification</h4>
-            <p>Member counts, dividend yield, and gallery stats shown site-wide are placeholders — confirm real numbers.</p>
-          </div>
-          <a href="#" class="attn-cta" onclick="return notifyStub('KPIs &amp; Stats')">Review</a>
-        </div>
-
+        {% endfor %}
       </div>
     </div>
 
+    <!-- Dynamic "Recent Activity" Panel -->
     <div class="panel">
       <div class="panel-head">
         <h3>Recent Activity</h3>
       </div>
       <div>
+        {% for article in recent_articles %}
         <div class="activity-item">
-          <img class="activity-avatar" src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=100" alt="" onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80';">
+          <!-- Generates a safe initial avatar from the author's name -->
+          <div class="activity-avatar">{{ article.author|default:"A"|first|upper }}</div>
           <div class="activity-body">
-            <p><strong>Michael Owusu</strong> published <strong>"2026 Dividend Payouts Declared"</strong></p>
-            <div class="activity-time">2 hours ago</div>
+            <p><strong>{{ article.author|default:"Admin" }}</strong> {% if article.status == 'published' %}published{% else %}drafted{% endif %} <strong>"{{ article.title }}"</strong></p>
+            <div class="activity-time">{{ article.updated_at|timesince }} ago</div>
           </div>
         </div>
+        {% endfor %}
+
+        {% for doc in recent_documents %}
         <div class="activity-item">
-          <img class="activity-avatar" src="https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=100" alt="" onerror="this.src='https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=100&q=80';">
+          <div class="activity-avatar"><span class="material-symbols-outlined" style="font-size: 1.1rem;">upload_file</span></div>
           <div class="activity-body">
-            <p><strong>Linda Amoako</strong> uploaded <strong>Membership Enrollment Form</strong></p>
-            <div class="activity-time">Yesterday, 4:12 PM</div>
+            <p><strong>Admin</strong> uploaded <strong>{{ doc.title }}</strong></p>
+            <div class="activity-time">{{ doc.created_at|timesince }} ago</div>
           </div>
         </div>
-        <div class="activity-item">
-          <img class="activity-avatar" src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100" alt="" onerror="this.src='https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&q=80';">
-          <div class="activity-body">
-            <p><strong>Kwame Darko</strong> saved a draft: <strong>"How to Maximize Your ISL"</strong></p>
-            <div class="activity-time">Yesterday, 11:30 AM</div>
-          </div>
+        {% endfor %}
+        
+        {% if not recent_articles and not recent_documents %}
+        <div class="activity-item" style="justify-content: center; padding: 2rem;">
+          <p style="color: var(--text-muted); text-align: center;">No recent activity found.</p>
         </div>
-        <div class="activity-item">
-          <img class="activity-avatar" src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=100" alt="" onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80';">
-          <div class="activity-body">
-            <p><strong>Michael Owusu</strong> created album <strong>"38th AGM - Accra"</strong></p>
-            <div class="activity-time">3 days ago</div>
-          </div>
-        </div>
+        {% endif %}
       </div>
     </div>
   </div>
 
+  <!-- Quick Actions with real Django URL routing -->
   <div class="qa-grid">
-    <a href="admin-news.html#new" class="qa-card">
+    <a href="{% url 'cms:news_create' %}" class="qa-card">
       <div class="qa-icon"><span class="material-symbols-outlined">edit_square</span></div>
       <h4>Write a New Article</h4>
       <p>Draft news, guides, or announcements with a live preview.</p>
     </a>
-    <a href="admin-downloads.html#upload" class="qa-card">
+    <a href="{% url 'cms:document_create' %}" class="qa-card">
       <div class="qa-icon"><span class="material-symbols-outlined">upload_file</span></div>
       <h4>Upload a Document</h4>
       <p>Add a form, statement, or AGM report to the Vault.</p>
     </a>
-    <a href="admin-gallery.html#new" class="qa-card">
+    <a href="{% url 'cms:gallery_create' %}" class="qa-card">
       <div class="qa-icon"><span class="material-symbols-outlined">add_photo_alternate</span></div>
       <h4>Create a Gallery Album</h4>
       <p>Upload event photos or video with captions.</p>
