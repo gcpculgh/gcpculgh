@@ -165,6 +165,24 @@ MAILERS = {
     },
 }
 
+# Tells Django to trust Vercel's edge network when it says the original request was HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Forces browsers to NEVER send these cookies over unencrypted HTTP
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Prevents the CSRF and Session cookies from being sent in cross-site requests
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Must include the https:// prefix to be mathematically valid
+CSRF_TRUSTED_ORIGINS = [
+    "https://gcpculgh.com",
+    "https://www.gcpculgh.com",
+    "https://*.vercel.app",
+]
+
 # Cloudflare R2 Storage Settings
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
