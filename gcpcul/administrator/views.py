@@ -321,12 +321,14 @@ def document_list(request):
 @staff_required
 def document_create(request):
     if request.method == "POST":
-        form = DocumentForm(request.POST, request.FILES)
         r2_file_key = request.POST.get('r2_file_key', '').strip()
+        
+        # FIX: If direct-to-R2 was used, inject a dummy file so form.is_valid() passes
+        mutable_files = request.FILES.copy()
+        if r2_file_key and 'document' not in mutable_files:
+            mutable_files['document'] = ContentFile(b"placeholder", name="r2_upload.pdf")
 
-        # If direct-to-R2 was used, bypass standard form requirement for 'document'
-        if r2_file_key and 'document' in form.errors:
-            del form.errors['document']
+        form = DocumentForm(request.POST, mutable_files)
 
         if form.is_valid():
             doc = form.save(commit=False)
@@ -336,7 +338,6 @@ def document_create(request):
                     verification = _verify_and_promote_r2_file(r2_file_key)
                     doc.document.name = verification['clean_key']
 
-                    # Edge metadata population
                     if verification['page_count'] is not None and hasattr(doc, 'pages'):
                         doc.pages = verification['page_count']
 
@@ -379,11 +380,13 @@ def document_create(request):
 def document_update(request, pk):
     document = get_object_or_404(Document, pk=pk)
     if request.method == "POST":
-        form = DocumentForm(request.POST, request.FILES, instance=document)
         r2_file_key = request.POST.get('r2_file_key', '').strip()
+        
+        mutable_files = request.FILES.copy()
+        if r2_file_key and 'document' not in mutable_files:
+            mutable_files['document'] = ContentFile(b"placeholder", name="r2_upload.pdf")
 
-        if r2_file_key and 'document' in form.errors:
-            del form.errors['document']
+        form = DocumentForm(request.POST, mutable_files, instance=document)
 
         if form.is_valid():
             doc = form.save(commit=False)
@@ -428,7 +431,6 @@ def document_update(request, pk):
     else:
         form = DocumentForm(instance=document)
     return render(request, "cms/admin_downloads.html", {"form": form, "editing": document, "open_upload": True})
-
 
 @require_POST
 @staff_required
