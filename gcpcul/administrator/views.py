@@ -35,6 +35,7 @@ from django.shortcuts import get_object_or_404, redirect
 from .forms import DocumentForm, GalleryAlbumForm, NewsArticleForm
 from .models import Document, GalleryAlbum, GalleryMedia, NewsArticle
 from .utils import optimize_and_convert_to_webp
+from django.utils import timezone
 
 # Every view below is content-management, not member-facing — staff_member_required
 # (checks request.user.is_staff) is deliberate here instead of login_required, which
@@ -300,7 +301,8 @@ def secure_document_download(request, doc_id):
 
 @staff_required
 def document_list(request):
-    documents = Document.objects.all()
+    # Only fetch active documents
+    documents = Document.objects.filter(is_deleted=False)
 
     query = request.GET.get("q", "").strip()
     if query:
@@ -314,8 +316,8 @@ def document_list(request):
         "documents": documents,
         "query": query,
         "category": category,
-        "total_count": Document.objects.count(),
-        "uploaded_count": Document.objects.exclude(document="").count(),
+        "total_count": Document.objects.filter(is_deleted=False).count(),
+        "uploaded_count": Document.objects.filter(is_deleted=False).exclude(document="").count(),
     }
     return render(request, "cms/admin_downloads.html", context)
 
@@ -367,7 +369,8 @@ def document_create(request):
             messages.success(request, f'"{doc.title}" saved successfully.')
             return redirect("cms:document_list")
         else:
-            messages.error(request, "Upload failed. Please check the form for errors.")
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
     else:
         form = DocumentForm()
     return render(request, "cms/admin_downloads.html", {"form": form, "editing": None, "open_upload": True})
@@ -422,7 +425,8 @@ def document_update(request, pk):
             messages.success(request, f'"{doc.title}" updated successfully.')
             return redirect("cms:document_list")
         else:
-            messages.error(request, "Update failed. Please check the form for errors.")
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
     else:
         form = DocumentForm(instance=document)
     return render(request, "cms/admin_downloads.html", {"form": form, "editing": document, "open_upload": True})
@@ -431,11 +435,14 @@ def document_update(request, pk):
 @staff_required
 def document_delete(request, pk):
     document = get_object_or_404(Document, pk=pk)
-    title = document.title
-    document.delete()
-    messages.success(request, f'"{title}" deleted.')
+    
+    # ENTERPRISE STANDARD: Soft Delete
+    document.is_deleted = True
+    document.deleted_at = timezone.now()
+    document.save()
+    
+    messages.success(request, f'"{document.title}" has been archived and removed from the vault.')
     return redirect("cms:document_list")
-
 
 # GALLERY
 
@@ -568,3 +575,12 @@ def gallery_media_delete(request, pk):
     media.file.delete(save=False)
     media.delete()
     return redirect("cms:gallery_update", pk=album_id)
+
+
+def custom_csrf_failure(request, reason=""):
+    """Catches dead sessions and routes them gracefully instead of crashing."""
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    
+    messages.error(request, "Your secure session expired due to inactivity. Please try saving again.")
+    return redirect("cms:dashboard")

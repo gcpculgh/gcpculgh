@@ -183,6 +183,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
 ]
 
+CSRF_FAILURE_VIEW = 'administrator.views.custom_csrf_failure'
+
 # Cloudflare R2 Storage Settings
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")

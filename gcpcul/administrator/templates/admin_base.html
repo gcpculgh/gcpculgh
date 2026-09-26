@@ -223,6 +223,8 @@
 
 <!-- Auto-dismiss logic -->
 <script>
+
+
   function dismissToast(toastElement) {
     // Add the fade-out class to trigger the CSS animation
     toastElement.classList.add('toast-fade-out');
@@ -387,5 +389,33 @@
   }
 </script>
 {% block extra_js %}{% endblock %}
+<script>
+  (function() {
+    let lastActivity = Date.now();
+    const PING_INTERVAL = 10 * 60 * 1000; 
+    const TIMEOUT_LIMIT = 20 * 60 * 1000; 
+
+    // Background Heartbeat
+    setInterval(() => {
+      fetch("{% url 'cms:dashboard' %}", { method: 'HEAD' })
+        .then(res => {
+          if (res.redirected) window.location.reload();
+        }).catch(() => {});
+      
+      lastActivity = Date.now();
+    }, PING_INTERVAL);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        const timeAsleep = Date.now() - lastActivity;
+        if (timeAsleep > TIMEOUT_LIMIT) {
+          window.location.reload(); 
+        } else {
+          lastActivity = Date.now();
+        }
+      }
+    });
+  })();
+</script>
 </body>
 </html>

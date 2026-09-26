@@ -114,6 +114,7 @@ class Document(models.Model):
         blank=True, null=True,
         help_text="Required for AGM documents — drives the auto-generated title in the admin form.",
     )
+
     description = models.CharField(max_length=300, blank=True)
     pages = models.PositiveIntegerField(blank=True, null=True)
     icon_name = models.CharField(max_length=40, default="description")
@@ -130,6 +131,9 @@ class Document(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ["category", "-year", "title"]

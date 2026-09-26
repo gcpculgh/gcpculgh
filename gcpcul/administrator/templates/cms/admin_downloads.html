@@ -121,6 +121,24 @@
   .icon-item-btn:hover { background: var(--bg-section-alt); color: var(--text-main); }
   .icon-item-btn.selected { background: var(--primary-light); color: var(--heading-green); border-color: rgba(10, 92, 54, 0.2); }
 
+  /* Custom Modal Styles */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-card { background: var(--bg-card); width: 100%; max-width: 24rem; border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: translateY(15px); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); text-align: center; }
+  .modal-overlay.active .modal-card { transform: translateY(0); }
+  .modal-icon { width: 3rem; height: 3rem; border-radius: 50px; background: var(--danger-bg); color: var(--danger); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; }
+  .modal-icon .material-symbols-outlined { font-size: 1.5rem; }
+  .modal-card h3 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
+  .modal-card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.4; }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+  .modal-actions button { flex: 1; }
+  .danger-btn { background: var(--danger); border-color: var(--danger); }
+  .danger-btn:hover { background: #b91c1c; }
+
+  /* Button loading spinner */
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .spin-icon { animation: spin 1s linear infinite; }
+
   /* Pulsing animation for the verification phase */
   @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
   .progress-fill.verifying { background: var(--coop-gold); animation: pulse 1.5s infinite ease-in-out; }
@@ -370,8 +388,8 @@
                 </a>
                 {% endif %}
                 <a href="{% url 'cms:document_update' doc.pk %}" class="row-action-btn"><span class="material-symbols-outlined">edit</span></a>
-                <!-- POST-only deletion for Zero Trust CSRF protection -->
-                <form method="post" action="{% url 'cms:document_delete' doc.pk %}" style="margin:0;" onsubmit="return confirm('Are you sure you want to permanently delete this document?');">
+                <!-- Secure, custom modal trigger -->
+                <form method="post" action="{% url 'cms:document_delete' doc.pk %}" style="margin:0;" id="delete-form-{{ doc.pk }}" onsubmit="event.preventDefault(); openDeleteModal('{{ doc.pk }}', '{{ doc.title|escapejs }}');">
                   {% csrf_token %}
                   <button type="submit" class="row-action-btn danger" aria-label="Delete"><span class="material-symbols-outlined">delete</span></button>
                 </form>
@@ -393,6 +411,19 @@
     </div>
   </div>
   {% endif %}
+
+  <!-- Enterprise Delete Modal -->
+  <div id="customDeleteModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon"><span class="material-symbols-outlined">warning</span></div>
+      <h3>Archive Document</h3>
+      <p>Are you sure you want to remove <strong id="modalDocTitle"></strong> from the Vault? It will be hidden from the public portal.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-outline-admin" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-primary-admin danger-btn" id="confirmDeleteBtn">Yes, Archive It</button>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
 
@@ -457,7 +488,7 @@
     'apartment', 'store', 'business', 'event', 'calendar_month', 'schedule', 
     'public', 'language', 'chat', 'forum', 'mail', 'email', 'phone', 
     'contact_support', 'help', 'info', 'warning', 'error', 'check_circle', 
-    'cloud_download', 'upload_file', 'lock', 'key', 'settings', 'admin_panel_settings'
+    'cloud_download', 'upload_file', 'lock', 'key', 'settings', 'admin_panel_settings', 'child_care'
   ];
 
   let iconPopover, iconSearchInput, iconGrid, docIconInput, selectedIconDisplay, selectedIconText;
@@ -547,6 +578,29 @@
     }
   }
 
+  // Custom Modal Logic
+  let formToSubmit = null;
+
+  function openDeleteModal(docId, docTitle) {
+    formToSubmit = document.getElementById(`delete-form-${docId}`);
+    document.getElementById('modalDocTitle').textContent = docTitle;
+    document.getElementById('customDeleteModal').classList.add('active');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('customDeleteModal').classList.remove('active');
+    formToSubmit = null;
+  }
+
+  document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    if (formToSubmit) {
+      // Lock button to prevent double-clicks
+      this.disabled = true;
+      this.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">sync</span> Archiving...';
+      formToSubmit.submit();
+    }
+  });
+
   function suggestAgmTitle() {
     const year = document.getElementById('docYear').value;
     const titleField = document.getElementById('docTitle');
@@ -558,8 +612,22 @@
 
   async function initiateSecureUpload() {
     const form = document.querySelector('.form-panel');
-    
-    // 1. Premium inline validation check
+    const submitBtn = document.querySelector('.form-footer .btn-primary-admin');
+    const originalBtnText = submitBtn.innerHTML;
+
+    submitBtn.disabled = true;
+    submitBtn.style.pointerEvents = 'none';
+    submitBtn.style.opacity = '0.7';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">sync</span> Securing Vault...';
+
+    // Helper function to unlock the button if validation or upload fails
+    const unlockButton = () => {
+      submitBtn.disabled = false;
+      submitBtn.style.pointerEvents = 'auto';
+      submitBtn.style.opacity = '1';
+      submitBtn.innerHTML = originalBtnText;
+    };
+
     if (!form.checkValidity()) {
       const invalidField = form.querySelector(':invalid');
       document.querySelectorAll('.premium-tooltip').forEach(el => el.remove());
@@ -579,32 +647,33 @@
          if (tooltip.parentNode) tooltip.remove();
          invalidField.removeEventListener('input', clearErr);
       });
+      
+      unlockButton(); 
       return; 
     }
 
-    // 2. Business Rules
     const cat = document.getElementById('docCategory').value;
     if (cat === 'agm' && !document.getElementById('docYear').value) {
       showClientToast("AGM Year is required for AGM documents.", "warning");
       document.getElementById('docYear').focus();
+      unlockButton(); /
       return;
     }
 
     const fileInput = document.getElementById('docFile');
     const file = fileInput.files[0];
     
-    // Allow update form to submit without picking a new file
     if (!file) {
       {% if editing %}
         form.submit();
         return;
       {% else %}
         showClientToast("Please select a document first.", "warning");
+        unlockButton(); 
         return;
       {% endif %}
     }
 
-    // 3. Client extension sanity check
     const allowedExtensions = ['.pdf', '.doc', '.docx'];
     const fileName = file.name.toLowerCase();
     const isValidExt = allowedExtensions.some(ext => fileName.endsWith(ext));
@@ -615,15 +684,16 @@
       document.getElementById('fileDrop').classList.remove('has-file');
       document.getElementById('fileDropLabel').textContent = 'Click or drag a file here';
       document.getElementById('fileDropSub').textContent = 'Up to 300MB limit';
+      unlockButton(); // <--- UNLOCK
       return;
     }
 
     if (file.size > 300 * 1024 * 1024) {
       showClientToast("File exceeds the 300MB strict limit. Please compress the document.", "error");
+      unlockButton(); 
       return;
     }
 
-    // 4. UI Swap: Dropzone -> Progress Bar
     document.getElementById('dropzoneContainer').style.display = 'none';
     const progressWrapper = document.getElementById('progressWrapper');
     const fillBar = document.getElementById('progressFillBar');
@@ -672,14 +742,15 @@
       
       document.getElementById('r2FileKey').value = file_key;
       
-      // CRITICAL: Strip the name attribute so the browser does NOT re-send the 77MB file to Vercel
       fileInput.removeAttribute('name');
+      
       form.submit();
 
     } catch (error) {
       showClientToast(error.message || error, "error");
       progressWrapper.classList.remove('active');
       document.getElementById('dropzoneContainer').style.display = 'block';
+      unlockButton(); 
     }
   }
 
