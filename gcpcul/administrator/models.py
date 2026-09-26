@@ -106,17 +106,7 @@ class Document(models.Model):
         ("agm", "AGM Minutes / Report"),
         ("legal", "Policy & By-Laws"),
     ]
-    # Matches exactly the choices offered in the admin icon picker.
-    ICON_CHOICES = [
-        ("description", "Document"),
-        ("person_add", "Person (single applicant)"),
-        ("group_add", "Group / Guarantor"),
-        ("gavel", "Governance / Legal"),
-        ("receipt_long", "Statement / Report"),
-        ("health_and_safety", "Health / Insurance"),
-        ("badge", "ID / Membership"),
-        ("account_balance", "Institutional"),
-    ]
+   
 
     title = models.CharField(max_length=220)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default="form")
@@ -126,7 +116,7 @@ class Document(models.Model):
     )
     description = models.CharField(max_length=300, blank=True)
     pages = models.PositiveIntegerField(blank=True, null=True)
-    icon_name = models.CharField(max_length=40, choices=ICON_CHOICES, default="description")
+    icon_name = models.CharField(max_length=40, default="description")
     document = models.FileField(
         upload_to="documents/%Y/", 
         blank=True, 
