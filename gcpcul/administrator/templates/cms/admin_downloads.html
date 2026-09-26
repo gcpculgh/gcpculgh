@@ -221,13 +221,12 @@
         
         <div class="field-group">
           <label>Icon</label>
-          <!-- Hidden input stores the selected icon value for Django -->
-          <input type="hidden" name="icon" id="docIcon" value="{{ form.icon.value|default_if_none:'description' }}">
+          <input type="hidden" name="icon_name" id="docIcon" value="{{ form.icon_name.value|default_if_none:'description' }}">
           
           <div class="icon-popover-wrap">
             <button type="button" class="icon-picker-trigger" id="iconPickerTrigger" onclick="toggleIconPicker()">
-              <span class="material-symbols-outlined" id="selectedIconDisplay">{{ form.icon.value|default_if_none:'description' }}</span>
-              <span class="trigger-text" id="selectedIconText">{{ form.icon.value|default_if_none:'description' }}</span>
+              <span class="material-symbols-outlined" id="selectedIconDisplay">{{ form.icon_name.value|default_if_none:'description' }}</span>
+              <span class="trigger-text" id="selectedIconText">{{ form.icon_name.value|default_if_none:'description' }}</span>
               <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
             </button>
 
