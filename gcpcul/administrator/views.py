@@ -199,15 +199,15 @@ def _verify_and_promote_r2_file(r2_key):
     s3_client = _get_s3_client()
     bucket = settings.AWS_STORAGE_BUCKET_NAME
 
-    # 1. Fetch file from quarantine
+    # 1. Fetch file from quarantine and strip any accidental leading whitespace/padding
     response = s3_client.get_object(Bucket=bucket, Key=r2_key)
-    file_bytes = response['Body'].read()
+    file_bytes = response['Body'].read().lstrip()
 
     # 2. Strict Magic Byte / Hex Inspection
     header = file_bytes[:8]
     is_pdf = header.startswith(b'%PDF')
-    is_docx = header.startswith(b'PK\x03\x04')
-    is_doc = header.startswith(b'\xd0\xcf\x11\xe0')
+    is_docx = file_bytes.startswith(b'PK\x03\x04')
+    is_doc = file_bytes.startswith(b'\xd0\xcf\x11\xe0')
 
     if not (is_pdf or is_docx or is_doc):
         # Scrub quarantine immediately on spoofed upload
@@ -242,7 +242,6 @@ def _verify_and_promote_r2_file(r2_key):
         'sha256_hash': sha256_hash,
         'page_count': page_count,
     }
-
 
 @staff_required
 def generate_upload_url(request):
