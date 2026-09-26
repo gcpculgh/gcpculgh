@@ -48,7 +48,7 @@ class NewsArticleForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ["category", "year", "title", "description", "pages", "icon_name", "document"]
+        fields = ["category", "year", "title", "description", "pages", "icon_name"]
 
     def clean(self):
         cleaned = super().clean()
@@ -57,7 +57,6 @@ class DocumentForm(forms.ModelForm):
         if category == "agm" and not year:
             self.add_error("year", "AGM documents need a year.")
         return cleaned
-
 
 class GalleryAlbumForm(forms.ModelForm):
     class Meta:

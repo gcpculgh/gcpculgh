@@ -186,33 +186,36 @@ def _get_s3_client():
         region_name=settings.AWS_S3_REGION_NAME or 'auto',
     )
 
-
 def _verify_and_promote_r2_file(r2_key):
     """
-    Zero-Trust Quarantine Inspector:
-    1. Reads the quarantined object from Cloudflare R2.
-    2. Enforces strict byte-level hex validation (PDF, DOC, DOCX).
-    3. Computes SHA-256 cryptographic checksum for immutable auditing.
-    4. Extracts true document metadata (page count via pypdf).
-    5. Moves the verified file from quarantine/ to documents/ and scrubs quarantine.
+    Zero-Trust Quarantine Inspector with Telemetry:
     """
     s3_client = _get_s3_client()
     bucket = settings.AWS_STORAGE_BUCKET_NAME
 
-    # 1. Fetch file from quarantine and strip any accidental leading whitespace/padding
+    # 1. Fetch file from quarantine
     response = s3_client.get_object(Bucket=bucket, Key=r2_key)
-    file_bytes = response['Body'].read().lstrip()
+    file_bytes = response['Body'].read()
+
+    # --- TELEMETRY DEBUG PRINT (Check your local terminal / Vercel logs) ---
+    print(f"--- R2 FILE DEBUG ---")
+    print(f"Key: {r2_key}")
+    print(f"Total Bytes Length: {len(file_bytes)}")
+    print(f"First 30 Bytes: {file_bytes[:30]}")
+    print(f"---------------------")
 
     # 2. Strict Magic Byte / Hex Inspection
-    header = file_bytes[:8]
+    clean_bytes = file_bytes.lstrip()
+    header = clean_bytes[:8]
+    
     is_pdf = header.startswith(b'%PDF')
     is_docx = file_bytes.startswith(b'PK\x03\x04')
     is_doc = file_bytes.startswith(b'\xd0\xcf\x11\xe0')
 
     if not (is_pdf or is_docx or is_doc):
-        # Scrub quarantine immediately on spoofed upload
+        # Scrub quarantine immediately on spoofed/empty upload
         s3_client.delete_object(Bucket=bucket, Key=r2_key)
-        raise ValueError("Invalid file structure. Only genuine PDF, DOC, and DOCX files are permitted.")
+        raise ValueError(f"Invalid file structure. Length was {len(file_bytes)} bytes, header was {header!r}.")
 
     # 3. Cryptographic Immutability (SHA-256)
     sha256_hash = hashlib.sha256(file_bytes).hexdigest()
@@ -316,24 +319,19 @@ def document_list(request):
     }
     return render(request, "cms/admin_downloads.html", context)
 
-
 @staff_required
 def document_create(request):
     if request.method == "POST":
+        # Pure decoupled form handling — no dummy files needed
+        form = DocumentForm(request.POST)
         r2_file_key = request.POST.get('r2_file_key', '').strip()
-        
-        # FIX: If direct-to-R2 was used, inject a dummy file so form.is_valid() passes
-        mutable_files = request.FILES.copy()
-        if r2_file_key and 'document' not in mutable_files:
-            mutable_files['document'] = ContentFile(b"placeholder", name="r2_upload.pdf")
-
-        form = DocumentForm(request.POST, mutable_files)
 
         if form.is_valid():
             doc = form.save(commit=False)
 
             if r2_file_key:
                 try:
+                    # The true zero-trust validation happens securely in the cloud
                     verification = _verify_and_promote_r2_file(r2_file_key)
                     doc.document.name = verification['clean_key']
 
@@ -379,19 +377,16 @@ def document_create(request):
 def document_update(request, pk):
     document = get_object_or_404(Document, pk=pk)
     if request.method == "POST":
+        # Pure decoupled form handling — no dummy files needed
+        form = DocumentForm(request.POST, instance=document)
         r2_file_key = request.POST.get('r2_file_key', '').strip()
-        
-        mutable_files = request.FILES.copy()
-        if r2_file_key and 'document' not in mutable_files:
-            mutable_files['document'] = ContentFile(b"placeholder", name="r2_upload.pdf")
-
-        form = DocumentForm(request.POST, mutable_files, instance=document)
 
         if form.is_valid():
             doc = form.save(commit=False)
 
             if r2_file_key:
                 try:
+                    # The true zero-trust validation happens securely in the cloud
                     verification = _verify_and_promote_r2_file(r2_file_key)
                     doc.document.name = verification['clean_key']
 
@@ -408,6 +403,7 @@ def document_update(request, pk):
                     messages.error(request, f"Cloudflare R2 verification error: {str(e)}")
                     return render(request, "cms/admin_downloads.html", {"form": form, "editing": document, "open_upload": True})
 
+            # Save base64 canvas thumbnail if generated
             thumbnail_b64 = request.POST.get('thumbnail_base64', '')
             if thumbnail_b64 and hasattr(doc, 'thumbnail'):
                 try:
