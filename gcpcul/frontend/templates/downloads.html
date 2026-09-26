@@ -809,7 +809,7 @@
       <span class="material-symbols-outlined">verified_user</span>
       <p><strong>These are the official current versions.</strong> Every form and report here is issued by GCPCUL and
         replaced the moment it's revised, so the copy you download is the one the office will accept. If a document
-        looks out of date, <a href="{% url 'contact' %}" style="text-decoration: none;">tell us</a>and we'll correct it.</p>
+        looks out of date, <a href="{% url 'contact' %}" style="text-decoration: none; color: #073E24;"><strong>tell us</strong></a> and we'll correct it.</p>
     </div> 
 
     <div class="empty-state-box" id="docEmptyState">
@@ -822,13 +822,16 @@
 
     <div class="doc-grid" id="docGrid">
 
+      <!-- 1. APPLICATION FORMS -->
       {% for form in forms %}
       <div class="doc-card{% if not form.document %} is-pending{% endif %}" data-category="form" id="{{ form.title|slugify }}">
+        <!-- Uses the new unified icon_name field -->
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{form.icon_name}}</span></span></div>
         <div class="doc-info">
           <span class="doc-meta">
             {% if form.document %}
-            PDF · {{ form.pages }} page{{ form.pages|pluralize }}
+            <!-- Uses the new unified pages field and safe_file_size property -->
+            PDF · {% if form.pages %}{{ form.pages }} page{{ form.pages|pluralize }}{% else %}Auto{% endif %}
             {% if form.safe_file_size > 0 %}
             · <span class="doc-size" style="color: var(--text-main);">{{ form.safe_file_size|filesizeformat }}</span>
             {% endif %}
@@ -848,11 +851,12 @@
 
           <div class="doc-actions">
             {% if form.document %}
-            <a href="{{ form.document.url }}" target="_blank" download class="btn btn-outline btn-sm">
+            <a href="{% url 'cms:secure_document_download' form.id %}" target="_blank" download class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span>
               Download PDF
             </a>
             {% else %}
+            <!-- Safe fallback for missing files -->
             <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ form.title|urlencode }}."
               target="_blank" class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span>
@@ -864,6 +868,7 @@
       </div>
       {% endfor %}
 
+      <!-- HARDCODED PORTAL TEASER FOR REPORTS -->
       <div class="doc-card" data-category="report" style="position: relative;">
         <div
           style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">
@@ -887,14 +892,14 @@
         </div>
       </div>
 
+      <!-- 2. STATEMENTS & REPORTS (Dynamic) -->
       {% for report in reports %}
-      <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="agm" id="{{ report.title|slugify }}">
+      <div class="doc-card{% if not report.document %} is-pending{% endif %}" data-category="report" id="{{ report.title|slugify }}">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ report.icon_name }}</span></span></div>
-
         <div class="doc-info">
           <span class="doc-meta">
             {% if report.document %}
-            PDF · {{ report.year }} AGM
+            PDF · {% if report.pages %}{{ report.pages }} page{{ report.pages|pluralize }}{% else %}Auto{% endif %}
             {% if report.safe_file_size > 0 %}
             · <span class="doc-size" style="color: var(--text-main);">{{ report.safe_file_size|filesizeformat }}</span>
             {% endif %}
@@ -902,27 +907,19 @@
             <span class="pending-note">Being prepared</span>
             {% endif %}
           </span>
-
           <h4>
-            {{ report.year }} {{ report.title }}
-            {% if not report.document %}
-            <span class="pending-tag">Coming soon</span>
-            {% endif %}
+            {{ report.title }}
+            {% if not report.document %}<span class="pending-tag">Coming soon</span>{% endif %}
           </h4>
-
           <p>{{ report.description }}</p>
-
           <div class="doc-actions">
             {% if report.document %}
-            <a href="{{ report.document.url }}" target="_blank" download class="btn btn-outline btn-sm">
-              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span>
-              Download PDF
+            <a href="{% url 'cms:secure_document_download' report.id %}" target="_blank" download class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
             </a>
             {% else %}
-            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ report.year }}%20{{ report.title|urlencode }}."
-              target="_blank" class="btn btn-outline btn-sm">
-              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span>
-              Request a Copy
+            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ report.title|urlencode }}." target="_blank" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span> Request a Copy
             </a>
             {% endif %}
           </div>
@@ -930,6 +927,77 @@
       </div>
       {% endfor %}
 
+      <!-- 3. AGM DOCUMENTS -->
+      {% for agm in agm_docs %}
+      <div class="doc-card{% if not agm.document %} is-pending{% endif %}" data-category="agm" id="{{ agm.title|slugify }}">
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ agm.icon_name }}</span></span></div>
+        <div class="doc-info">
+          <span class="doc-meta">
+            {% if agm.document %}
+            PDF · {{ agm.year }} AGM
+            {% if agm.safe_file_size > 0 %}
+            · <span class="doc-size" style="color: var(--text-main);">{{ agm.safe_file_size|filesizeformat }}</span>
+            {% endif %}
+            {% else %}
+            <span class="pending-note">Being prepared</span>
+            {% endif %}
+          </span>
+          <h4>
+            {{ agm.title }}
+            {% if not agm.document %}<span class="pending-tag">Coming soon</span>{% endif %}
+          </h4>
+          <p>{{ agm.description }}</p>
+          <div class="doc-actions">
+            {% if agm.document %}
+            <a href="{% url 'cms:secure_document_download' agm.id %}"  target="_blank" download class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
+            </a>
+            {% else %}
+            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ agm.title|urlencode }}." target="_blank" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span> Request a Copy
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- 4. POLICIES & BY-LAWS -->
+      {% for policy in policies %}
+      <div class="doc-card{% if not policy.document %} is-pending{% endif %}" data-category="legal" id="{{ policy.title|slugify }}">
+        <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ policy.icon_name }}</span></span></div>
+        <div class="doc-info">
+          <span class="doc-meta">
+            {% if policy.document %}
+            PDF · {% if policy.pages %}{{ policy.pages }} page{{ policy.pages|pluralize }}{% else %}Auto{% endif %}
+            {% if policy.safe_file_size > 0 %}
+            · <span class="doc-size" style="color: var(--text-main);">{{ policy.safe_file_size|filesizeformat }}</span>
+            {% endif %}
+            {% else %}
+            <span class="pending-note">Being prepared</span>
+            {% endif %}
+          </span>
+          <h4>
+            {{ policy.title }}
+            {% if not policy.document %}<span class="pending-tag">Coming soon</span>{% endif %}
+          </h4>
+          <p>{{ policy.description }}</p>
+          <div class="doc-actions">
+            {% if policy.document %}
+            <a href="{% url 'cms:secure_document_download' policy.id %}" target="_blank" download class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
+            </a>
+            {% else %}
+            <a href="https://wa.me/233548685362?text=Hello%20GCPCUL!%20Please%20send%20me%20a%20copy%20of%20the%20{{ policy.title|urlencode }}." target="_blank" class="btn btn-outline btn-sm">
+              <span class="material-symbols-outlined" style="font-size: 1.05rem;">chat</span> Request a Copy
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- HELP CARD -->
       <div class="doc-help-card" id="docHelpCard">
         <span class="material-symbols-outlined">contact_support</span>
         <h4>Can't find what you need?</h4>

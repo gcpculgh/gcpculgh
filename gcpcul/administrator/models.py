@@ -4,6 +4,9 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from .utils import optimize_and_convert_to_webp
+from django.core.validators import FileExtensionValidator
+import os
+from django.core.exceptions import ValidationError
 
 import bleach
 from bleach.linkifier import Linker
@@ -72,6 +75,29 @@ class NewsArticle(models.Model):
     def read_time_display(self):
         return f"{self.read_time_minutes} min read"
 
+def validate_secure_document(file):
+    valid_extensions = ['.pdf', '.doc', '.docx']
+    ext = os.path.splitext(file.name)[1].lower()
+    
+    if ext not in valid_extensions:
+        raise ValidationError(f"Unsupported file extension: {ext}. Allowed types: PDF, DOC, DOCX.")
+    
+    # ZERO-TRUST: Read the first 8 bytes (Magic Bytes) to prove the file isn't spoofed
+    file.seek(0)
+    header = file.read(8)
+    file.seek(0) # Reset pointer so Django can save it properly later
+    
+    is_pdf = header.startswith(b'%PDF')
+    is_docx = header.startswith(b'PK\x03\x04') # Standard ZIP/XML header for modern Word docs
+    is_doc = header.startswith(b'\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1') # OLE header for legacy Word docs
+    
+    if ext == '.pdf' and not is_pdf:
+        raise ValidationError("Spoofed file detected: Extension is PDF, but content is malicious/invalid.")
+    if ext == '.docx' and not is_docx:
+        raise ValidationError("Spoofed file detected: Extension is DOCX, but content is malicious/invalid.")
+    if ext == '.doc' and not is_doc:
+        raise ValidationError("Spoofed file detected: Extension is DOC, but content is malicious/invalid.")
+
 
 class Document(models.Model):
     CATEGORY_CHOICES = [
@@ -101,7 +127,16 @@ class Document(models.Model):
     description = models.CharField(max_length=300, blank=True)
     pages = models.PositiveIntegerField(blank=True, null=True)
     icon_name = models.CharField(max_length=40, choices=ICON_CHOICES, default="description")
-    document = models.FileField(upload_to="documents/%Y/", blank=True, null=True)
+    document = models.FileField(
+        upload_to="documents/%Y/", 
+        blank=True, 
+        null=True,
+        validators=[validate_secure_document]
+    )
+
+    file_hash = models.CharField(max_length=64, blank=True, null=True, help_text="SHA-256 cryptographic checksum")
+    page_count = models.PositiveIntegerField(blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='document_thumbs/', blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

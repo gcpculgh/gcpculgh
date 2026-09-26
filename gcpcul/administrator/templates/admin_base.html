@@ -25,6 +25,7 @@
     --font-display: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
     --sidebar-w: 16.5rem;
   }
+
   [data-theme="dark"] {
     --bg-page: #0B1120; --bg-card: #111827; --bg-section-alt: #0F172A;
     --text-main: #F1F0EC; --text-muted: #A9A398; --border-color: #232B22;
@@ -33,7 +34,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; }
-  body { font-family: var(--font-display); background: var(--bg-page); color: var(--text-main); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  body { font-family: var(--font-display); background: var(--bg-page); color: var(--text-main); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; }
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 22; font-size: 1.3em; line-height: 1; vertical-align: middle; }
@@ -64,6 +65,8 @@
 
   .sidebar-foot { padding: 1rem .85rem 1.25rem; border-top: 1px solid rgba(255,255,255,.08); }
   .sidebar-foot a { display: flex; align-items: center; gap: .65rem; padding: .55rem .5rem; border-radius: .5rem; font-size: .82rem; font-weight: 600; color: rgba(231,237,233,.65); }
+  .sidebar-foot a, .sidebar-foot button { display: flex; align-items: center; gap: .65rem; padding: .55rem .5rem; border-radius: .5rem; font-size: .82rem; font-weight: 600; color: rgba(231,237,233,.65); background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit; }
+  .sidebar-foot a:hover, .sidebar-foot button:hover { color: #fff; background: rgba(255,255,255,.06); }
   .sidebar-foot a:hover { color: #fff; }
 
   /* ---- Main column ---- */
@@ -92,6 +95,88 @@
 
   .content { flex: 1; padding: 1.85rem clamp(1.25rem, 3vw, 2.25rem) 3rem; }
 
+  /* Premium Toast Notifications */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 0;           
+    padding: 2rem;      
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 9999;
+    pointer-events: none; 
+    
+    overflow-x: clip;   
+  }
+
+  .toast-notification {
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #eaeaea);
+    border-left: 4px solid var(--primary-green, #10b981);
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 1.15rem 1.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 320px;
+    max-width: 420px;
+    pointer-events: auto;
+    transform: translateX(120%);
+    animation: slideInToast 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Color coding based on Django message tags */
+  .toast-notification.toast-error { border-left-color: var(--danger, #ef4444); }
+  .toast-notification.toast-warning { border-left-color: var(--warn, #f59e0b); }
+
+  .toast-icon {
+    margin-top: 0.1rem;
+  }
+  .toast-success .toast-icon { color: var(--primary-green, #10b981); }
+  .toast-error .toast-icon { color: var(--danger, #ef4444); }
+  .toast-warning .toast-icon { color: var(--warn, #f59e0b); }
+
+  .toast-content {
+    flex: 1;
+  }
+  .toast-content p {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-main, #111827);
+    line-height: 1.4;
+  }
+
+  .toast-close {
+    background: none;
+    border: none;
+    color: var(--text-muted, #6b7280);
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: color 0.15s ease;
+  }
+  .toast-close:hover {
+    color: var(--text-main, #111827);
+  }
+
+  @keyframes slideInToast {
+    0% { transform: translateX(120%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes fadeOutToast {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(10%); opacity: 0; }
+  }
+
+  .toast-fade-out {
+    animation: fadeOutToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  }
+
   @media (max-width: 68rem) {
     .sidebar { transform: translateX(-100%); }
     .sidebar.open { transform: translateX(0); box-shadow: 0 0 0 100vmax rgba(0,0,0,.4); }
@@ -103,7 +188,57 @@
 {% block extra_css %}{% endblock %}
 </head>
 <body>
+{% if messages %}
+<div class="toast-container" id="admin-toast-container">
+  {% for message in messages %}
+  <div class="toast-notification toast-{{ message.tags }}">
+    
+    <!-- Dynamic Icon based on message type -->
+    <div class="toast-icon">
+      <span class="material-symbols-outlined">
+        {% if message.tags == 'success' %}check_circle
+        {% elif message.tags == 'error' %}error
+        {% elif message.tags == 'warning' %}warning
+        {% else %}info
+        {% endif %}
+      </span>
+    </div>
 
+    <!-- The actual message from views.py -->
+    <div class="toast-content">
+      <p>{{ message }}</p>
+    </div>
+
+    <!-- Manual Close Button -->
+    <button class="toast-close" onclick="dismissToast(this.parentElement)" aria-label="Close notification">&times;</button>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Auto-dismiss logic -->
+<script>
+  function dismissToast(toastElement) {
+    // Add the fade-out class to trigger the CSS animation
+    toastElement.classList.add('toast-fade-out');
+    // Remove it completely from the DOM after the animation finishes
+    toastElement.addEventListener('animationend', () => {
+      toastElement.remove();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const toasts = document.querySelectorAll('.toast-notification');
+    toasts.forEach((toast, index) => {
+      // Stagger the dismiss times slightly if there are multiple messages
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          dismissToast(toast);
+        }
+      }, 4500 + (index * 500)); 
+    });
+  });
+</script>
+{% endif %}
 <div class="shell">
   <aside class="sidebar" id="adminSidebar">
     <div class="sidebar-brand">
@@ -128,7 +263,6 @@
       </a>
       <a href="{% url 'cms:document_list' %}" class="nav-item {% block nav_downloads %}{% endblock %}">
         <span class="material-symbols-outlined">folder_open</span> Document Vault
-        <span class="nav-flag count">3</span>
       </a>
       <a href="{% url 'cms:gallery_list' %}" class="nav-item {% block nav_gallery %}{% endblock %}">
         <span class="material-symbols-outlined">photo_library</span> Gallery
@@ -158,12 +292,17 @@
     </nav>
 
     <div class="sidebar-foot">
-      <a href="{% url 'home' %}" target="_blank">
+      <a href="{% url 'home' %}" target="_blank" rel="noopener noreferrer">
         <span class="material-symbols-outlined">open_in_new</span> View Live Site
       </a>
-      <a href="">
-        <span class="material-symbols-outlined">logout</span> Sign Out
-      </a>
+      
+      <!-- ZERO TRUST LOGOUT: Requires a POST request with a CSRF token -->
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">
+          <span class="material-symbols-outlined">logout</span> Sign Out
+        </button>
+      </form>
     </div>
   </aside>
 
@@ -185,10 +324,26 @@
           <span class="dot"></span>
         </button>
         <div class="topbar-user">
-          <img src="{% static 'assets/images/team/okyere-michael.jpeg' %}" alt="Image of Micahel Okyere">
+          <!-- 1. The Avatar: Safely checks first name, then email, then username for the initial -->
+          <div style="width: 2.15rem; height: 2.15rem; border-radius: 50%; background: var(--primary-light); color: var(--heading-green); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .95rem; border: 1px solid var(--border-color);">
+            {{ request.user.first_name|default:request.user.email|default:request.user.username|make_list|first|upper }}
+          </div>
           <div>
-            <div class="topbar-user-name">Michael Okyere</div>
-            <div class="topbar-user-role">Systems Admin</div>
+            <!-- 2. The Name: Uses Django's built-in full name compiler, falls back to the raw username/email -->
+            <div class="topbar-user-name">
+              {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+            
+            <!-- 3. The Role: Live RBAC querying based on actual assigned Django Groups -->
+            <div class="topbar-user-role">
+              {% if request.user.is_superuser %}
+                Systems Admin
+              {% elif request.user.groups.exists %}
+                {{ request.user.groups.first.name }}
+              {% else %}
+                Staff Member
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>

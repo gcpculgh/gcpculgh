@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import * 
 from administrator.models import *
 from django.contrib import messages
 from administrator.forms import * 
+from administrator.models import Document 
+
 
 
 # Create your views here.
@@ -28,21 +29,22 @@ def calculator(request):
 def gallery(request):
     return render(request, 'gallery.html')
 
-def downloads(request): 
-    
-    # We order them so the newest/most relevant ones show up first
-    forms = DownloadableForm.objects.all().order_by('title')
-    reports = AGMReport.objects.all().order_by('-year')
-    
-    # 3. Pack them into the context dictionary
-    context = {
-        'forms': forms,
-        'reports': reports,
-    }
-    
-    # 4. Pass the context to the template
-    return render(request, 'downloads.html', context)
 
+
+def downloads(request):
+    # Query the unified table by category
+    forms = Document.objects.filter(category="form").exclude(document="")
+    reports = Document.objects.filter(category="report").exclude(document="")
+    agm_docs = Document.objects.filter(category="agm").exclude(document="")
+    policies = Document.objects.filter(category="legal").exclude(document="")
+
+    context = {
+        "forms": forms,
+        "reports": reports,
+        "agm_docs": agm_docs,
+        "policies": policies,
+    }
+    return render(request, 'downloads.html', context)
 
 def news(request):
     # Fetch all published articles once, ordered by newest first

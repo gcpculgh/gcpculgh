@@ -3,20 +3,20 @@
 
 {% block admin_title %}Document Vault{% endblock %}
 {% block nav_downloads %}active{% endblock %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 {% block extra_css %}
 <style>
   .page-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
   .page-head h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; }
   .page-head p { color: var(--text-muted); font-size: .88rem; margin-top: .25rem; }
-  .btn-primary-admin { display: inline-flex; align-items: center; gap: .5rem; background: var(--primary-green); color: #fff; font-weight: 700; font-size: .87rem; padding: .68rem 1.25rem; border-radius: .6rem; border: none; cursor: pointer; }
-  .btn-primary-admin:hover { background: var(--accent-green); }
-  .btn-outline-admin { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); font-weight: 700; font-size: .85rem; padding: .6rem 1.1rem; border-radius: .6rem; cursor: pointer; }
-  .btn-outline-admin:hover { border-color: var(--primary-green); }
+  .btn-primary-admin { display: inline-flex; align-items: center; gap: .5rem; background: var(--primary-green); color: #fff; font-weight: 700; font-size: .87rem; padding: .68rem 1.25rem; border-radius: .6rem; border: none; cursor: pointer; text-decoration: none; }
+  .btn-primary-admin:hover { background: var(--accent-green); color: #fff; }
+  .btn-outline-admin { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); font-weight: 700; font-size: .85rem; padding: .6rem 1.1rem; border-radius: .6rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-outline-admin:hover { border-color: var(--primary-green); color: var(--text-main); }
 
   .list-toolbar { display: flex; gap: .75rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.25rem; }
   .list-search { position: relative; flex: 1 1 16rem; max-width: 22rem; }
-  .list-search input { width: 100%; box-sizing: border-box; padding: .58rem .9rem .58rem 2.5rem; border: 1.5px solid var(--border-color); border-radius: .6rem; background: var(--bg-card); font-family: inherit; font-size: .85rem; }
+  .list-search input { width: 100%; box-sizing: border-box; padding: .58rem .9rem .58rem 2.5rem; border: 1.5px solid var(--border-color); border-radius: .6rem; background: var(--bg-card); font-family: inherit; font-size: .85rem; color: var(--text-main); }
   .list-search .material-symbols-outlined { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted); }
   .chip-group { display: flex; gap: .4rem; flex-wrap: wrap; }
   .chip { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-muted); font-size: .8rem; font-weight: 700; padding: .45rem .9rem; border-radius: 50px; cursor: pointer; }
@@ -31,30 +31,31 @@
   .doc-row-title { display: flex; align-items: center; gap: .85rem; }
   .doc-row-icon { width: 2.6rem; height: 2.6rem; border-radius: .55rem; background: var(--primary-light); color: var(--heading-green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .doc-row-icon .material-symbols-outlined { font-size: 1.2rem; }
-  .doc-row-title strong { font-weight: 700; font-size: .88rem; }
+  .doc-row-title strong { font-weight: 700; font-size: .88rem; display: block; margin-bottom: 0.15rem; }
+  .doc-row-desc { font-size: .76rem; color: var(--text-muted); }
   .cat-chip { display: inline-block; font-size: .68rem; font-weight: 700; padding: .18rem .55rem; border-radius: 50px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .03em; }
+  
   .cat-form { background: #EEF2FF; color: #4F46E5; }
   .cat-report { background: #F0FDFA; color: #0D9488; }
   .cat-agm { background: #FFFBEB; color: #B45309; }
   .cat-legal { background: #F1F5F9; color: #475569; }
+  
   .status-pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .78rem; font-weight: 700; }
   .status-pill.uploaded { color: var(--ok); }
   .status-pill.pending { color: var(--text-muted); }
   .status-pill .material-symbols-outlined { font-size: 1rem; }
+  
   .row-actions { display: flex; gap: .35rem; }
-  .row-action-btn { width: 2rem; height: 2rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; background: none; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; }
+  .row-action-btn { width: 2rem; height: 2rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; background: none; border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; text-decoration: none; }
   .row-action-btn:hover { color: var(--text-main); border-color: var(--primary-green); }
-  .row-action-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+  .row-action-btn.danger:hover { color: var(--danger); border-color: var(--danger); background: var(--danger-bg); }
   .row-action-btn .material-symbols-outlined { font-size: 1.05rem; }
   .table-footer { padding: .85rem 1.1rem; font-size: .8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); }
 
   /* ============ UPLOAD FORM VIEW ============ */
-  #uploadView { display: none; max-width: 42rem; }
-  #uploadView.active { display: block; }
-  #listView.hidden { display: none; }
-
-  .back-to-list { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); border: 1.5px solid var(--border-color); padding: .55rem 1rem; border-radius: 50px; cursor: pointer; margin-bottom: 1.5rem; }
-  .back-to-list:hover { color: var(--text-main); }
+   #uploadView { max-width: 48rem; margin: 0 auto; }
+  .back-to-list { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 700; color: var(--text-muted); background: var(--bg-card); border: 1.5px solid var(--border-color); padding: .55rem 1rem; border-radius: 50px; cursor: pointer; margin-bottom: 1.5rem; text-decoration: none; }
+  .back-to-list:hover { color: var(--text-main); border-color: var(--primary-green); }
 
   .form-panel { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 1.75rem; display: flex; flex-direction: column; gap: 1.35rem; }
   .field-group label { display: block; font-size: .82rem; font-weight: 700; margin-bottom: .5rem; }
@@ -63,7 +64,6 @@
   .field-control:focus { border-color: var(--primary-green); }
   textarea.field-control { resize: vertical; min-height: 4.5rem; font-family: inherit; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  #agmYearField { display: none; }
   .auto-fill-note { display: flex; align-items: center; gap: .4rem; font-size: .76rem; color: var(--heading-green); margin-top: .5rem; font-weight: 600; }
   .auto-fill-note .material-symbols-outlined { font-size: .95rem; }
 
@@ -75,40 +75,252 @@
   .icon-pick-btn .material-symbols-outlined { font-size: 1.3rem; }
 
   /* File dropzone */
-  .file-drop { border: 1.5px dashed var(--border-color); border-radius: .7rem; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; background: var(--bg-page); position: relative; }
+  .file-drop { border: 1.5px dashed var(--border-color); border-radius: .7rem; padding: 1.75rem 1.25rem; text-align: center; cursor: pointer; background: var(--bg-page); position: relative; transition: all 0.2s ease; }
   .file-drop:hover { border-color: var(--primary-green); }
   .file-drop.has-file { border-style: solid; border-color: var(--ok); background: var(--ok-bg); }
   .file-drop .material-symbols-outlined { font-size: 2rem; color: var(--text-muted); margin-bottom: .5rem; }
   .file-drop.has-file .material-symbols-outlined { color: var(--ok); }
-  .file-drop-label { font-size: .88rem; font-weight: 700; }
+  .file-drop-label { font-size: .88rem; font-weight: 700; color: var(--text-main); }
   .file-drop-sub { font-size: .76rem; color: var(--text-muted); margin-top: .2rem; }
-  .file-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
 
   .form-footer { display: flex; justify-content: flex-end; gap: .75rem; padding-top: .5rem; border-top: 1px solid var(--border-color); }
 
+  .error-text { color: var(--danger); font-size: 0.75rem; font-weight: 600; margin-top: 0.35rem; display: block; }
+
+  /* Upload Progress UI */
+  .upload-progress-wrapper { display: none; flex-direction: column; gap: 0.85rem; padding: 1.5rem; background: var(--bg-section-alt); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-top: 1rem; }
+  .upload-progress-wrapper.active { display: flex; }
+  
+  .progress-header { display: flex; justify-content: space-between; align-items: flex-end; }
+  .progress-status { font-weight: 800; font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+  .progress-status .material-symbols-outlined { font-size: 1.2rem; color: var(--heading-green); }
+  .progress-percentage { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+  
+  .progress-track { width: 100%; height: 8px; background: var(--border-color); border-radius: 50px; overflow: hidden; position: relative; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-green), var(--accent-green)); border-radius: 50px; transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+  
+  /* Searchable Icon Picker UI */
+  .icon-picker-trigger { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.6rem 0.9rem; border: 1.5px solid var(--border-color); border-radius: 0.55rem; background: var(--bg-page); cursor: pointer; color: var(--text-main); font-family: inherit; font-size: 0.9rem; transition: border-color 0.2s ease; text-align: left; }
+  .icon-picker-trigger:hover { border-color: var(--primary-green); }
+  .icon-picker-trigger:focus { outline: none; border-color: var(--primary-green); }
+  .icon-picker-trigger .dropdown-arrow { margin-left: auto; color: var(--text-muted); font-size: 1.2rem; }
+  .trigger-text { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+  
+  .icon-popover-wrap { position: relative; width: 100%; }
+  .icon-picker-popover { display: none; position: absolute; top: calc(100% + 0.4rem); left: 0; width: 100%; min-width: 18rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 0.6rem; box-shadow: var(--shadow-md); z-index: 50; flex-direction: column; overflow: hidden; }
+  .icon-picker-popover.active { display: flex; animation: tooltipDrop 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  
+  .icon-search-wrap { padding: 0.6rem; border-bottom: 1px solid var(--border-color); position: relative; }
+  .icon-search-wrap input { width: 100%; padding: 0.5rem 0.5rem 0.5rem 2.2rem; border: 1.5px solid var(--border-color); border-radius: 0.4rem; background: var(--bg-page); outline: none; font-family: inherit; font-size: 0.85rem; color: var(--text-main); }
+  .icon-search-wrap input:focus { border-color: var(--primary-green); }
+  .icon-search-wrap .material-symbols-outlined { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted); pointer-events: none; }
+  
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr)); gap: 0.4rem; padding: 0.6rem; max-height: 14rem; overflow-y: auto; }
+  .icon-item-btn { aspect-ratio: 1; border-radius: 0.4rem; border: 1px solid transparent; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: all 0.15s ease; }
+  .icon-item-btn:hover { background: var(--bg-section-alt); color: var(--text-main); }
+  .icon-item-btn.selected { background: var(--primary-light); color: var(--heading-green); border-color: rgba(10, 92, 54, 0.2); }
+
+  /* Pulsing animation for the verification phase */
+  @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+  .progress-fill.verifying { background: var(--coop-gold); animation: pulse 1.5s infinite ease-in-out; }
+
+  /* Premium Custom Validation UI */
+  .field-control.is-invalid {
+    border-color: var(--danger) !important;
+    background: var(--danger-bg) !important;
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  }
+
+  .premium-tooltip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--danger);
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.65rem;
+    background: var(--bg-card);
+    border: 1px solid var(--danger-border);
+    border-radius: 0.4rem;
+    box-shadow: 0 4px 10px rgba(180, 35, 24, 0.08);
+    animation: tooltipDrop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+
+  @keyframes tooltipDrop {
+    0% { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
   @media (max-width: 52rem) { .field-row { grid-template-columns: 1fr; } }
 </style>
 {% endblock %}
 
 {% block admin_content %}
 
+  {% if open_upload %}
+  <!-- ============ UPLOAD / EDIT FORM VIEW ============ -->
+  <div id="uploadView">
+    <a href="{% url 'cms:document_list' %}" class="back-to-list">
+      <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
+      Back to Document Vault
+    </a>
+
+    <!-- True Server-Side Form Routing -->
+    <form class="form-panel" method="post" enctype="multipart/form-data" action="{% if editing %}{% url 'cms:document_update' editing.pk %}{% else %}{% url 'cms:document_create' %}{% endif %}">
+      {% csrf_token %}
+      <input type="hidden" name="thumbnail_base64" id="thumbBase64">
+      <div class="field-row">
+        <div class="field-group">
+          <label for="docCategory">Category</label>
+          <select id="docCategory" name="category" class="field-control" onchange="handleCategoryChange()">
+            {% for value, label in form.category.field.choices %}
+              <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          {% if form.category.errors %}<span class="error-text">{{ form.category.errors.0 }}</span>{% endif %}
+        </div>
+        
+        <div class="field-group" id="agmYearField" style="display: {% if form.category.value == 'agm' %}block{% else %}none{% endif %};">
+          <label for="docYear">AGM Year</label>
+          <input type="number" id="docYear" name="year" class="field-control" value="{{ form.year.value|default_if_none:'' }}" placeholder="e.g. 2026" min="1985" max="2100" oninput="suggestAgmTitle()">
+          {% if form.year.errors %}<span class="error-text">{{ form.year.errors.0 }}</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="docTitle">Document Title</label>
+        <input type="text" id="docTitle" name="title" class="field-control" value="{{ form.title.value|default_if_none:'' }}" placeholder="e.g. Standard Loan Application" required>
+        {% if form.title.errors %}<span class="error-text">{{ form.title.errors.0 }}</span>{% endif %}
+        <div class="auto-fill-note" id="autoFillNote" style="display:none;">
+          <span class="material-symbols-outlined">auto_fix_high</span>
+          Auto-filled from category + year — edit freely if needed.
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="docDescription">Description</label>
+        <textarea id="docDescription" name="description" class="field-control" placeholder="One sentence describing what this document is for." required>{{ form.description.value|default_if_none:'' }}</textarea>
+        {% if form.description.errors %}<span class="error-text">{{ form.description.errors.0 }}</span>{% endif %}
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="docPages">Pages <span class="hint">(leave blank if not applicable)</span></label>
+          <input type="number" id="docPages" name="pages" class="field-control" min="1" value="{{ form.pages.value|default_if_none:'' }}" placeholder="e.g. 2">
+          {% if form.pages.errors %}<span class="error-text">{{ form.pages.errors.0 }}</span>{% endif %}
+        </div>
+        
+        <div class="field-group">
+          <label>Icon</label>
+          <!-- Hidden input stores the selected icon value for Django -->
+          <input type="hidden" name="icon" id="docIcon" value="{{ form.icon.value|default_if_none:'description' }}">
+          
+          <div class="icon-popover-wrap">
+            <button type="button" class="icon-picker-trigger" id="iconPickerTrigger" onclick="toggleIconPicker()">
+              <span class="material-symbols-outlined" id="selectedIconDisplay">{{ form.icon.value|default_if_none:'description' }}</span>
+              <span class="trigger-text" id="selectedIconText">{{ form.icon.value|default_if_none:'description' }}</span>
+              <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
+            </button>
+
+            <!-- The Searchable Popover -->
+            <div class="icon-picker-popover" id="iconPickerPopover">
+              <div class="icon-search-wrap">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="iconSearchInput" placeholder="Search icons..." autocomplete="off">
+              </div>
+              <div class="icon-grid" id="iconGrid">
+                <!-- JavaScript will populate this grid instantly -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secure File Upload & Progress UI -->
+      <div class="field-group" id="dropzoneContainer">
+        <label>File Upload <span class="hint">(PDF, DOC, DOCX — Max 300MB)</span></label>
+        
+        <div class="file-drop {% if editing and editing.document %}has-file{% endif %}" id="fileDrop" onclick="document.getElementById('docFile').click()">
+          <span class="material-symbols-outlined">{% if editing and editing.document %}task{% else %}cloud_upload{% endif %}</span>
+          
+          <div class="file-drop-label" id="fileDropLabel">
+            {% if editing and editing.document %}
+              {{ editing.document.name }}
+            {% else %}
+              Click or drag a file here
+            {% endif %}
+          </div>
+          
+          <div class="file-drop-sub" id="fileDropSub">
+            {% if editing and editing.document %}
+              {{ editing.document.size|filesizeformat }} — currently active<br>
+              <a href="{% url 'cms:secure_document_download' editing.id %}" target="_blank" style="color: var(--primary-green); text-decoration: underline; font-weight: 700; position: relative; z-index: 10; margin-top: 0.5rem; display: inline-block;" onclick="event.stopPropagation()">Preview Current File</a>
+            {% else %}
+              Up to 300MB limit
+            {% endif %}
+          </div>
+          
+          <!-- File input (Hides visually, triggered by clicking the dropzone) -->
+          <input type="file" id="docFile" name="document" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="handleFileSelect(event)">
+        </div>
+        {% if form.document.errors %}<span class="error-text">{{ form.document.errors.0 }}</span>{% endif %}
+      </div>
+
+      <!-- The Progress UI (Shows when upload starts) -->
+      <div class="upload-progress-wrapper" id="progressWrapper">
+        <div class="progress-header">
+          <div class="progress-status" id="progressStatusText">
+            <span class="material-symbols-outlined">cloud_sync</span>
+            Starting secure upload...
+          </div>
+          <div class="progress-percentage" id="progressPercentText">0%</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFillBar"></div>
+        </div>
+      </div>
+      
+      <!-- Hidden input to store the Cloudflare R2 Key to send to Django -->
+      <input type="hidden" name="r2_file_key" id="r2FileKey">
+
+      <div class="form-footer">
+        <a href="{% url 'cms:document_list' %}" class="btn-outline-admin">Cancel</a>
+        <button type="button" onclick="initiateSecureUpload()" class="btn-primary-admin">
+          <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
+          {% if editing %}Update{% else %}Save{% endif %} Document
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  {% else %}
   <!-- ============ LIST VIEW ============ -->
   <div id="listView">
     <div class="page-head">
       <div>
         <h1>Document Vault</h1>
-        <p>18 of 21 documents uploaded — 3 awaiting a file.</p>
+        <p>{{ uploaded_count }} of {{ total_count }} document{{ total_count|pluralize }} uploaded with valid files.</p>
       </div>
-      <button class="btn-primary-admin" onclick="openUpload()">
+      <a href="{% url 'cms:document_create' %}" class="btn-primary-admin">
         <span class="material-symbols-outlined" style="font-size:1.05rem;">upload_file</span>
         Upload Document
-      </button>
+      </a>
     </div>
 
     <div class="list-toolbar">
       <div class="list-search">
         <span class="material-symbols-outlined">search</span>
-        <input type="search" id="docSearch" placeholder="Search documents…" oninput="filterDocs()">
+        <input type="search" id="docSearch" placeholder="Search documents…" oninput="filterDocs()" value="{{ query }}">
       </div>
       <div class="chip-group" id="catChips">
         <button class="chip active" data-cat="all" onclick="setCatFilter(this,'all')">All</button>
@@ -125,196 +337,388 @@
           <tr><th>Document</th><th>Category</th><th>Pages</th><th>File</th><th></th></tr>
         </thead>
         <tbody>
-          <tr data-cat="form" data-search="standard loan application">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">description</span></div><strong>Standard Loan Application</strong></div></td>
-            <td><span class="cat-chip cat-form">Form</span></td>
-            <td class="mono">2</td>
-            <td><span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>450 KB</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
+          {% for doc in documents %}
+          <tr data-cat="{{ doc.category }}" data-search="{{ doc.title|lower }}">
+            <td>
+              <div class="doc-row-title">
+                <div class="doc-row-icon"><span class="material-symbols-outlined">{{ doc.icon|default:"description" }}</span></div>
+                <div>
+                  <strong>{{ doc.title }}</strong>
+                  {% if doc.description %}<div class="doc-row-desc">{{ doc.description|truncatechars:45 }}</div>{% endif %}
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if doc.category == 'form' %}<span class="cat-chip cat-form">Form</span>
+              {% elif doc.category == 'report' %}<span class="cat-chip cat-report">Report</span>
+              {% elif doc.category == 'agm' %}<span class="cat-chip cat-agm">AGM</span>
+              {% elif doc.category == 'legal' %}<span class="cat-chip cat-legal">Policy</span>
+              {% else %}<span class="cat-chip">{{ doc.get_category_display }}</span>{% endif %}
+            </td>
+            <td class="mono">{% if doc.pages %}{{ doc.pages }}{% else %}—{% endif %}</td>
+            <td>
+              {% if doc.document %}
+                <span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>{{ doc.document.size|filesizeformat }}</span>
+              {% else %}
+                <span class="status-pill pending"><span class="material-symbols-outlined">schedule</span>Pending File</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="row-actions">
+                {% if doc.document %}
+                <a href="{% url 'cms:secure_document_download' doc.id %}" target="_blank" class="row-action-btn" title="Download Document">
+                  <span class="material-symbols-outlined">download</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'cms:document_update' doc.pk %}" class="row-action-btn"><span class="material-symbols-outlined">edit</span></a>
+                <!-- POST-only deletion for Zero Trust CSRF protection -->
+                <form method="post" action="{% url 'cms:document_delete' doc.pk %}" style="margin:0;" onsubmit="return confirm('Are you sure you want to permanently delete this document?');">
+                  {% csrf_token %}
+                  <button type="submit" class="row-action-btn danger" aria-label="Delete"><span class="material-symbols-outlined">delete</span></button>
+                </form>
+              </div>
+            </td>
           </tr>
-          <tr data-cat="form" data-search="membership enrollment form">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">person_add</span></div><strong>Membership Enrollment Form</strong></div></td>
-            <td><span class="cat-chip cat-form">Form</span></td>
-            <td class="mono">1</td>
-            <td><span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>210 KB</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+              <span class="material-symbols-outlined" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;">folder_open</span><br>
+              <strong>No documents found.</strong><br>
+              Adjust your search or upload a new one.
+            </td>
           </tr>
-          <tr data-cat="agm" data-search="2026 agm minutes resolutions">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">gavel</span></div><strong>2026 AGM Minutes &amp; Resolutions</strong></div></td>
-            <td><span class="cat-chip cat-agm">AGM</span></td>
-            <td class="mono">—</td>
-            <td><span class="status-pill pending"><span class="material-symbols-outlined">schedule</span>Pending</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
-          </tr>
-          <tr data-cat="agm" data-search="2023 agm minutes resolutions">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">gavel</span></div><strong>2023 AGM Minutes &amp; Resolutions</strong></div></td>
-            <td><span class="cat-chip cat-agm">AGM</span></td>
-            <td class="mono">—</td>
-            <td><span class="status-pill pending"><span class="material-symbols-outlined">schedule</span>Pending</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
-          </tr>
-          <tr data-cat="agm" data-search="2022 agm minutes resolutions">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">gavel</span></div><strong>2022 AGM Minutes &amp; Resolutions</strong></div></td>
-            <td><span class="cat-chip cat-agm">AGM</span></td>
-            <td class="mono">—</td>
-            <td><span class="status-pill pending"><span class="material-symbols-outlined">schedule</span>Pending</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
-          </tr>
-          <tr data-cat="report" data-search="dividend share statement">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">receipt_long</span></div><strong>Dividend &amp; Share Statement</strong></div></td>
-            <td><span class="cat-chip cat-report">Report</span></td>
-            <td class="mono">Auto</td>
-            <td><span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>Portal-generated</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
-          </tr>
-          <tr data-cat="legal" data-search="by-laws constitution">
-            <td><div class="doc-row-title"><div class="doc-row-icon"><span class="material-symbols-outlined">gavel</span></div><strong>By-Laws &amp; Constitution</strong></div></td>
-            <td><span class="cat-chip cat-legal">Policy</span></td>
-            <td class="mono">—</td>
-            <td><span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>1.2 MB</span></td>
-            <td><div class="row-actions"><button class="row-action-btn" onclick="openUpload()"><span class="material-symbols-outlined">edit</span></button><button class="row-action-btn danger"><span class="material-symbols-outlined">delete</span></button></div></td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
-      <div class="table-footer" id="docTableFooter">Showing 7 of 21 documents</div>
+      <div class="table-footer" id="docTableFooter">Showing {{ documents|length }} of {{ total_count }} documents</div>
     </div>
   </div>
-
-  <!-- ============ UPLOAD FORM VIEW ============ -->
-  <div id="uploadView">
-    <button class="back-to-list" onclick="closeUpload()">
-      <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
-      Back to Document Vault
-    </button>
-
-    <div class="form-panel">
-
-      <div class="field-row">
-        <div class="field-group">
-          <label for="docCategory">Category</label>
-          <select id="docCategory" class="field-control" onchange="handleCategoryChange()">
-            <option value="form">Application Form</option>
-            <option value="report">Statement &amp; Report</option>
-            <option value="agm">AGM Minutes / Report</option>
-            <option value="legal">Policy &amp; By-Laws</option>
-          </select>
-        </div>
-        <div class="field-group" id="agmYearField">
-          <label for="docYear">AGM Year</label>
-          <input type="number" id="docYear" class="field-control" placeholder="e.g. 2026" min="1985" max="2100" oninput="suggestAgmTitle()">
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label for="docTitle">Document Title</label>
-        <input type="text" id="docTitle" class="field-control" placeholder="e.g. Standard Loan Application">
-        <div class="auto-fill-note" id="autoFillNote" style="display:none;">
-          <span class="material-symbols-outlined">auto_fix_high</span>
-          Auto-filled from category + year — edit freely if needed.
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label for="docDescription">Description</label>
-        <textarea id="docDescription" class="field-control" placeholder="One sentence describing what this document is for."></textarea>
-      </div>
-
-      <div class="field-row">
-        <div class="field-group">
-          <label for="docPages">Pages <span class="hint">(leave blank if not applicable)</span></label>
-          <input type="number" id="docPages" class="field-control" min="1" placeholder="e.g. 2">
-        </div>
-        <div class="field-group">
-          <label>Icon</label>
-          <div class="icon-picker" id="iconPicker">
-            <button type="button" class="icon-pick-btn selected" data-icon="description" onclick="selectIcon(this)"><span class="material-symbols-outlined">description</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="person_add" onclick="selectIcon(this)"><span class="material-symbols-outlined">person_add</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="group_add" onclick="selectIcon(this)"><span class="material-symbols-outlined">group_add</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="gavel" onclick="selectIcon(this)"><span class="material-symbols-outlined">gavel</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="receipt_long" onclick="selectIcon(this)"><span class="material-symbols-outlined">receipt_long</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="health_and_safety" onclick="selectIcon(this)"><span class="material-symbols-outlined">health_and_safety</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="badge" onclick="selectIcon(this)"><span class="material-symbols-outlined">badge</span></button>
-            <button type="button" class="icon-pick-btn" data-icon="account_balance" onclick="selectIcon(this)"><span class="material-symbols-outlined">account_balance</span></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label>File</label>
-        <div class="file-drop" id="fileDrop" onclick="document.getElementById('docFile').click()">
-          <span class="material-symbols-outlined">cloud_upload</span>
-          <div class="file-drop-label" id="fileDropLabel">Click or drag a PDF here</div>
-          <div class="file-drop-sub" id="fileDropSub">PDF up to 10MB</div>
-          <input type="file" id="docFile" accept=".pdf" onchange="handleFileSelect(event)">
-        </div>
-      </div>
-
-      <div class="form-footer">
-        <button class="btn-outline-admin" onclick="closeUpload()">Cancel</button>
-        <button class="btn-primary-admin" onclick="saveDocument()">
-          <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
-          Save Document
-        </button>
-      </div>
-
-    </div>
-  </div>
+  {% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  function openUpload() {
-    document.getElementById('listView').classList.add('hidden');
-    document.getElementById('uploadView').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function closeUpload() {
-    document.getElementById('uploadView').classList.remove('active');
-    document.getElementById('listView').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  // 1. TOAST NOTIFICATION ENGINE
+  function showClientToast(message, type = 'error') {
+    let container = document.getElementById('admin-toast-container');
+    
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'admin-toast-container';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+
+    let icon = 'info';
+    if (type === 'error') icon = 'error';
+    if (type === 'success') icon = 'check_circle';
+    if (type === 'warning') icon = 'warning';
+
+    toast.innerHTML = `
+      <div class="toast-icon">
+        <span class="material-symbols-outlined">${icon}</span>
+      </div>
+      <div class="toast-content">
+        <p>${message}</p>
+      </div>
+      <button class="toast-close" aria-label="Close notification">&times;</button>
+    `;
+
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+      toast.classList.add('toast-fade-out');
+      toast.addEventListener('animationend', () => toast.remove());
+    });
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        toast.classList.add('toast-fade-out');
+        toast.addEventListener('animationend', () => toast.remove());
+      }
+    }, 4500);
   }
 
+  // ==========================================
+  // 2. ICON PICKER ENGINE (Moved to Global Scope)
+  // ==========================================
+  const iconLibrary = [
+    'description', 'article', 'receipt_long', 'gavel', 'account_balance', 
+    'health_and_safety', 'folder', 'folder_open', 'picture_as_pdf', 'text_snippet', 
+    'shield', 'verified_user', 'policy', 'assignment', 'task', 'fact_check', 
+    'contract', 'handshake', 'payments', 'credit_card', 'account_balance_wallet', 
+    'savings', 'monetization_on', 'currency_exchange', 'balance', 'real_estate_agent', 
+    'analytics', 'trending_up', 'pie_chart', 'bar_chart', 'group', 'groups', 
+    'person', 'badge', 'id_card', 'workspace_premium', 'military_tech', 'school', 
+    'apartment', 'store', 'business', 'event', 'calendar_month', 'schedule', 
+    'public', 'language', 'chat', 'forum', 'mail', 'email', 'phone', 
+    'contact_support', 'help', 'info', 'warning', 'error', 'check_circle', 
+    'cloud_download', 'upload_file', 'lock', 'key', 'settings', 'admin_panel_settings'
+  ];
+
+  let iconPopover, iconSearchInput, iconGrid, docIconInput, selectedIconDisplay, selectedIconText;
+
+  function initIconPicker() {
+    iconPopover = document.getElementById('iconPickerPopover');
+    iconSearchInput = document.getElementById('iconSearchInput');
+    iconGrid = document.getElementById('iconGrid');
+    docIconInput = document.getElementById('docIcon');
+    selectedIconDisplay = document.getElementById('selectedIconDisplay');
+    selectedIconText = document.getElementById('selectedIconText');
+
+    if(!iconPopover) return; // Exit if not on the upload form
+
+    // Render the grid based on search filter
+    function renderIconGrid(filterText = '') {
+      iconGrid.innerHTML = '';
+      const currentVal = docIconInput.value;
+      
+      const filtered = iconLibrary.filter(icon => icon.includes(filterText.toLowerCase()));
+      
+      if (filtered.length === 0) {
+        iconGrid.innerHTML = `<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem; grid-column: 1 / -1;">No icons match "${filterText}"</div>`;
+        return;
+      }
+
+      filtered.forEach(icon => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `icon-item-btn ${icon === currentVal ? 'selected' : ''}`;
+        btn.innerHTML = `<span class="material-symbols-outlined">${icon}</span>`;
+        btn.title = icon; 
+        
+        btn.onclick = () => {
+          docIconInput.value = icon;
+          selectedIconDisplay.textContent = icon;
+          selectedIconText.textContent = icon;
+          iconPopover.classList.remove('active');
+          renderIconGrid(iconSearchInput.value); 
+        };
+        iconGrid.appendChild(btn);
+      });
+    }
+
+    // Toggle Logic
+    window.toggleIconPicker = function() {
+      const isActive = iconPopover.classList.contains('active');
+      if (!isActive) {
+        iconPopover.classList.add('active');
+        renderIconGrid(); 
+        iconSearchInput.value = '';
+        setTimeout(() => iconSearchInput.focus(), 100);
+      } else {
+        iconPopover.classList.remove('active');
+      }
+    };
+
+    // Live search as they type
+    iconSearchInput.addEventListener('input', (e) => {
+      renderIconGrid(e.target.value);
+    });
+
+    // Close the popover if clicking outside of it
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.icon-popover-wrap')) {
+        iconPopover.classList.remove('active');
+      }
+    });
+
+    renderIconGrid();
+  }
+
+  // ==========================================
+  // 3. FORM UI & UPLOAD ENGINE
+  // ==========================================
   function handleCategoryChange() {
     const cat = document.getElementById('docCategory').value;
-    document.getElementById('agmYearField').style.display = cat === 'agm' ? 'block' : 'none';
-    if (cat === 'agm') { suggestAgmTitle(); }
-    else { document.getElementById('autoFillNote').style.display = 'none'; }
+    const yearField = document.getElementById('agmYearField');
+    if (yearField) {
+      yearField.style.display = (cat === 'agm') ? 'block' : 'none';
+      if (cat === 'agm') { 
+        suggestAgmTitle(); 
+      } else { 
+        const note = document.getElementById('autoFillNote');
+        if(note) note.style.display = 'none'; 
+      }
+    }
   }
 
-  // Ties directly into the "name AGM documents with the year up front"
-  // convention established for the Document Vault — auto-suggests it so
-  // nobody has to remember the pattern by hand.
   function suggestAgmTitle() {
     const year = document.getElementById('docYear').value;
     const titleField = document.getElementById('docTitle');
-    if (year) {
+    if (year && !titleField.value.includes('Minutes')) {
       titleField.value = year + ' AGM Minutes & Resolutions';
       document.getElementById('autoFillNote').style.display = 'flex';
     }
   }
 
-  function selectIcon(btn) {
-    document.querySelectorAll('.icon-pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
+  async function initiateSecureUpload() {
+    const form = document.querySelector('.form-panel');
+    
+    // 1. Premium inline validation check
+    if (!form.checkValidity()) {
+      const invalidField = form.querySelector(':invalid');
+      document.querySelectorAll('.premium-tooltip').forEach(el => el.remove());
+      document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+      
+      invalidField.classList.add('is-invalid');
+      const tooltip = document.createElement('div');
+      tooltip.className = 'premium-tooltip';
+      tooltip.innerHTML = `<span class="material-symbols-outlined" style="font-size: 1.05rem;">error</span> This field is required.`;
+      invalidField.parentNode.appendChild(tooltip);
+      
+      invalidField.focus();
+      showClientToast("Please complete all required fields.", "error");
+      
+      invalidField.addEventListener('input', function clearErr() {
+         invalidField.classList.remove('is-invalid');
+         if (tooltip.parentNode) tooltip.remove();
+         invalidField.removeEventListener('input', clearErr);
+      });
+      return; 
+    }
+
+    // 2. Business Rules
+    const cat = document.getElementById('docCategory').value;
+    if (cat === 'agm' && !document.getElementById('docYear').value) {
+      showClientToast("AGM Year is required for AGM documents.", "warning");
+      document.getElementById('docYear').focus();
+      return;
+    }
+
+    const fileInput = document.getElementById('docFile');
+    const file = fileInput.files[0];
+    
+    // Allow update form to submit without picking a new file
+    if (!file) {
+      {% if editing %}
+        form.submit();
+        return;
+      {% else %}
+        showClientToast("Please select a document first.", "warning");
+        return;
+      {% endif %}
+    }
+
+    // 3. Client extension sanity check
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    const fileName = file.name.toLowerCase();
+    const isValidExt = allowedExtensions.some(ext => fileName.endsWith(ext));
+    
+    if (!isValidExt) {
+      showClientToast("Invalid file type. Please select a PDF or Word Document.", "error");
+      fileInput.value = ''; 
+      document.getElementById('fileDrop').classList.remove('has-file');
+      document.getElementById('fileDropLabel').textContent = 'Click or drag a file here';
+      document.getElementById('fileDropSub').textContent = 'Up to 300MB limit';
+      return;
+    }
+
+    if (file.size > 300 * 1024 * 1024) {
+      showClientToast("File exceeds the 300MB strict limit. Please compress the document.", "error");
+      return;
+    }
+
+    // 4. UI Swap: Dropzone -> Progress Bar
+    document.getElementById('dropzoneContainer').style.display = 'none';
+    const progressWrapper = document.getElementById('progressWrapper');
+    const fillBar = document.getElementById('progressFillBar');
+    const statusText = document.getElementById('progressStatusText');
+    const percentText = document.getElementById('progressPercentText');
+    progressWrapper.classList.add('active');
+
+    try {
+      statusText.innerHTML = '<span class="material-symbols-outlined">key</span> Requesting secure uplink...';
+      
+      const presignedRes = await fetch(`/admin/api/generate-upload-url/?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
+      if (!presignedRes.ok) throw new Error("Failed to secure Cloudflare uplink.");
+      
+      const { upload_url, file_key } = await presignedRes.json();
+
+      statusText.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Uploading to Cloudflare...';
+
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', upload_url, true);
+        xhr.setRequestHeader('Content-Type', file.type);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
+            fillBar.style.width = percentComplete + '%';
+            percentText.textContent = percentComplete + '%';
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else reject("Cloudflare rejected the upload.");
+        };
+        xhr.onerror = () => reject("Network error during upload.");
+        xhr.send(file);
+      });
+
+      fillBar.classList.add('verifying');
+      statusText.innerHTML = '<span class="material-symbols-outlined">policy</span> Verifying security signatures...';
+      percentText.textContent = 'Processing';
+      
+      document.getElementById('r2FileKey').value = file_key;
+      
+      // CRITICAL: Strip the name attribute so the browser does NOT re-send the 77MB file to Vercel
+      fileInput.removeAttribute('name');
+      form.submit();
+
+    } catch (error) {
+      showClientToast(error.message || error, "error");
+      progressWrapper.classList.remove('active');
+      document.getElementById('dropzoneContainer').style.display = 'block';
+    }
   }
 
-  function handleFileSelect(e) {
+  async function handleFileSelect(e) {
     const file = e.target.files[0];
     const drop = document.getElementById('fileDrop');
     if (!file) return;
+
     drop.classList.add('has-file');
     document.getElementById('fileDropLabel').textContent = file.name;
-    document.getElementById('fileDropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to upload';
-  }
+    document.getElementById('fileDropSub').textContent = 'Generating preview...';
 
-  function saveDocument() {
-    const title = document.getElementById('docTitle').value || 'Untitled Document';
-    alert('"' + title + '" saved — wire this to your upload endpoint when the backend is ready.');
-    closeUpload();
+    // Canvas WebP Cover Extraction
+    if (file.type === 'application/pdf') {
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const fileURL = URL.createObjectURL(file);
+        const pdf = await pdfjsLib.getDocument(fileURL).promise;
+        const page = await pdf.getPage(1);
+        
+        const viewport = page.getViewport({ scale: 1.0 });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+        
+        const webpDataUrl = canvas.toDataURL('image/webp', 0.8);
+        document.getElementById('thumbBase64').value = webpDataUrl;
+        document.getElementById('fileDropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — Cover generated, ready to upload';
+      } catch (err) {
+        document.getElementById('fileDropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to upload';
+      }
+    } else {
+      document.getElementById('fileDropSub').textContent = (file.size / 1024).toFixed(0) + ' KB — ready to upload';
+    }
   }
-
-  // ---- List filtering ----
+  
+  // ==========================================
+  // 4. LIST VIEW SEARCH
+  // ==========================================
   let currentCatFilter = 'all';
   function setCatFilter(btn, cat) {
     document.querySelectorAll('#catChips .chip').forEach(c => c.classList.remove('active'));
@@ -322,18 +726,37 @@
     currentCatFilter = cat;
     filterDocs();
   }
+  
   function filterDocs() {
-    const query = document.getElementById('docSearch').value.toLowerCase().trim();
+    const searchInput = document.getElementById('docSearch');
+    if(!searchInput) return;
+    
+    const query = searchInput.value.toLowerCase().trim();
     const rows = document.querySelectorAll('#docTable tbody tr');
     let visible = 0;
+    
     rows.forEach(row => {
-      const matchesCat = currentCatFilter === 'all' || row.getAttribute('data-cat') === currentCatFilter;
-      const matchesQuery = !query || row.getAttribute('data-search').includes(query);
+      if(row.children.length === 1) return;
+      
+      const matchesCat = (currentCatFilter === 'all' || row.getAttribute('data-cat') === currentCatFilter);
+      const matchesQuery = (!query || row.getAttribute('data-search').includes(query));
+      
       const show = matchesCat && matchesQuery;
       row.style.display = show ? '' : 'none';
       if (show) visible++;
     });
-    document.getElementById('docTableFooter').textContent = `Showing ${visible} of 21 documents`;
+    
+    document.getElementById('docTableFooter').textContent = `Showing ${visible} document(s)`;
   }
+  
+  // ==========================================
+  // 5. INITIALIZE ON PAGE LOAD
+  // ==========================================
+  document.addEventListener("DOMContentLoaded", () => {
+    const catSelect = document.getElementById('docCategory');
+    if(catSelect) handleCategoryChange();
+    
+    initIconPicker();
+  });
 </script>
 {% endblock %}
