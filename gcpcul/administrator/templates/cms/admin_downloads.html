@@ -636,7 +636,11 @@
       statusText.innerHTML = '<span class="material-symbols-outlined">key</span> Requesting secure uplink...';
       
       const presignedRes = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
-      if (!presignedRes.ok) throw new Error("Failed to secure Cloudflare uplink.");
+      if (!presignedRes.ok) {
+        const errText = await presignedRes.text();
+        console.error("Backend Error:", errText);
+        throw new Error("Backend connection failed. Check your browser console for the exact error.");
+      }
       
       const { upload_url, file_key } = await presignedRes.json();
 

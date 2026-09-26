@@ -176,15 +176,14 @@ def news_delete(request, pk):
 # ============================================================
 # DOCUMENT VAULT
 # ============================================================
-
 def _get_s3_client():
-    """Returns a configured Boto3 client targeting Cloudflare R2."""
+    """Returns a configured Boto3 client targeting Cloudflare R2 using your existing AWS settings."""
     return boto3.client(
         's3',
-        endpoint_url=settings.CLOUDFLARE_R2_ENDPOINT,
-        aws_access_key_id=settings.CLOUDFLARE_ACCESS_KEY,
-        aws_secret_access_key=settings.CLOUDFLARE_SECRET_KEY,
-        region_name='auto',
+        endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME or 'auto',
     )
 
 
@@ -198,7 +197,7 @@ def _verify_and_promote_r2_file(r2_key):
     5. Moves the verified file from quarantine/ to documents/ and scrubs quarantine.
     """
     s3_client = _get_s3_client()
-    bucket = settings.CLOUDFLARE_BUCKET_NAME
+    bucket = settings.AWS_STORAGE_BUCKET_NAME
 
     # 1. Fetch file from quarantine
     response = s3_client.get_object(Bucket=bucket, Key=r2_key)
@@ -259,7 +258,7 @@ def generate_upload_url(request):
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
             Params={
-                'Bucket': settings.CLOUDFLARE_BUCKET_NAME,
+                'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
                 'Key': unique_key,
                 'ContentType': content_type,
             },
@@ -289,14 +288,13 @@ def secure_document_download(request, doc_id):
     presigned_url = s3_client.generate_presigned_url(
         'get_object',
         Params={
-            'Bucket': settings.CLOUDFLARE_BUCKET_NAME,
+            'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
             'Key': doc.document.name,
             'ResponseContentDisposition': f'attachment; filename="{doc.title}.pdf"'
         },
         ExpiresIn=900  # 15 minutes
     )
     return redirect(presigned_url)
-
 
 @staff_required
 def document_list(request):
