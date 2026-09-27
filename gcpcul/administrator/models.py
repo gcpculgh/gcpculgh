@@ -161,7 +161,6 @@ class Document(models.Model):
         except (FileNotFoundError, ValueError, OSError):
             return 0
 
-
 class GalleryAlbum(models.Model):
     CATEGORY_CHOICES = [
         ("agm", "AGM Meetings"),
@@ -174,26 +173,39 @@ class GalleryAlbum(models.Model):
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default="agm")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Enterprise Soft Delete
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+
     class Meta:
         ordering = ["-created_at"]
 
     def __str__(self):
         return self.title
 
+    def soft_delete(self):
+        """Enterprise Cascade Delete: Archives the album and all its media instantly."""
+        from django.utils import timezone
+        now = timezone.now()
+        self.is_deleted = True
+        self.deleted_at = now
+        self.save()
+        self.media.update(is_deleted=True, deleted_at=now)
+
     @property
     def cover(self):
-        return self.media.filter(is_cover=True).first() or self.media.first()
+        # Only return media that hasn't been soft-deleted
+        active_media = self.media.filter(is_deleted=False)
+        return active_media.filter(is_cover=True).first() or active_media.first()
 
     @property
     def media_count(self):
-        return self.media.count()
+        return self.media.filter(is_deleted=False).count()
 
     @property
     def uses_placeholder_media(self):
-        """Powers the Dashboard's 'Gallery is still stock photography' alert
-        and the album grid's 'Stock Photos' tag — true only if every item in
-        the album was seeded without a real uploaded file."""
-        return self.media.exists() and not self.media.exclude(file="").exists()
+        active_media = self.media.filter(is_deleted=False)
+        return active_media.exists() and not active_media.exclude(file="").exists()
 
 
 class GalleryMedia(models.Model):
@@ -206,6 +218,13 @@ class GalleryMedia(models.Model):
     is_cover = models.BooleanField(default=False)
     order = models.PositiveIntegerField(default=0)
 
+    # Zero-Trust Cryptographic Hash
+    file_hash = models.CharField(max_length=64, blank=True, null=True)
+
+    # Enterprise Soft Delete
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(blank=True, null=True)
+
     class Meta:
         ordering = ["order", "id"]
 
@@ -217,8 +236,7 @@ class GalleryMedia(models.Model):
         # Exactly one cover per album — enforced here so a stray extra
         # `is_cover=True` can never slip in from a bulk edit.
         if self.is_cover:
-            GalleryMedia.objects.filter(album=self.album).exclude(pk=self.pk).update(is_cover=False)
-
+            GalleryMedia.objects.filter(album=self.album, is_deleted=False).exclude(pk=self.pk).update(is_cover=False)
 
 class PortalWaitlist(models.Model):
     email = models.EmailField(unique=True)

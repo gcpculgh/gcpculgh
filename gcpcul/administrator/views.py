@@ -187,52 +187,55 @@ def _get_s3_client():
         region_name=settings.AWS_S3_REGION_NAME or 'auto',
     )
 
-def _verify_and_promote_r2_file(r2_key):
+def _verify_and_promote_r2_file(r2_key, file_category="document"):
     """
-    Zero-Trust Quarantine Inspector with Telemetry:
+    Zero-Trust Quarantine Inspector: 
+    Validates Magic Bytes, Hashes Payload, and Promotes File.
     """
     s3_client = _get_s3_client()
     bucket = settings.AWS_STORAGE_BUCKET_NAME
 
-    # 1. Fetch file from quarantine
     response = s3_client.get_object(Bucket=bucket, Key=r2_key)
     file_bytes = response['Body'].read()
 
-    # --- TELEMETRY DEBUG PRINT (Check your local terminal / Vercel logs) ---
-    print(f"--- R2 FILE DEBUG ---")
-    print(f"Key: {r2_key}")
-    print(f"Total Bytes Length: {len(file_bytes)}")
-    print(f"First 30 Bytes: {file_bytes[:30]}")
-    print(f"---------------------")
-
-    # 2. Strict Magic Byte / Hex Inspection
     clean_bytes = file_bytes.lstrip()
-    header = clean_bytes[:8]
+    header = clean_bytes[:12] # Expanded to 12 bytes to catch MP4/WebP signatures
     
-    is_pdf = header.startswith(b'%PDF')
-    is_docx = file_bytes.startswith(b'PK\x03\x04')
-    is_doc = file_bytes.startswith(b'\xd0\xcf\x11\xe0')
+    is_valid = False
+    page_count = None
 
-    if not (is_pdf or is_docx or is_doc):
-        # Scrub quarantine immediately on spoofed/empty upload
+    if file_category == "document":
+        is_pdf = header.startswith(b'%PDF')
+        is_docx = file_bytes.startswith(b'PK\x03\x04')
+        is_doc = file_bytes.startswith(b'\xd0\xcf\x11\xe0')
+        is_valid = is_pdf or is_docx or is_doc
+        
+        if is_pdf:
+            try:
+                reader = PdfReader(io.BytesIO(file_bytes))
+                page_count = len(reader.pages)
+            except Exception:
+                page_count = None
+                
+    elif file_category == "media":
+        # Image formats (WebP is the target from our edge interceptor, plus fallbacks)
+        is_webp = header.startswith(b'RIFF') and clean_bytes[8:12] == b'WEBP'
+        is_jpeg = header.startswith(b'\xff\xd8\xff')
+        is_png = header.startswith(b'\x89PNG')
+        # Video format (MP4 ftyp box)
+        is_mp4 = clean_bytes[4:8] == b'ftyp'
+        
+        is_valid = is_webp or is_jpeg or is_png or is_mp4
+
+    if not is_valid:
         s3_client.delete_object(Bucket=bucket, Key=r2_key)
-        raise ValueError(f"Invalid file structure. Length was {len(file_bytes)} bytes, header was {header!r}.")
+        raise ValueError(f"Spoofed or invalid {file_category} detected. Header: {header!r}")
 
-    # 3. Cryptographic Immutability (SHA-256)
     sha256_hash = hashlib.sha256(file_bytes).hexdigest()
 
-    # 4. Edge Metadata Extraction
-    page_count = None
-    if is_pdf:
-        try:
-            reader = PdfReader(io.BytesIO(file_bytes))
-            page_count = len(reader.pages)
-        except Exception:
-            page_count = None
-
-    # 5. Promote from quarantine/ to documents/
     ext = r2_key.split('.')[-1].lower()
-    clean_key = f"documents/{uuid.uuid4().hex}.{ext}"
+    folder = "gallery" if file_category == "media" else "documents"
+    clean_key = f"{folder}/{uuid.uuid4().hex}.{ext}"
 
     s3_client.copy_object(
         Bucket=bucket,
@@ -444,70 +447,84 @@ def document_delete(request, pk):
     messages.success(request, f'"{document.title}" has been archived and removed from the vault.')
     return redirect("cms:document_list")
 
-# GALLERY
 
 @staff_required
 def gallery_list(request):
-    albums = GalleryAlbum.objects.all()
+    # Only fetch albums that haven't been soft-deleted
+    albums = GalleryAlbum.objects.filter(is_deleted=False)
     context = {
         "albums": albums,
         "album_count": albums.count(),
-        "media_count": GalleryMedia.objects.count(),
+        "media_count": GalleryMedia.objects.filter(is_deleted=False).count(),
         "stock_album_count": sum(1 for a in albums if a.uses_placeholder_media),
     }
     return render(request, "cms/admin_gallery.html", context)
 
-def _save_gallery_media(request, album):
+def _process_parallel_media(request, album):
     """
-    Shared by create/update. Expects, per new item i:
-      media_files       -> request.FILES.getlist (the uploaded files themselves)
-      captions           -> request.POST.getlist (parallel to media_files)
-      media_types         -> request.POST.getlist ('image' | 'video', parallel to media_files)
+    Enterprise Parallel Upload Handler:
+    Intercepts the array of R2 keys sent by the frontend, verifies them 
+    in the cloud, and writes the database records atomically.
     """
-    files = request.FILES.getlist("media_files")
+    r2_keys = request.POST.getlist("r2_media_keys")
     captions = request.POST.getlist("captions")
     media_types = request.POST.getlist("media_types")
 
     new_items = []
-    starting_order = album.media.count()
-    for i, f in enumerate(files):
+    starting_order = album.media.filter(is_deleted=False).count()
+    
+    for i, r2_key in enumerate(r2_keys):
+        if not r2_key.strip():
+            continue
+            
         caption = captions[i] if i < len(captions) else ""
         media_type = media_types[i] if i < len(media_types) else "image"
         
-        # ZERO-TRUST COMPRESSION: Intercept image files and optimize them before saving
-        if media_type == 'image':
-            f = optimize_and_convert_to_webp(f, max_width=1600, quality=80)
-
-        new_items.append(
-            GalleryMedia(
-                album=album, file=f, caption=caption,
-                media_type=media_type, order=starting_order + i,
+        try:
+            # Verify and pull from the quarantine bucket
+            verification = _verify_and_promote_r2_file(r2_key, file_category="media")
+            
+            new_items.append(
+                GalleryMedia(
+                    album=album, 
+                    file=verification['clean_key'], 
+                    caption=caption,
+                    media_type=media_type, 
+                    order=starting_order + i,
+                    file_hash=verification['sha256_hash']
+                )
             )
-        )
-    GalleryMedia.objects.bulk_create(new_items)
+        except Exception as e:
+            # Log the failure but don't crash the entire batch upload
+            print(f"Skipping failed media item: {e}")
+            
+    if new_items:
+        GalleryMedia.objects.bulk_create(new_items)
 
 def _update_existing_media(request):
     ids = request.POST.getlist("existing_media_id")
     captions = request.POST.getlist("existing_caption")
     types = request.POST.getlist("existing_media_type")
     for i, media_id in enumerate(ids):
-        GalleryMedia.objects.filter(pk=media_id).update(
+        GalleryMedia.objects.filter(pk=media_id, is_deleted=False).update(
             caption=captions[i] if i < len(captions) else "",
             media_type=types[i] if i < len(types) else "image",
         )
 
-
 def _apply_cover_selection(request, album):
-    cover_key = request.POST.get("cover_key", "")  # e.g. "existing-14" or "new-2"
+    cover_key = request.POST.get("cover_key", "")
     if not cover_key:
         return
-    album.media.update(is_cover=False)
+    
+    album.media.filter(is_deleted=False).update(is_cover=False)
+    
     if cover_key.startswith("existing-"):
         media_id = cover_key.split("-", 1)[1]
-        GalleryMedia.objects.filter(pk=media_id, album=album).update(is_cover=True)
+        GalleryMedia.objects.filter(pk=media_id, album=album, is_deleted=False).update(is_cover=True)
     elif cover_key.startswith("new-"):
         new_index = int(cover_key.split("-", 1)[1])
-        ordered_new = list(album.media.order_by("-id")[: len(request.FILES.getlist("media_files"))])
+        # Find the newly created items by ordering descending
+        ordered_new = list(album.media.filter(is_deleted=False).order_by("-id")[: len(request.POST.getlist("r2_media_keys"))])
         ordered_new.reverse()
         if 0 <= new_index < len(ordered_new):
             ordered_new[new_index].is_cover = True
@@ -520,15 +537,21 @@ def gallery_create(request):
         form = GalleryAlbumForm(request.POST)
         if form.is_valid():
             album = form.save()
-            _save_gallery_media(request, album)
+            _process_parallel_media(request, album)
             _apply_cover_selection(request, album)
-            if not album.media.filter(is_cover=True).exists():
-                first = album.media.first()
+            
+            # Ensure at least one cover exists
+            if not album.media.filter(is_cover=True, is_deleted=False).exists():
+                first = album.media.filter(is_deleted=False).first()
                 if first:
                     first.is_cover = True
                     first.save()
+                    
             messages.success(request, f'"{album.title}" created with {album.media_count} item(s).')
             return redirect("cms:gallery_list")
+        else:
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
     else:
         form = GalleryAlbumForm()
     return render(request, "cms/admin_gallery.html", {"form": form, "editing": None, "open_editor": True})
@@ -536,21 +559,25 @@ def gallery_create(request):
 
 @staff_required
 def gallery_update(request, pk):
-    album = get_object_or_404(GalleryAlbum, pk=pk)
+    album = get_object_or_404(GalleryAlbum, pk=pk, is_deleted=False)
     if request.method == "POST":
         form = GalleryAlbumForm(request.POST, instance=album)
         if form.is_valid():
             album = form.save()
             _update_existing_media(request)
-            _save_gallery_media(request, album)
+            _process_parallel_media(request, album)
             _apply_cover_selection(request, album)
             messages.success(request, f'"{album.title}" updated.')
             return redirect("cms:gallery_list")
+        else:
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
     else:
         form = GalleryAlbumForm(instance=album)
+        
     return render(
         request, "cms/admin_gallery.html",
-        {"form": form, "editing": album, "existing_media": album.media.all(), "open_editor": True},
+        {"form": form, "editing": album, "existing_media": album.media.filter(is_deleted=False), "open_editor": True},
     )
 
 
@@ -559,21 +586,25 @@ def gallery_update(request, pk):
 def gallery_delete(request, pk):
     album = get_object_or_404(GalleryAlbum, pk=pk)
     title = album.title
-    album.delete()  # CASCADE removes its GalleryMedia rows too
-    messages.success(request, f'"{title}" and its media deleted.')
+    
+    # Calls the custom method we added to models.py to soft-delete the album and all its media
+    album.soft_delete()
+    
+    messages.success(request, f'"{title}" and its media have been archived.')
     return redirect("cms:gallery_list")
 
 
 @require_POST
 @staff_required
 def gallery_media_delete(request, pk):
-    """Removes a single already-saved photo/video from an album without
-    resubmitting the whole album form — the 'x' button on an existing
-    media tile in the editor calls this directly."""
     media = get_object_or_404(GalleryMedia, pk=pk)
     album_id = media.album_id
-    media.file.delete(save=False)
-    media.delete()
+    
+    # Enterprise Soft Delete for a single item
+    media.is_deleted = True
+    media.deleted_at = timezone.now()
+    media.save()
+    
     return redirect("cms:gallery_update", pk=album_id)
 
 

@@ -922,18 +922,25 @@
     </div>
 
     <div class="albums-grid" id="albumsGrid">
-
-      <div class="album-card" data-category="hospital" onclick="openAlbum('kath')">
+      {% for album in albums %}
+      <div class="album-card" data-category="{{ album.category }}" onclick="openAlbum('album-{{ album.id }}')">
         <div class="album-stack-back"></div>
         <div class="album-stack-mid"></div>
         <div class="album-cover">
-          <img src="https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="Visit to KATH" loading="lazy">
+          {% if album.cover and album.cover.file %}
+            <img src="{{ album.cover.file.url }}" alt="{{ album.title }}" loading="lazy">
+          {% else %}
+            <!-- Fallback for empty albums -->
+            <div style="width:100%; height:100%; background: #10241A; display:flex; align-items:center; justify-content:center;">
+              <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--coop-gold); opacity: 0.5;">photo_library</span>
+            </div>
+          {% endif %}
+          
           <div class="album-overlay">
             <div class="album-text">
-              <span class="album-count-badge">8 Media Files</span>
-              <h3>Visit to KATH (Komfo Anokye Teaching Hospital)</h3>
-              <p>Executive delegation visit to pharmacy administration & leadership.</p>
+              <span class="album-count-badge">{{ album.media_count }} Media File{{ album.media_count|pluralize }}</span>
+              <h3>{{ album.title }}</h3>
+              {% if album.subtitle %}<p>{{ album.subtitle }}</p>{% endif %}
             </div>
             <div class="album-hover-action">
               <span class="btn btn-gold btn-sm">
@@ -944,74 +951,12 @@
           </div>
         </div>
       </div>
-
-      <div class="album-card" data-category="agm" onclick="openAlbum('agm2025')">
-        <div class="album-stack-back"></div>
-        <div class="album-stack-mid"></div>
-        <div class="album-cover">
-          <img src="https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="38th AGM Accra" loading="lazy">
-          <div class="album-overlay">
-            <div class="album-text">
-              <span class="album-count-badge">12 Media Files</span>
-              <h3>38th Annual General Meeting - Accra</h3>
-              <p>Highlights from the AGM, Board election results, and dividend announcement.</p>
-            </div>
-            <div class="album-hover-action">
-              <span class="btn btn-gold btn-sm">
-                <span class="material-symbols-outlined" style="font-size:1.1rem;">visibility</span>
-                View Album
-              </span>
-            </div>
-          </div>
+      {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 4rem 1rem;">
+          <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">image_not_supported</span>
+          <p>No albums have been published yet.</p>
         </div>
-      </div>
-
-      <div class="album-card" data-category="outreach" onclick="openAlbum('outreach2025')">
-        <div class="album-stack-back"></div>
-        <div class="album-stack-mid"></div>
-        <div class="album-cover">
-          <img
-            src="https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="Community Health Outreach" loading="lazy">
-          <div class="album-overlay">
-            <div class="album-text">
-              <span class="album-count-badge">10 Media Files</span>
-              <h3>Kumasi Community Health Screening</h3>
-              <p>Free medical screening, BP checks, and medication education in Ashanti region.</p>
-            </div>
-            <div class="album-hover-action">
-              <span class="btn btn-gold btn-sm">
-                <span class="material-symbols-outlined" style="font-size:1.1rem;">visibility</span>
-                View Album
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="album-card" data-category="agm" onclick="openAlbum('awards')">
-        <div class="album-stack-back"></div>
-        <div class="album-stack-mid"></div>
-        <div class="album-cover">
-          <img src="https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=800"
-            alt="CUA Excellence Awards" loading="lazy">
-          <div class="album-overlay">
-            <div class="album-text">
-              <span class="album-count-badge">6 Media Files</span>
-              <h3>CUA Leadership Excellence Awards</h3>
-              <p>Recognizing outstanding pharmacy credit union contributors and long-serving members.</p>
-            </div>
-            <div class="album-hover-action">
-              <span class="btn btn-gold btn-sm">
-                <span class="material-symbols-outlined" style="font-size:1.1rem;">visibility</span>
-                View Album
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {% endfor %}
     </div>
   </div>
 </section>
@@ -1096,42 +1041,27 @@
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
   }
 
-  /* PEXELS-VERIFIED ALBUMS DATABASE */
+  /* DYNAMIC DJANGO ALBUMS DATABASE (Zero-Trust R2 Links) */
   const ALBUMS_DATA = {
-    kath: {
-      title: "Visit to KATH (Komfo Anokye Teaching Hospital)",
-      subtitle: "Executive delegation visit to pharmacy administration & leadership.",
+    {% for album in albums %}
+    "album-{{ album.id }}": {
+      title: "{{ album.title|escapejs }}",
+      subtitle: "{{ album.subtitle|escapejs }}",
       photos: [
-        { type: "image", src: "https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "GCPCUL Leadership with KATH Pharmacy Directorate" },
-        { type: "image", src: "https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Consultation on Hospital Pharmacy Credit Support" },
-        { type: "image", src: "https://images.pexels.com/photos/3825539/pexels-photo-3825539.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Touring the KATH Central Medical Store" },
-        { type: "image", src: "https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Interaction with Resident Clinical Pharmacists" }
+        {% for media in album.media.all %}
+          {% if not media.is_deleted and media.file %}
+          {
+            type: "{{ media.media_type }}",
+            src: "{{ media.file.url|escapejs }}",
+            /* Videos use a generic dark placeholder for the masonry grid, Images use the actual WebP URL */
+            thumb: "{% if media.media_type == 'video' %}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII={% else %}{{ media.file.url|escapejs }}{% endif %}",
+            caption: "{{ media.caption|default:album.title|escapejs }}"
+          }{% if not forloop.last %},{% endif %}
+          {% endif %}
+        {% endfor %}
       ]
-    },
-    agm2025: {
-      title: "38th Annual General Meeting - Accra",
-      subtitle: "Highlights from the AGM, Board election results, and dividend announcement.",
-      photos: [
-        { type: "video", src: "https://videos.pexels.com/video-files/7578544/7578544-uhd_2560_1440_30fps.mp4", thumb: "https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=600", caption: "Board Chairman delivering the 2025 Annual Performance Address (Video)" },
-        { type: "image", src: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Members casting votes during the Board of Directors Election" },
-        { type: "image", src: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Announcement of AGM Share Dividend Distribution" }
-      ]
-    },
-    outreach2025: {
-      title: "Kumasi Community Health Screening",
-      subtitle: "Free medical screening, BP checks, and medication education in Ashanti region.",
-      photos: [
-        { type: "image", src: "{% static 'assets/images/peer_grou'}", caption: "Pharmacists conducting free blood pressure checks in Kumasi" },
-        { type: "image", src: "https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "Medication counseling station manned by volunteer members" }
-      ]
-    },
-    awards: {
-      title: "CUA Leadership Excellence Awards",
-      subtitle: "Recognizing outstanding pharmacy credit union contributors and long-serving members.",
-      photos: [
-        { type: "image", src: "https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=1200", caption: "GCPCUL receiving CUA Excellence in Financial Growth Trophy" }
-      ]
-    }
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
   };
 
   let activeAlbumKey = null;

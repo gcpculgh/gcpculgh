@@ -191,16 +191,24 @@
       Back to Gallery
     </button>
 
-    <div class="form-panel">
+    <!-- 1. CHANGED: Made this a real FORM with the new galleryForm ID -->
+    <form id="galleryForm" class="form-panel" method="post" enctype="multipart/form-data" action="{% url 'cms:gallery_create' %}">
+      
+      <!-- 2. CHANGED: Added Django CSRF and the hidden payload container for Cloudflare -->
+      {% csrf_token %}
+      <div id="r2KeysContainer"></div>
+      <input type="hidden" name="cover_key" id="coverKeyInput" value="new-0">
 
       <div class="field-row">
         <div class="field-group">
           <label for="albumTitle">Album Title</label>
-          <input type="text" id="albumTitle" class="field-control" placeholder="e.g. Visit to KATH">
+          <!-- 3. CHANGED: Added name="title" -->
+          <input type="text" id="albumTitle" name="title" class="field-control" placeholder="e.g. Visit to KATH" required>
         </div>
         <div class="field-group">
           <label for="albumCategory">Category</label>
-          <select id="albumCategory" class="field-control">
+          <!-- 3. CHANGED: Added name="category" -->
+          <select id="albumCategory" name="category" class="field-control">
             <option value="agm">AGM Meetings</option>
             <option value="outreach">Community Outreach</option>
             <option value="hospital">Hospital Visits</option>
@@ -210,16 +218,19 @@
 
       <div class="field-group">
         <label for="albumSubtitle">Subtitle</label>
-        <input type="text" id="albumSubtitle" class="field-control" placeholder="One line describing this album.">
+        <!-- 3. CHANGED: Added name="subtitle" -->
+        <input type="text" id="albumSubtitle" name="subtitle" class="field-control" placeholder="One line describing this album.">
       </div>
 
       <div class="field-group">
         <label>Photos &amp; Video</label>
-        <div class="media-drop" onclick="document.getElementById('mediaFiles').click()">
+        <div class="media-drop" onclick="document.getElementById('mediaFilesInput').click()">
           <span class="material-symbols-outlined">perm_media</span>
           <div class="media-drop-label">Click or drag photos here</div>
           <div class="media-drop-sub">Select multiple files at once — JPG, PNG up to 8MB each</div>
-          <input type="file" id="mediaFiles" accept="image/*" multiple onchange="handleMediaUpload(event)">
+          
+          <!-- 4. CHANGED: Updated ID to mediaFilesInput and added name="media_files" -->
+          <input type="file" id="mediaFilesInput" name="media_files" accept="image/*" multiple onchange="handleMediaUpload(event)">
         </div>
 
         <div class="media-grid-header">
@@ -232,16 +243,134 @@
       </div>
 
       <div class="form-footer">
-        <button class="btn-outline-admin" onclick="closeEditor()">Cancel</button>
-        <button class="btn-primary-admin" onclick="saveAlbum()">
+        <button type="button" class="btn-outline-admin" onclick="closeEditor()">Cancel</button>
+        
+        <!-- 5. CHANGED: Wired the button to the new Interceptor script -->
+        <button type="button" id="gallerySubmitBtn" onclick="initiateBulkSecureUpload(event)" class="btn-primary-admin">
           <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
           Save Album
         </button>
       </div>
 
-    </div>
+    </form>
   </div>
 
+  <script>
+    /**
+   * Enterprise Edge Compression
+   * Resizes large JPEGs/PNGs to max 1920px width and converts to WebP.
+   * Leaves videos (MP4) completely untouched.
+   */
+    async function compressImageToWebP(file, maxWidth = 1920, quality = 0.8) {
+        if (!file.type.startsWith('image/')) return file; 
+        
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+
+              if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              canvas.toBlob((blob) => {
+                const originalName = file.name.replace(/\.[^/.]+$/, "");
+                const newFile = new File([blob], `${originalName}.webp`, {
+                  type: 'image/webp',
+                  lastModified: Date.now(),
+                });
+                resolve(newFile);
+              }, 'image/webp', quality);
+            };
+          };
+        });
+      }
+
+      /**
+       * Parallel Direct-to-Cloud Interceptor
+       */
+    async function initiateBulkSecureUpload(event) {
+    event.preventDefault(); // Stop the standard HTML payload crash
+    
+    const form = document.getElementById('galleryForm');
+    const submitBtn = document.getElementById('gallerySubmitBtn');
+    const fileInput = document.getElementById('mediaFilesInput');
+    const r2KeysContainer = document.getElementById('r2KeysContainer');
+    const originalBtnText = submitBtn.innerHTML;
+
+    // 1. Lock UI
+    submitBtn.disabled = true;
+    submitBtn.style.pointerEvents = 'none';
+    submitBtn.style.opacity = '0.7';
+    submitBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">sync</span> Securing Media...';
+
+    const files = Array.from(fileInput.files);
+    r2KeysContainer.innerHTML = ''; 
+
+    try {
+      if (files.length === 0 && !document.querySelector('[name="existing_media_id"]')) {
+         throw new Error("Please add at least one photo or video to this album.");
+      }
+
+      if (files.length > 0) {
+        // 2. Parallel Edge Compression
+        const processedFiles = await Promise.all(files.map(file => compressImageToWebP(file)));
+
+        // 3. Parallel Cloudflare R2 Uploads
+        const uploadPromises = processedFiles.map(async (file) => {
+          const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
+          if (!res.ok) throw new Error("Backend connection failed.");
+          const { upload_url, file_key } = await res.json();
+
+          const uploadRes = await fetch(upload_url, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file
+          });
+          
+          if (!uploadRes.ok) throw new Error(`Cloudflare rejected ${file.name}`);
+          return file_key;
+        });
+
+        const completedR2Keys = await Promise.all(uploadPromises);
+
+        // 4. Inject strict zero-trust keys into the form
+        completedR2Keys.forEach(key => {
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'r2_media_keys';
+          hiddenInput.value = key;
+          r2KeysContainer.appendChild(hiddenInput);
+        });
+
+        // 5. CRITICAL: Strip the physical files so Vercel doesn't crash on the payload limit
+        fileInput.removeAttribute('name');
+      }
+
+      // 6. Final atomic submission to Django
+      form.submit();
+
+    } catch (error) {
+      showClientToast(error.message, "error");
+      submitBtn.disabled = false;
+      submitBtn.style.pointerEvents = 'auto';
+      submitBtn.style.opacity = '1';
+      submitBtn.innerHTML = originalBtnText;
+    }
+  }
+    </script>
 {% endblock %}
 
 {% block extra_js %}
@@ -297,8 +426,11 @@
           <div class="cover-ribbon">Cover</div>
         </div>
         <div class="media-item-body">
-          <input type="text" class="media-caption-input" placeholder="Caption…" value="${item.caption}" oninput="updateCaption(${i}, this.value)">
-          <select class="media-type-select" onchange="updateType(${i}, this.value)">
+          <!-- Added name="captions" so Django can read it -->
+          <input type="text" name="captions" class="media-caption-input" placeholder="Caption…" value="${item.caption}" oninput="updateCaption(${i}, this.value)">
+          
+          <!-- Added name="media_types" so Django can read it -->
+          <select name="media_types" class="media-type-select" onchange="updateType(${i}, this.value)">
             <option value="image" ${item.type === 'image' ? 'selected' : ''}>Photo</option>
             <option value="video" ${item.type === 'video' ? 'selected' : ''}>Video</option>
           </select>
@@ -307,7 +439,13 @@
     `).join('');
   }
 
-  function setCover(i) { coverIndex = i; renderMediaGrid(); }
+  function setCover(i) { 
+    coverIndex = i; 
+    // Tells Django exactly which file to use as the cover image
+    document.getElementById('coverKeyInput').value = 'new-' + i; 
+    renderMediaGrid(); 
+  }
+
   function removeMedia(i) {
     mediaItems.splice(i, 1);
     if (coverIndex === i) coverIndex = mediaItems.length > 0 ? 0 : null;

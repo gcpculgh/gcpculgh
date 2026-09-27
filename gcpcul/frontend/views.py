@@ -27,8 +27,11 @@ def calculator(request):
     return render(request, 'calculator.html')
 
 def gallery(request):
-    return render(request, 'gallery.html')
-
+    albums = GalleryAlbum.objects.filter(is_deleted=False).prefetch_related('media')
+    
+    return render(request, "gallery.html", {
+        "albums": albums,
+    })
 
 
 def downloads(request):
