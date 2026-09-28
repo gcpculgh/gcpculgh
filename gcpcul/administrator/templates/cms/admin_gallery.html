@@ -657,36 +657,33 @@
     updateWatermarkPreview();
   }
 
-  let watermarkLogoR2Key = null;
+  let watermarkLogoBase64 = null;
 
-  async function loadWatermarkImage(e) {
+  function loadWatermarkImage(e) {
     const file = e.target.files[0];
     if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const img = new Image();
-        img.onload = () => {
-            wmConfig.logoImg = img;
-            document.getElementById('wmImageStatus').style.display = 'block';
-            updateWatermarkPreview(); 
-        };
-        img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
 
-    try {
-      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
-      const { upload_url, file_key } = await res.json();
-      await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
-      watermarkLogoR2Key = file_key;
-      console.log("Watermark logo secured in R2 quarantine:", watermarkLogoR2Key);
-    } catch (err) {
-      console.error("Failed to upload watermark logo to quarantine:", err);
-      showClientToast("Failed to upload watermark logo to cloud storage.", "error");
-    }
+    const img = new Image();
+    img.onload = () => {
+        // INDUSTRY STANDARD: Pre-compress the logo to keep Base64 payload microscopic
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        const maxLogoWidth = 600; 
+        if (w > maxLogoWidth) { h = Math.round(h * maxLogoWidth / w); w = maxLogoWidth; }
+        
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        
+        // Export as lightweight PNG data URL to preserve transparency
+        watermarkLogoBase64 = canvas.toDataURL('image/png');
+
+        wmConfig.logoImg = img;
+        document.getElementById('wmImageStatus').style.display = 'block';
+        updateWatermarkPreview(); 
+    };
+    img.src = URL.createObjectURL(file);
   }
-  
 
   function updateWatermarkPreview() {
     const isWmEnabled = document.getElementById('wmEnable').checked;
@@ -886,7 +883,7 @@
           size: document.getElementById('wmSize').value,
           opacity: document.getElementById('wmOpacity').value,
           radius: document.getElementById('wmBorderRadius').value,
-          logo_r2_key: watermarkLogoR2Key 
+          logo_base64: watermarkLogoBase64 // Sent instantly, completely dodging network fetches
         };
 
         const payload = {
@@ -1234,7 +1231,6 @@
     markDirty();
     renderMediaGrid();
     document.getElementById('batchCaptionInput').value = '';
-  }
 
   function publishAlbum() {
     const title = document.getElementById('albumTitle').value.trim();
@@ -1253,12 +1249,11 @@
     const wmEnabled = document.getElementById('wmEnable').checked;
     const wmType = document.querySelector('input[name="wmType"]:checked').value;
     const logoInput = document.getElementById('wmImageInput');
-    if (wmEnabled && wmType === 'image' && logoInput.files.length > 0 && !watermarkLogoR2Key) {
-        showClientToast("Please wait for the watermark logo to finish syncing to the cloud.", "warning");
+    if (wmEnabled && wmType === 'image' && logoInput.files.length > 0 && !watermarkLogoBase64) {
+        showClientToast("Processing watermark logo, please wait a moment.", "warning");
         return;
     }
     
-    // RESET AND LAUNCH THE OVERLAY
     document.getElementById('publishLogs').innerHTML = '';
     document.getElementById('publishTitle').textContent = 'Deploying Album...';
     document.getElementById('publishProgressOverlay').classList.add('active');

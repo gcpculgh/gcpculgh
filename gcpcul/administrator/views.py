@@ -29,7 +29,7 @@ from django.core.files.base import ContentFile
 from .forms import DocumentForm
 from .models import Document
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 import json
 from django.http import JsonResponse
@@ -346,7 +346,7 @@ def gallery_auto_save(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
-    
+
 def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
     """
     Enterprise Server-Side Watermarking Engine using Pillow.
@@ -357,6 +357,9 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
 
     try:
         img = Image.open(io.BytesIO(file_bytes)).convert("RGBA")
+        
+        # ENTERPRISE FIX 1: Normalize hidden EXIF rotation from mobile cameras
+        img = ImageOps.exif_transpose(img)
         width, height = img.size
 
         overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -365,16 +368,18 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
         opacity = float(wm_config.get('opacity', 80)) / 100.0
         scale = float(wm_config.get('size', 15)) / 100.0
         position = wm_config.get('position', 'bottom-right')
-        pad = int(width * 0.03)
+        
+        # ENTERPRISE FIX 2: Base scaling and padding on the longest edge to normalize portrait/landscape sizing
+        base_dim = max(width, height)
+        pad = int(base_dim * 0.02)
 
         wm_type = wm_config.get('type', 'text')
 
         if wm_type == 'text':
             text = wm_config.get('text', 'GCPCUL').strip()
             if text:
-                font_size = int(width * scale)
+                font_size = int(base_dim * scale)
                 
-                # Vercel-Safe Font Path Resolution
                 font_path = os.path.join(settings.BASE_DIR, 'cms', 'fonts', 'arial.ttf')
                 try:
                     font = ImageFont.truetype(font_path, font_size)
@@ -403,25 +408,25 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
                 rgb = tuple(int(color_hex[i:i+2], 16) for i in (0, 2, 4))
                 color_rgba = rgb + (int(255 * opacity),)
 
-                # Text drop-shadow for contrast
                 shadow_rgba = (0, 0, 0, int(255 * opacity * 0.6))
                 draw.text((x + 2, y + 2), text, font=font, fill=shadow_rgba)
                 draw.text((x, y), text, font=font, fill=color_rgba)
 
         elif wm_type == 'image':
-            logo_r2_key = wm_config.get('logo_r2_key')
-            if logo_r2_key and s3_client and bucket_name:
+            logo_base64 = wm_config.get('logo_base64')
+            if logo_base64:
                 try:
-                    # Fetch logo directly from Cloudflare R2 bucket (Serverless Standard)
-                    logo_resp = s3_client.get_object(Bucket=bucket_name, Key=logo_r2_key)
-                    logo_bytes = logo_resp['Body'].read()
+                    if ',' in logo_base64:
+                        _, logo_base64 = logo_base64.split(',', 1)
+                    
+                    logo_bytes = base64.b64decode(logo_base64)
                     logo_img = Image.open(io.BytesIO(logo_bytes)).convert("RGBA")
 
-                    logo_w = int(width * scale)
+                    # Mathematical sizing based on the longest edge of the main photo
+                    logo_w = int(base_dim * scale)
                     logo_h = int(logo_img.height * (logo_w / logo_img.width))
                     logo_img = logo_img.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
 
-                    # Apply border radius clipping
                     wm_radius = float(wm_config.get('radius', 0)) / 100.0
                     if wm_radius > 0:
                         radius_px = int(min(logo_w, logo_h) * wm_radius)
