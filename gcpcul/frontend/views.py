@@ -27,7 +27,7 @@ def calculator(request):
     return render(request, 'calculator.html')
 
 def gallery(request):
-    albums = GalleryAlbum.objects.filter(is_deleted=False).prefetch_related('media')
+    albums = GalleryAlbum.objects.filter(is_deleted=False, status='published').prefetch_related('media')
     
     return render(request, "gallery.html", {
         "albums": albums,
@@ -69,8 +69,8 @@ def news(request):
     return render(request, 'news.html', context)
 
 
-def article_detail_view(request, article_id):
-    article = get_object_or_404(NewsArticle, id=article_id)
+def article_detail_view(request, public_id):
+    article = get_object_or_404(NewsArticle, public_id=public_id)
     
     # Grab two random articles for the "Keep Reading" footer
     related = NewsArticle.objects.exclude(id=article.id).order_by('?')[:2]

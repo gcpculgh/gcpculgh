@@ -11,7 +11,8 @@ from django.core.exceptions import ValidationError
 import bleach
 from bleach.linkifier import Linker
 import markdown
-
+import uuid
+from django.db import models
 
 class NewsArticle(models.Model):
     CATEGORY_CHOICES = [
@@ -33,6 +34,9 @@ class NewsArticle(models.Model):
     excerpt = models.CharField(max_length=160, blank=True, help_text="Shown in the article grid teaser")
     body = models.TextField(blank=True, help_text="Rich HTML content from the article editor")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
+
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -132,6 +136,8 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(blank=True, null=True)
 
@@ -167,10 +173,20 @@ class GalleryAlbum(models.Model):
         ("outreach", "Community Outreach"),
         ("hospital", "Hospital Visits"),
     ]
+    STATUS_CHOICES = [
+        ("draft", "Draft"),
+        ("published", "Published"),
+    ]
 
-    title = models.CharField(max_length=180)
+    # blank=True allows the background auto-save to work before a title is typed
+    title = models.CharField(max_length=180, blank=True) 
     subtitle = models.CharField(max_length=280, blank=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default="agm")
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    # The new Enterprise Draft State
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Enterprise Soft Delete
@@ -181,7 +197,7 @@ class GalleryAlbum(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return self.title
+        return self.title or "Untitled Draft"
 
     def soft_delete(self):
         """Enterprise Cascade Delete: Archives the album and all its media instantly."""
@@ -194,7 +210,6 @@ class GalleryAlbum(models.Model):
 
     @property
     def cover(self):
-        # Only return media that hasn't been soft-deleted
         active_media = self.media.filter(is_deleted=False)
         return active_media.filter(is_cover=True).first() or active_media.first()
 
@@ -206,7 +221,6 @@ class GalleryAlbum(models.Model):
     def uses_placeholder_media(self):
         active_media = self.media.filter(is_deleted=False)
         return active_media.exists() and not active_media.exclude(file="").exists()
-
 
 class GalleryMedia(models.Model):
     TYPE_CHOICES = [("image", "Photo"), ("video", "Video")]
@@ -220,6 +234,8 @@ class GalleryMedia(models.Model):
 
     # Zero-Trust Cryptographic Hash
     file_hash = models.CharField(max_length=64, blank=True, null=True)
+
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     # Enterprise Soft Delete
     is_deleted = models.BooleanField(default=False)

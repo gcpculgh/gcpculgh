@@ -402,21 +402,22 @@
 </div>
 
 <div class="article-hero-wrapper">
-  {% if article.cover_image %}
-  <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="article-hero-bg"
+  {% if article.featured_image %}
+  <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" class="article-hero-bg"
     onerror="this.style.display='none';">
   {% endif %}
   <div class="article-hero-overlay"></div>
 
   <div class="container article-hero-content">
     <a href="{% url 'news' %}" class="back-nav-btn">
-      <span>← Back to News Directory</span>
+      <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_back</span>
+      <span>Back to News Directory</span>
     </a>
 
     <div style="margin-bottom: 0.5rem;">
       <span
-        class="tag-badge tag-{% if article.topic == 'security' %}security{% elif article.topic == 'dividends' %}dividend{% elif article.topic == 'loans' %}guide{% else %}news{% endif %}">
-        {{ article.get_topic_display }}
+        class="tag-badge tag-{% if article.category == 'security' %}security{% elif article.category == 'dividend' %}dividend{% elif article.category == 'guide' %}guide{% else %}news{% endif %}">
+        {{ article.get_category_display }}
       </span>
     </div>
 
@@ -432,7 +433,7 @@
       </div>
       <div class="article-hero-date-time">
         <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
-        {{ article.published_date|date:"F j, Y" }}
+        {{ article.published_at|date:"F j, Y" }}
       </div>
     </div>
   </div>
@@ -440,7 +441,7 @@
 
 <article class="container article-content-container">
   <div class="reader-prose" id="articleBodyContent">
-    {{ article.content|safe }}
+    {{ article.body|safe }}
   </div>
 
   <div class="article-share-footer">
@@ -461,15 +462,15 @@
     {% for rel in related %}
     <a href="{% url 'article_detail' rel.id %}" class="blog-card">
       <div class="blog-thumb">
-        {% if rel.cover_image %}
-        <img src="{{ rel.cover_image.url }}" alt="{{ rel.title }}" loading="lazy" onerror="this.style.display='none';">
+        {% if rel.featured_image %}
+        <img src="{{ rel.featured_image.url }}" alt="{{ rel.title }}" loading="lazy" onerror="this.style.display='none';">
         {% endif %}
       </div>
       <div class="blog-body">
         <div class="blog-meta">
           <span
-            class="tag-badge tag-{% if rel.topic == 'security' %}security{% elif rel.topic == 'dividends' %}dividend{% elif rel.topic == 'loans' %}guide{% else %}news{% endif %}">
-            {{ rel.get_topic_display }}
+            class="tag-badge tag-{% if rel.category == 'security' %}security{% elif rel.category == 'dividend' %}dividend{% elif rel.category == 'guide' %}guide{% else %}news{% endif %}">
+            {{ rel.get_category_display }}
           </span>
         </div>
         <h3
@@ -478,11 +479,14 @@
         </h3>
         <p
           style="font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">
-          {{ rel.summary }}
+          {{ rel.excerpt }}
         </p>
         <div class="blog-footer">
           <div class="blog-author-mini">{{ rel.author }}</div>
-          <span class="read-btn">Read Article →</span>
+          <span class="read-btn">
+            Read Article 
+            <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-left: 0.2rem;">arrow_forward</span>
+          </span>
         </div>
       </div>
     </a>
@@ -490,7 +494,6 @@
     <p style="padding: 0 2rem; color: var(--text-muted);">More articles coming soon.</p>
     {% endfor %}
   </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -516,21 +519,22 @@
     }
   });
 
-  /* SHARE BUTTON JS */
   const readerShareBtn = document.getElementById('readerShareBtn');
   if (readerShareBtn) {
     readerShareBtn.addEventListener('click', async () => {
+      const articleUrl = window.location.href;
       if (navigator.share) {
         try {
           await navigator.share({
-            title: '{{ article.title }}',
-            url: window.location.href
+            title: '{{ article.title|escapejs }}',
+            url: articleUrl
           });
         } catch (err) {
-          console.log('Share cancelled.');
         }
       } else {
-        alert("Copy this link to share: " + window.location.href);
+        if (typeof copyText === 'function') {
+          copyText(articleUrl, readerShareBtn);
+        }
       }
     });
   }

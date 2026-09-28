@@ -230,10 +230,13 @@
         {% if form.description.errors %}<span class="error-text">{{ form.description.errors.0 }}</span>{% endif %}
       </div>
 
-      <div class="field-row">
-        <div class="field-group">
-          <label for="docPages">Pages <span class="hint">(leave blank if not applicable)</span></label>
-          <input type="number" id="docPages" name="pages" class="field-control" min="1" value="{{ form.pages.value|default_if_none:'' }}" placeholder="e.g. 2">
+      <div class="field-group">
+          <label for="docPages">Pages <span class="hint">(Auto-calculated securely)</span></label>
+          <input type="text" id="docPages" name="pages" class="field-control" 
+                 value="{{ form.pages.value|default_if_none:'' }}" 
+                 placeholder="Populated automatically on the server" 
+                 readonly 
+                 style="background-color: var(--bg-section-alt); color: var(--text-muted); cursor: not-allowed; border-color: transparent;">
           {% if form.pages.errors %}<span class="error-text">{{ form.pages.errors.0 }}</span>{% endif %}
         </div>
         
@@ -383,13 +386,13 @@
             <td>
               <div class="row-actions">
                 {% if doc.document %}
-                <a href="{% url 'cms:secure_document_download' doc.id %}" target="_blank" class="row-action-btn" title="Download Document">
+                <a href="{% url 'cms:secure_document_download' doc.public_id %}" target="_blank" class="row-action-btn" title="Download Document">
                   <span class="material-symbols-outlined">download</span>
                 </a>
                 {% endif %}
-                <a href="{% url 'cms:document_update' doc.pk %}" class="row-action-btn"><span class="material-symbols-outlined">edit</span></a>
+                <a href="{% url 'cms:document_update' doc.public_id %}" class="row-action-btn"><span class="material-symbols-outlined">edit</span></a>
                 <!-- Secure, custom modal trigger -->
-                <form method="post" action="{% url 'cms:document_delete' doc.pk %}" style="margin:0;" id="delete-form-{{ doc.pk }}" onsubmit="event.preventDefault(); openDeleteModal('{{ doc.pk }}', '{{ doc.title|escapejs }}');">
+                <form method="post" action="{% url 'cms:document_delete' doc.public_id %}" style="margin:0;" id="delete-form-{{ doc.public_id }}" onsubmit="event.preventDefault(); openDeleteModal('{{ doc.pk }}', '{{ doc.title|escapejs }}');">
                   {% csrf_token %}
                   <button type="submit" class="row-action-btn danger" aria-label="Delete"><span class="material-symbols-outlined">delete</span></button>
                 </form>
@@ -474,9 +477,7 @@
     }, 4500);
   }
 
-  // ==========================================
   // 2. ICON PICKER ENGINE (Moved to Global Scope)
-  // ==========================================
   const iconLibrary = [
     'description', 'article', 'receipt_long', 'gavel', 'account_balance', 
     'health_and_safety', 'folder', 'folder_open', 'picture_as_pdf', 'text_snippet', 
@@ -488,7 +489,7 @@
     'apartment', 'store', 'business', 'event', 'calendar_month', 'schedule', 
     'public', 'language', 'chat', 'forum', 'mail', 'email', 'phone', 
     'contact_support', 'help', 'info', 'warning', 'error', 'check_circle', 
-    'cloud_download', 'upload_file', 'lock', 'key', 'settings', 'admin_panel_settings', 'child_care'
+    'cloud_download', 'upload_file', 'lock', 'key', 'settings', 'admin_panel_settings', 'child_care', 'person_add',
   ];
 
   let iconPopover, iconSearchInput, iconGrid, docIconInput, selectedIconDisplay, selectedIconText;
@@ -604,7 +605,8 @@
   function suggestAgmTitle() {
     const year = document.getElementById('docYear').value;
     const titleField = document.getElementById('docTitle');
-    if (year && !titleField.value.includes('Minutes')) {
+    
+    if (year && titleField.value.trim() === '') {
       titleField.value = year + ' AGM Minutes & Resolutions';
       document.getElementById('autoFillNote').style.display = 'flex';
     }

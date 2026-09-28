@@ -30,12 +30,17 @@ from .forms import DocumentForm
 from .models import Document
 
 
+import json
+from django.http import JsonResponse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from django.shortcuts import get_object_or_404, redirect
 
 from .forms import DocumentForm, GalleryAlbumForm, NewsArticleForm
 from .models import Document, GalleryAlbum, GalleryMedia, NewsArticle
 from .utils import optimize_and_convert_to_webp
 from django.utils import timezone
+from django.utils.text import slugify
 
 # Every view below is content-management, not member-facing — staff_member_required
 # (checks request.user.is_staff) is deliberate here instead of login_required, which
@@ -151,8 +156,8 @@ def news_create(request):
 
 
 @staff_required
-def news_update(request, pk):
-    article = get_object_or_404(NewsArticle, pk=pk)
+def news_update(request, public_id):
+    article = get_object_or_404(NewsArticle, public_id=public_id)
     if request.method == "POST":
         form = NewsArticleForm(request.POST, request.FILES, instance=article)
         if form.is_valid():
@@ -166,8 +171,8 @@ def news_update(request, pk):
 
 @require_POST
 @staff_required
-def news_delete(request, pk):
-    article = get_object_or_404(NewsArticle, pk=pk)
+def news_delete(request, public_id):
+    article = get_object_or_404(NewsArticle, public_id=public_id)
     title = article.title
     article.delete()
     messages.success(request, f'"{title}" deleted.')
@@ -250,6 +255,116 @@ def _verify_and_promote_r2_file(r2_key, file_category="document"):
         'page_count': page_count,
     }
 
+@require_POST
+@staff_required
+def gallery_auto_save(request):
+    """
+    Enterprise Shadow Save:
+    Silently pinged by the browser to lock Cloudflare uploads and text changes 
+    into the database as a draft, preventing data loss if the device dies.
+    """
+    try:
+        data = json.loads(request.body)
+        album_id = data.get('album_id')
+        if album_id:
+            album = get_object_or_404(GalleryAlbum, public_id=album_id, is_deleted=False)
+        else:
+            album = GalleryAlbum.objects.create(status='draft')
+
+        # 2. Sync Metadata
+        album.title = data.get('title', album.title)
+        album.subtitle = data.get('subtitle', album.subtitle)
+        album.category = data.get('category', album.category)
+        
+        # If the user clicks the final "Publish" button
+        if data.get('publish'):
+            album.status = 'published'
+            
+        album.save()
+
+        # 3. Process newly streamed Cloudflare files from the quarantine bucket
+        new_media_payload = data.get('new_media', [])
+        starting_order = album.media.filter(is_deleted=False).count()
+        
+        saved_media = []
+
+        # ENTERPRISE FIX: Multi-Threaded I/O for Zero-Trust Verification
+        # This helper function isolates the heavy Cloudflare network operations
+        def verify_asset(media_item, idx):
+            r2_key = media_item.get('r2_key')
+            if not r2_key:
+                return None
+            verification = _verify_and_promote_r2_file(r2_key, file_category="media")
+            return {"item": media_item, "verification": verification, "order": idx}
+
+        # Spin up a thread pool to execute the Cloudflare network operations SIMULTANEOUSLY
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [
+                executor.submit(verify_asset, item, starting_order + i)
+                for i, item in enumerate(new_media_payload)
+            ]
+
+            # Process the results as they finish downloading and verifying
+            for future in as_completed(futures):
+                result = future.result() # Will instantly raise ValueError if any thread spots a spoofed file
+                if result:
+                    item = result["item"]
+                    verif = result["verification"]
+
+                    # Safe, sequential database writes in the main thread
+                    new_obj = GalleryMedia.objects.create(
+                        album=album,
+                        file=verif['clean_key'],
+                        caption=item.get('caption', ''),
+                        media_type=item.get('type', 'image'),
+                        order=result["order"],
+                        file_hash=verif['sha256_hash']
+                    )
+                    
+                    # Return the new database ID to the frontend
+                    saved_media.append({
+                        'frontend_id': item.get('frontend_id'), 
+                        'db_id': str(new_obj.public_id),
+                        'clean_url': new_obj.file.url
+                    })
+
+        existing_updates = data.get('existing_media_updates', [])
+        for u in existing_updates:
+            GalleryMedia.objects.filter(public_id=u['db_id'], album=album).update(
+                caption=u.get('caption', ''),
+                media_type=u.get('type', 'image')
+            )
+            
+        # THE ENTERPRISE FIX: Micro-Batch Safe Garbage Collection
+        # Only execute deletions if the frontend explicitly provided the protection array.
+        if 'active_db_ids' in data:
+            frontend_active_ids = data.get('active_db_ids', [])
+            newly_saved_uuids = [item['db_id'] for item in saved_media]
+            all_keep_uuids = frontend_active_ids + newly_saved_uuids
+            
+            album.media.filter(is_deleted=False).exclude(public_id__in=all_keep_uuids).update(
+                is_deleted=True,
+                deleted_at=timezone.now()
+            )
+            
+        # 5. Lock in the cover photo
+        cover_id = data.get('cover_db_id')
+        if cover_id:
+            album.media.filter(is_deleted=False).update(is_cover=False)
+            album.media.filter(public_id=cover_id, is_deleted=False).update(is_cover=True)
+
+        return JsonResponse({
+            'success': True,
+            'album_id': str(album.public_id), 
+            'saved_media': saved_media
+        })
+        
+    except ValueError as ve:
+        return JsonResponse({'success': False, 'error': f"Security Alert: {str(ve)}"}, status=400)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    
 @staff_required
 def generate_upload_url(request):
     """Generates a secure, temporary direct-to-Cloudflare R2 upload URL."""
@@ -278,13 +393,13 @@ def generate_upload_url(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-def secure_document_download(request, doc_id):
+def secure_document_download(request, public_id):
     """
     Public JIT Download Gateway.
     No login required for members, but keeps R2 fully private.
     Issues a short-lived (15-minute) signed link to prevent permanent hotlinking.
     """
-    doc = get_object_or_404(Document, id=doc_id)
+    doc = get_object_or_404(Document, public_id)
     
     if not doc.document:
         messages.error(request, "This document file is not yet available.")
@@ -299,6 +414,38 @@ def secure_document_download(request, doc_id):
             'ResponseContentDisposition': f'attachment; filename="{doc.title}.pdf"'
         },
         ExpiresIn=900  # 15 minutes
+    )
+    return redirect(presigned_url)
+
+
+
+def secure_media_download(request, public_id):
+    """
+    Public JIT Media Download Gateway.
+    Forces Cloudflare to serve the file as a downloadable attachment 
+    instead of rendering it inline in a new browser tab.
+    """
+    media = get_object_or_404(GalleryMedia, public_id=public_id, is_deleted=False)
+    
+    if not media.file:
+        messages.error(request, "This media file is currently unavailable.")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    s3_client = _get_s3_client()
+    
+    # Generate a clean, professional filename for the user's hard drive
+    ext = media.file.name.split('.')[-1].lower() if '.' in media.file.name else 'webp'
+    album_slug = slugify(media.album.title) if media.album.title else "gcpcul_gallery"
+    clean_filename = f"{album_slug}_{str(media.public_id)[:8]}.{ext}"
+
+    presigned_url = s3_client.generate_presigned_url(
+        'get_object',
+        Params={
+            'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+            'Key': media.file.name,
+            'ResponseContentDisposition': f'attachment; filename="{clean_filename}"'
+        },
+        ExpiresIn=60  # 60 seconds is plenty since it redirects instantly
     )
     return redirect(presigned_url)
 
@@ -380,8 +527,8 @@ def document_create(request):
 
 
 @staff_required
-def document_update(request, pk):
-    document = get_object_or_404(Document, pk=pk)
+def document_update(request, public_id):
+    document = get_object_or_404(Document, public_id=public_id)
     if request.method == "POST":
         # Pure decoupled form handling — no dummy files needed
         form = DocumentForm(request.POST, instance=document)
@@ -436,8 +583,8 @@ def document_update(request, pk):
 
 @require_POST
 @staff_required
-def document_delete(request, pk):
-    document = get_object_or_404(Document, pk=pk)
+def document_delete(request, public_id):
+    document = get_object_or_404(Document, public_id=public_id)
     
     # ENTERPRISE STANDARD: Soft Delete
     document.is_deleted = True
@@ -501,12 +648,13 @@ def _process_parallel_media(request, album):
     if new_items:
         GalleryMedia.objects.bulk_create(new_items)
 
+
 def _update_existing_media(request):
     ids = request.POST.getlist("existing_media_id")
     captions = request.POST.getlist("existing_caption")
     types = request.POST.getlist("existing_media_type")
     for i, media_id in enumerate(ids):
-        GalleryMedia.objects.filter(pk=media_id, is_deleted=False).update(
+        GalleryMedia.objects.filter(public_id=media_id, is_deleted=False).update(
             caption=captions[i] if i < len(captions) else "",
             media_type=types[i] if i < len(types) else "image",
         )
@@ -520,16 +668,14 @@ def _apply_cover_selection(request, album):
     
     if cover_key.startswith("existing-"):
         media_id = cover_key.split("-", 1)[1]
-        GalleryMedia.objects.filter(pk=media_id, album=album, is_deleted=False).update(is_cover=True)
+        GalleryMedia.objects.filter(public_id=media_id, album=album, is_deleted=False).update(is_cover=True)
     elif cover_key.startswith("new-"):
         new_index = int(cover_key.split("-", 1)[1])
-        # Find the newly created items by ordering descending
         ordered_new = list(album.media.filter(is_deleted=False).order_by("-id")[: len(request.POST.getlist("r2_media_keys"))])
         ordered_new.reverse()
         if 0 <= new_index < len(ordered_new):
             ordered_new[new_index].is_cover = True
             ordered_new[new_index].save()
-
 
 @staff_required
 def gallery_create(request):
@@ -558,8 +704,8 @@ def gallery_create(request):
 
 
 @staff_required
-def gallery_update(request, pk):
-    album = get_object_or_404(GalleryAlbum, pk=pk, is_deleted=False)
+def gallery_update(request, public_id):
+    album = get_object_or_404(GalleryAlbum, public_id=public_id, is_deleted=False)
     if request.method == "POST":
         form = GalleryAlbumForm(request.POST, instance=album)
         if form.is_valid():
@@ -583,8 +729,8 @@ def gallery_update(request, pk):
 
 @require_POST
 @staff_required
-def gallery_delete(request, pk):
-    album = get_object_or_404(GalleryAlbum, pk=pk)
+def gallery_delete(request, public_id):
+    album = get_object_or_404(GalleryAlbum, public_id=public_id)
     title = album.title
     
     # Calls the custom method we added to models.py to soft-delete the album and all its media
@@ -596,16 +742,15 @@ def gallery_delete(request, pk):
 
 @require_POST
 @staff_required
-def gallery_media_delete(request, pk):
-    media = get_object_or_404(GalleryMedia, pk=pk)
-    album_id = media.album_id
+def gallery_media_delete(request, public_id): 
+    media = get_object_or_404(GalleryMedia, public_id=public_id)
+    album_public_id = media.album.public_id
     
-    # Enterprise Soft Delete for a single item
     media.is_deleted = True
     media.deleted_at = timezone.now()
     media.save()
     
-    return redirect("cms:gallery_update", pk=album_id)
+    return redirect("cms:gallery_update", public_id=album_public_id)
 
 
 def custom_csrf_failure(request, reason=""):

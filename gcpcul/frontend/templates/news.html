@@ -11,58 +11,38 @@
     gap: 0.4rem;
     font-size: 0.75rem;
     font-weight: 800;
-    padding: 0.4rem 0.85rem;
+    padding: 0.45rem 0.9rem;
     border-radius: 50px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
 
   .tag-news {
-    background: #EEF2FF;
+    background: rgba(79, 70, 229, 0.15);
     color: #4F46E5;
-    border: 1px solid #C7D2FE;
+    border: 1px solid rgba(79, 70, 229, 0.35);
   }
 
   .tag-guide {
-    background: #F0FDFA;
+    background: rgba(20, 184, 166, 0.15);
     color: #0D9488;
-    border: 1px solid #99F6E4;
+    border: 1px solid rgba(20, 184, 166, 0.35);
   }
 
   .tag-security {
-    background: #FFF1F2;
+    background: rgba(225, 29, 72, 0.15);
     color: #E11D48;
-    border: 1px solid #FECDD3;
+    border: 1px solid rgba(225, 29, 72, 0.35);
   }
 
   .tag-dividend {
-    background: #FFFBEB;
+    background: rgba(245, 158, 11, 0.15);
     color: #D97706;
-    border: 1px solid #FDE68A;
-  }
-
-  [data-theme="dark"] .tag-news {
-    background: rgba(79, 70, 229, 0.15);
-    color: #A5B4FC;
-    border-color: #4F46E5;
-  }
-
-  [data-theme="dark"] .tag-guide {
-    background: rgba(13, 148, 136, 0.15);
-    color: #5EEAD4;
-    border-color: #0D9488;
-  }
-
-  [data-theme="dark"] .tag-security {
-    background: rgba(225, 29, 72, 0.15);
-    color: #FDA4AF;
-    border-color: #E11D48;
-  }
-
-  [data-theme="dark"] .tag-dividend {
-    background: rgba(217, 119, 6, 0.15);
-    color: #FCD34D;
-    border-color: #D97706;
+    border: 1px solid rgba(245, 158, 11, 0.35);
   }
 
   .view-section {
@@ -627,8 +607,8 @@
 <div id="mainBlogView" class="view-section">
   <section class="spotlight-hero">
     {% if featured %}
-    {% if featured.cover_image %}
-    <img src="{{ featured.cover_image.url }}" alt="Featured Image" class="spotlight-bg-img"
+    {% if featured.featured_image %}
+    <img src="{{ featured.featured_image.url }}" alt="Featured Image" class="spotlight-bg-img"
       onerror="this.style.display='none';">
     {% endif %}
     <div class="spotlight-overlay"></div>
@@ -636,10 +616,10 @@
       <div class="spotlight-meta-top">
         <span class="tag-badge tag-dividend"
           style="background: var(--coop-gold); color: #10241A; border: none;">Featured Announcement</span>
-        <span class="spotlight-date">{{ featured.published_date|date:"F j, Y" }}</span>
+        <span class="spotlight-date">{{ featured.published_at|date:"F j, Y" }}</span>
       </div>
       <h2 class="spotlight-title">{{ featured.title }}</h2>
-      <p class="spotlight-excerpt">{{ featured.summary }}</p>
+      <p class="spotlight-excerpt">{{ featured.excerpt }}</p>
       <div class="spotlight-author-bar">
         <img src="{% static 'assets/images/logo.jpg' %}" alt="Avatar" class="author-avatar">
         <div class="author-info">
@@ -647,7 +627,7 @@
           <span>Official Board Communication</span>
         </div>
       </div>
-      <a href="{% url 'article_detail' featured.id %}" class="btn btn-gold" style="text-decoration: none;">Read Featured
+      <a href="{% url 'article_detail' featured.public_id %}" class="btn btn-gold" style="text-decoration: none;">Read Featured
         Story</a>
     </div>
     {% else %}
@@ -679,16 +659,14 @@
   </section>
 
   {% if articles %}
-  <!-- SHOW FILTER BAR ONLY IF ARTICLES EXIST -->
   <div class="filter-bar-wrapper">
     <div class="container filter-container">
       <div class="filter-tabs" id="articleFilterBar">
         <button class="filter-tab-btn active" data-filter="all">All News</button>
-        <button class="filter-tab-btn" data-filter="dividends">Dividends & Shares</button>
-        <button class="filter-tab-btn" data-filter="loans">Loans & Credit</button>
+        <button class="filter-tab-btn" data-filter="dividend">Dividends</button>
+        <button class="filter-tab-btn" data-filter="guide">Financial Literacy</button>
         <button class="filter-tab-btn" data-filter="security">Security & Portal</button>
-        <button class="filter-tab-btn" data-filter="governance">Governance & Leadership</button>
-        <button class="filter-tab-btn" data-filter="health">Healthcare & Practice</button>
+        <button class="filter-tab-btn" data-filter="news">Union Governance</button>
       </div>
     </div>
   </div>
@@ -697,29 +675,32 @@
     <div class="container">
       <div class="blog-grid" id="blogGrid">
         {% for article in articles %}
-        <a href="{% url 'article_detail' article.id %}" class="blog-card" data-category="{{ article.topic }}">
+        <a href="{% url 'article_detail' article.public_id %}" class="blog-card" data-category="{{ article.category }}">
           <div class="blog-thumb">
-            {% if article.cover_image %}
-            <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" loading="lazy"
+            {% if article.featured_image %}
+            <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" loading="lazy"
               onerror="this.style.display='none';">
             {% endif %}
           </div>
           <div class="blog-body">
             <div class="blog-meta">
               <span
-                class="tag-badge tag-{% if article.topic == 'security' %}security{% elif article.topic == 'dividends' %}dividend{% elif article.topic == 'loans' %}guide{% else %}news{% endif %}"
+                class="tag-badge tag-{% if article.category == 'security' %}security{% elif article.category == 'dividend' %}dividend{% elif article.category == 'guide' %}guide{% else %}news{% endif %}"
                 style="font-family: var(--font-mono);">
-                {{ article.get_topic_display }}
+                {{ article.get_category_display }}
               </span>
-              <span class="blog-meta-right">{{ article.published_date|date:"M j, Y" }}</span>
+              <span class="blog-meta-right">{{ article.published_at|date:"M j, Y" }}</span>
             </div>
 
             <h3>{{ article.title }}</h3>
-            <p>{{ article.summary }}</p>
+            <p>{{ article.excerpt }}</p>
 
             <div class="blog-footer">
               <div class="blog-author-mini">{{ article.author }}</div>
-              <span class="read-btn">Read Article →</span>
+              <span class="read-btn">
+                Read Article 
+                <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-left: 0.2rem;">arrow_forward</span>
+              </span>
             </div>
           </div>
         </a>

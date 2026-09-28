@@ -39,7 +39,7 @@
   .new-album-card span.label { font-weight: 700; font-size: .9rem; }
 
   /* ============ EDITOR VIEW ============ */
-  #editorView { display: none; max-width: 52rem; }
+  #editorView { display: none; width: 100%; max-width: 90rem; }
   #editorView.active { display: block; }
   #listView.hidden { display: none; }
 
@@ -82,6 +82,189 @@
 
   .form-footer { display: flex; justify-content: flex-end; gap: .75rem; padding-top: .5rem; border-top: 1px solid var(--border-color); }
 
+  /* Premium Batch Selection UI */
+  .premium-cb-wrapper { position: absolute; top: 0.5rem; left: 2.5rem; z-index: 10; }
+  .premium-cb-input { display: none; }
+  .premium-cb-label {
+    display: flex; align-items: center; justify-content: center;
+    width: 1.35rem; height: 1.35rem; border-radius: 4px;
+    background: rgba(16, 36, 26, 0.5); border: 1.5px solid rgba(255, 255, 255, 0.7);
+    color: transparent; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .premium-cb-label:hover { border-color: #fff; background: rgba(16, 36, 26, 0.8); }
+  .premium-cb-input:checked + .premium-cb-label {
+    background: var(--primary-green); border-color: var(--primary-green); color: #fff;
+    box-shadow: 0 4px 10px rgba(10, 92, 54, 0.4); transform: scale(1.05);
+  }
+
+  .premium-cb-label .material-symbols-outlined { font-size: 1.05rem; font-weight: 800; }
+
+  /* Custom Enterprise Delete Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-card { background: var(--bg-card); width: 100%; max-width: 24rem; border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: translateY(15px); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); text-align: center; }
+  .modal-overlay.active .modal-card { transform: translateY(0); }
+  .modal-icon { width: 3rem; height: 3rem; border-radius: 50px; background: var(--danger-bg, #FEE2E2); color: var(--danger, #DC2626); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; }
+  .modal-icon .material-symbols-outlined { font-size: 1.5rem; }
+  .modal-card h3 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
+  .modal-card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.4; }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+  .modal-actions button { flex: 1; justify-content: center; }
+  .danger-btn { background: var(--danger, #DC2626); border-color: var(--danger, #DC2626); color: #fff; }
+  .danger-btn:hover { background: #b91c1c; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .spin-icon { animation: spin 1s linear infinite; }
+  
+  /* Make the selected tile look premium */
+  .media-item.is-selected { border-color: var(--primary-green); box-shadow: 0 0 0 1px var(--primary-green); }
+
+  /* 1. Premium Sync Badge */
+  .sync-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.4rem 0.9rem; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 800; font-family: var(--font-mono);
+    transition: all 0.3s ease;
+    background: var(--primary-light); color: var(--heading-green);
+    border: 1px solid rgba(10, 92, 54, 0.2);
+  }
+  .sync-badge.saving {
+    background: #FFFBEB; color: #B45309;
+    border-color: #FDE68A;
+    animation: pulseSync 1.5s infinite alternate;
+  }
+  @keyframes pulseSync {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0); }
+  }
+
+  /* 2. Cinematic Publish Overlay */
+  .publish-overlay {
+    position: fixed; inset: 0; background: rgba(250, 247, 240, 0.85);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 9999; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .publish-overlay.active { opacity: 1; pointer-events: auto; }
+  .publish-card {
+    background: var(--bg-card); width: 100%; max-width: 28rem;
+    padding: 2.5rem; border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);
+    text-align: center; transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .publish-overlay.active .publish-card { transform: translateY(0); }
+  .publish-icon {
+    width: 4.5rem; height: 4.5rem; background: var(--primary-light);
+    color: var(--primary-green); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .publish-icon .material-symbols-outlined { font-size: 2.2rem; }
+  .publish-card h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main); }
+  .publish-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5; }
+  
+  .publish-track {
+    width: 100%; height: 8px; background: var(--border-color);
+    border-radius: 50px; overflow: hidden; margin-bottom: 1rem;
+  }
+  .publish-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-green), var(--accent-green));
+    border-radius: 50px; transition: width 0.3s ease-out;
+  }
+
+  /* Premium Custom Sliders */
+  .premium-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 50px;
+    outline: none;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+  }
+  .premium-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2.5px solid var(--primary-green);
+    box-shadow: 0 2px 6px rgba(10, 92, 54, 0.25);
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2.5px solid var(--primary-green);
+    box-shadow: 0 2px 6px rgba(10, 92, 54, 0.25);
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .premium-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    border-color: var(--accent-green);
+  }
+  .premium-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    border-color: var(--accent-green);
+  }
+
+  /* Pure CSS Premium Spinners (No Font Ligature Wobble) */
+  .premium-loader {
+    width: 1.1rem; height: 1.1rem;
+    border: 2.5px solid rgba(10, 92, 54, 0.2);
+    border-top-color: var(--primary-green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+  .media-loader {
+    width: 2.5rem; height: 2.5rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--coop-gold);
+  }
+
+  /* Railway-Style Deployment Terminal */
+  .publish-logs {
+    background: #0F172A; /* Deep slate terminal background */
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+    margin-top: 1.5rem;
+    text-align: left;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.75rem;
+    color: #64748B;
+    height: 120px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid #1E293B;
+  }
+  
+  /* Custom scrollbar for the terminal */
+  .publish-logs::-webkit-scrollbar { width: 6px; }
+  .publish-logs::-webkit-scrollbar-track { background: transparent; }
+  .publish-logs::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+  .log-line { display: flex; align-items: flex-start; gap: 0.6rem; transition: color 0.2s; line-height: 1.4; }
+  .log-line.active { color: #F8FAFC; }
+  .log-line.done { color: var(--ok, #10B981); }
+  .log-line.error { color: var(--danger, #EF4444); }
+  
+  .log-icon { width: 14px; display: flex; justify-content: center; margin-top: 0.15rem; flex-shrink: 0; }
+  .log-spinner { width: 10px; height: 10px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .log-check { font-size: 0.9rem; font-weight: 900; }
+  .log-cross { font-size: 0.9rem; font-weight: 900; }
+
   @media (max-width: 52rem) { .field-row { grid-template-columns: 1fr; } }
 </style>
 {% endblock %}
@@ -89,11 +272,11 @@
 {% block admin_content %}
 
   <!-- ============ LIST VIEW ============ -->
-  <div id="listView">
+  <div id="listView" {% if open_editor %}class="hidden"{% endif %}>
     <div class="page-head">
       <div>
         <h1>Gallery</h1>
-        <p>4 albums, 26 media items.</p>
+        <p>{{ album_count }} album{{ album_count|pluralize }}, {{ media_count }} media item{{ media_count|pluralize }}.</p>
       </div>
       <button class="btn-primary-admin" onclick="openEditor()">
         <span class="material-symbols-outlined" style="font-size:1.05rem;">add_photo_alternate</span>
@@ -101,125 +284,100 @@
       </button>
     </div>
 
-    <div class="gallery-alert">
-      <span class="material-symbols-outlined">info</span>
-      <p><strong>All 4 albums below currently use stock photography</strong> as placeholders. Replace each with real event photos before the Gallery goes live publicly — click into an album to swap its media.</p>
-    </div>
-
     <div class="album-grid">
-
+      {% for album in albums %}
       <div class="album-admin-card">
-        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/3845126/pexels-photo-3845126.jpeg?auto=compress&cs=tinysrgb&w=600');">
-          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
-          <span class="album-media-count">8 items</span>
+        
+        <div class="album-admin-thumb" 
+             style="background-image:url('{% if album.cover and album.cover.file %}{{ album.cover.file.url }}{% else %}#10241A{% endif %}');">
+          <span class="album-media-count">{{ album.media_count }} item{{ album.media_count|pluralize }}</span>
         </div>
+        
         <div class="album-admin-body">
-          <span class="album-cat-chip">Hospital Visits</span>
-          <h4>Visit to KATH</h4>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: .55rem;">
+            <span class="album-cat-chip">{{ album.get_category_display }}</span>
+            {% if album.status == 'draft' %}
+              <span style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--warn); background: var(--warn-bg); padding: 0.2rem 0.5rem; border-radius: 4px;">Draft</span>
+            {% else %}
+              <span style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--ok); background: var(--ok-bg); padding: 0.2rem 0.5rem; border-radius: 4px;">Published</span>
+            {% endif %}
+          </div>
+          
+          <h4>{{ album.title|default:"Untitled Album" }}</h4>
+          
           <div class="album-admin-actions">
-            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
-            <button class="btn-outline-admin" style="flex:0;">
-              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
-            </button>
+            <a href="{% url 'cms:gallery_update' album.public_id %}" class="btn-outline-admin" style="text-decoration: none; text-align: center; display: inline-flex; justify-content: center; align-items: center;">Edit / Add Photos</a>
+            
+            <!-- Upgraded Delete Button -->
+            <form method="post" action="{% url 'cms:gallery_delete' album.public_id %}" style="margin:0; display:flex;" id="delete-form-{{ album.public_id }}" onsubmit="event.preventDefault(); openDeleteModal('{{ album.public_id }}', '{{ album.title|escapejs }}');">
+              {% csrf_token %}
+              <button type="submit" class="btn-outline-admin" style="color: var(--danger); border-color: var(--danger);">
+                <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>
-
-      <div class="album-admin-card">
-        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/2833037/pexels-photo-2833037.jpeg?auto=compress&cs=tinysrgb&w=600');">
-          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
-          <span class="album-media-count">12 items</span>
-        </div>
-        <div class="album-admin-body">
-          <span class="album-cat-chip">AGM Meetings</span>
-          <h4>38th Annual General Meeting</h4>
-          <div class="album-admin-actions">
-            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
-            <button class="btn-outline-admin" style="flex:0;">
-              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
-            </button>
-          </div>
-        </div>
+      {% empty %}
+      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+        <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">photo_library</span><br>
+        <strong>No albums found in the vault.</strong><br>
+        Click 'New Album' to start uploading.
       </div>
-
-      <div class="album-admin-card">
-        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=600');">
-          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
-          <span class="album-media-count">10 items</span>
-        </div>
-        <div class="album-admin-body">
-          <span class="album-cat-chip">Community Outreach</span>
-          <h4>Kumasi Community Health Screening</h4>
-          <div class="album-admin-actions">
-            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
-            <button class="btn-outline-admin" style="flex:0;">
-              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="album-admin-card">
-        <div class="album-admin-thumb" style="background-image:url('https://images.pexels.com/photos/3184398/pexels-photo-3184398.jpeg?auto=compress&cs=tinysrgb&w=600');">
-          <span class="stock-tag"><span class="material-symbols-outlined">warning</span>Stock Photos</span>
-          <span class="album-media-count">6 items</span>
-        </div>
-        <div class="album-admin-body">
-          <span class="album-cat-chip">AGM Meetings</span>
-          <h4>CUA Leadership Excellence Awards</h4>
-          <div class="album-admin-actions">
-            <button class="btn-outline-admin" onclick="openEditor()">Edit</button>
-            <button class="btn-outline-admin" style="flex:0;">
-              <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="new-album-card" onclick="openEditor()">
-        <span class="material-symbols-outlined">add_photo_alternate</span>
-        <span class="label">Create New Album</span>
-      </div>
-
+      {% endfor %}
     </div>
   </div>
 
-  <!-- ============ EDITOR VIEW ============ -->
-  <div id="editorView">
-    <button class="back-to-list" onclick="closeEditor()">
-      <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
-      Back to Gallery
-    </button>
+  <!-- Enterprise Delete Modal -->
+  <div id="customDeleteModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon"><span class="material-symbols-outlined">warning</span></div>
+      <h3>Archive Album</h3>
+      <p>Are you sure you want to archive <strong id="modalAlbumTitle"></strong>? All photos will be hidden from the public gallery.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-outline-admin" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-primary-admin danger-btn" id="confirmDeleteBtn">Yes, Archive It</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- 1. CHANGED: Made this a real FORM with the new galleryForm ID -->
-    <form id="galleryForm" class="form-panel" method="post" enctype="multipart/form-data" action="{% url 'cms:gallery_create' %}">
-      
-      <!-- 2. CHANGED: Added Django CSRF and the hidden payload container for Cloudflare -->
+  <div id="editorView" {% if open_editor %}class="active"{% endif %}>
+    
+    <!-- Smart Back Button: Navigates URLs if editing, or toggles UI if creating -->
+    {% if open_editor %}
+      <a href="{% url 'cms:gallery_list' %}" class="back-to-list" style="text-decoration: none;">
+        <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
+        Back to Gallery
+      </a>
+    {% else %}
+      <button type="button" class="back-to-list" onclick="closeEditor()">
+        <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
+        Back to Gallery
+      </button>
+    {% endif %}
+
+    <form id="galleryForm" class="form-panel" onsubmit="event.preventDefault();">
       {% csrf_token %}
-      <div id="r2KeysContainer"></div>
       <input type="hidden" name="cover_key" id="coverKeyInput" value="new-0">
 
       <div class="field-row">
         <div class="field-group">
           <label for="albumTitle">Album Title</label>
-          <!-- 3. CHANGED: Added name="title" -->
-          <input type="text" id="albumTitle" name="title" class="field-control" placeholder="e.g. Visit to KATH" required>
+          <input type="text" id="albumTitle" class="field-control" placeholder="e.g. Visit to KATH" value="{{ editing.title|default:'' }}" required>
         </div>
         <div class="field-group">
           <label for="albumCategory">Category</label>
-          <!-- 3. CHANGED: Added name="category" -->
-          <select id="albumCategory" name="category" class="field-control">
-            <option value="agm">AGM Meetings</option>
-            <option value="outreach">Community Outreach</option>
-            <option value="hospital">Hospital Visits</option>
+          <select id="albumCategory" class="field-control">
+            <option value="agm" {% if editing.category == 'agm' %}selected{% endif %}>AGM Meetings</option>
+            <option value="outreach" {% if editing.category == 'outreach' %}selected{% endif %}>Community Outreach</option>
+            <option value="hospital" {% if editing.category == 'hospital' %}selected{% endif %}>Hospital Visits</option>
           </select>
         </div>
       </div>
 
       <div class="field-group">
         <label for="albumSubtitle">Subtitle</label>
-        <!-- 3. CHANGED: Added name="subtitle" -->
-        <input type="text" id="albumSubtitle" name="subtitle" class="field-control" placeholder="One line describing this album.">
+        <input type="text" id="albumSubtitle" class="field-control" placeholder="One line describing this album." value="{{ editing.subtitle|default:'' }}">
       </div>
 
       <div class="field-group">
@@ -228,243 +386,843 @@
           <span class="material-symbols-outlined">perm_media</span>
           <div class="media-drop-label">Click or drag photos here</div>
           <div class="media-drop-sub">Select multiple files at once — JPG, PNG up to 8MB each</div>
+          <input type="file" id="mediaFilesInput" accept="image/*" multiple onchange="handleMediaUpload(event)">
+        </div>
+        
+        <!-- STICKY MEDIA HEADER -->
+        <div class="media-grid-header" style="position: sticky; top: 0; background: var(--bg-card); z-index: 100; padding: 1rem 0; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 0; margin-bottom: 1rem;">
           
-          <!-- 4. CHANGED: Updated ID to mediaFilesInput and added name="media_files" -->
-          <input type="file" id="mediaFilesInput" name="media_files" accept="image/*" multiple onchange="handleMediaUpload(event)">
+          <!-- Left Side: Status & Instructions -->
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <span id="mediaCountLabel" style="font-size: .9rem; font-weight: 800;">0 media items</span>
+            
+            <!-- Live Cloud Sync Indicator -->
+            <div id="syncStatus" class="sync-badge">
+              <span class="material-symbols-outlined" id="syncIcon" style="font-size: 1.1rem;">cloud_done</span> 
+              <span id="syncText">Draft secured</span>
+            </div>
+            
+            <!-- Instructions nicely separated -->
+            <div style="font-size:.8rem; color: var(--text-muted); padding-left: 1rem; border-left: 2px solid var(--border-color); display: flex; align-items: center;">
+              Click <span class="material-symbols-outlined" style="font-size:1rem; margin: 0 0.2rem; color: var(--text-main);">star</span> for cover
+            </div>
+          </div>
+          
+          <!-- Right Side: Batch Edit stretches cleanly -->
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex: 1; max-width: 400px; justify-content: flex-end;">
+            <input type="text" id="batchCaptionInput" class="field-control" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; flex: 1;" placeholder="Type a batch caption...">
+            <button type="button" class="btn-outline-admin" style="padding: 0.45rem 0.85rem; font-size: 0.85rem; white-space: nowrap;" onclick="applyBatchCaption()">Apply to All</button>
+          </div>
         </div>
 
-        <div class="media-grid-header">
-          <span id="mediaCountLabel">0 media items</span>
-          <span class="mono" style="font-size:.74rem;">Click <span class="material-symbols-outlined" style="font-size:.85rem; vertical-align:middle;">star</span> to set the album cover</span>
+        <!-- ENTERPRISE WATERMARK ENGINE PANEL -->
+        <!-- ENTERPRISE WATERMARK ENGINE PANEL -->
+        <div id="watermarkPanel" style="background: var(--bg-page); border: 1px solid var(--border-color); border-radius: 0.6rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="material-symbols-outlined" style="color: var(--primary-green);">branding_watermark</span>
+              <strong style="font-size: 0.9rem;">Auto-Watermark Engine</strong>
+            </div>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer; font-size: 0.85rem; font-weight: 700;">
+              <input type="checkbox" id="wmEnable" onchange="toggleWatermark()" style="width: 1.1rem; height: 1.1rem; accent-color: var(--primary-green);">
+              Enable Watermarking
+            </label>
+          </div>
+
+          <div id="wmSettings" style="opacity: 0.4; pointer-events: none; display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- Left: Type, Position, and Sliders -->
+              <div style="display: flex; flex-direction: column; gap: 1.1rem;">
+                <div style="display: flex; gap: 1rem;">
+                  <label style="font-size: 0.8rem; font-weight: 700;"><input type="radio" name="wmType" value="text" checked onchange="updateWmType()"> Text Mark</label>
+                  <label style="font-size: 0.8rem; font-weight: 700;"><input type="radio" name="wmType" value="image" onchange="updateWmType()"> Image Logo</label>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div class="field-group">
+                    <label>Position</label>
+                    <select id="wmPosition" class="field-control" style="padding: 0.4rem; font-size: 0.8rem;" onchange="updateWatermarkPreview()">
+                      <option value="bottom-right">Bottom Right</option>
+                      <option value="bottom-left">Bottom Left</option>
+                      <option value="top-right">Top Right</option>
+                      <option value="top-left">Top Left</option>
+                      <option value="center">Dead Center</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label>Opacity (<span id="wmOpacityLabel">80%</span>)</label>
+                    <input type="range" id="wmOpacity" class="premium-slider" min="10" max="100" value="80" oninput="document.getElementById('wmOpacityLabel').textContent = this.value + '%'; updateWatermarkPreview()">
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <label>Size / Scale (<span id="wmSizeLabel">15%</span> of photo width)</label>
+                  <input type="range" id="wmSize" class="premium-slider" min="2" max="60" value="15" oninput="document.getElementById('wmSizeLabel').textContent = this.value + '%'; updateWatermarkPreview()">
+                </div>
+              </div>
+
+              <!-- Right: Dynamic Inputs -->
+              <div id="wmTextSettings" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="field-group">
+                  <label>Watermark Text</label>
+                  <input type="text" id="wmText" class="field-control" value="GCPCUL" style="padding: 0.4rem; font-size: 0.8rem;" oninput="updateWatermarkPreview()">
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                  <div class="field-group" style="width: 70px;">
+                    <label>Color</label>
+                    <input type="color" id="wmColor" class="field-control" value="#ffffff" style="padding: 0.1rem; height: 33px; width: 100%; cursor: pointer;" oninput="updateWatermarkPreview()">
+                  </div>
+                  
+                  <div class="field-group" style="flex: 1;">
+                    <label>Photography Font</label>
+                    <select id="wmFont" class="field-control" style="padding: 0.4rem; font-size: 0.9rem;" onchange="updateWatermarkPreview()">
+                      <option value="Arial, sans-serif" style="font-family: Arial, sans-serif;">Arial (Modern Clean)</option>
+                      <option value="'Palatino Linotype', 'Book Antiqua', Palatino, serif" style="font-family: 'Palatino Linotype', serif;">Palatino (Elegant Serif)</option>
+                      <option value="Georgia, serif" style="font-family: Georgia, serif;">Georgia (Classic Serif)</option>
+                      <option value="'Brush Script MT', 'Lucida Handwriting', cursive" style="font-family: 'Brush Script MT', cursive;">Brush Script (Signature)</option>
+                      <option value="'Courier New', monospace" style="font-family: 'Courier New', monospace;">Courier (Typewriter)</option>
+                      <option value="Impact, sans-serif" style="font-family: Impact, sans-serif;">Impact (Bold Block)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div id="wmImageSettings" style="display: none; flex-direction: column; gap: 0.75rem;">
+                <div class="field-group">
+                  <label>Upload Logo (Any Image Format)</label>
+                  <input type="file" id="wmImageInput" accept="image/*" class="field-control" style="padding: 0.3rem; font-size: 0.8rem;" onchange="loadWatermarkImage(event)">
+                </div>
+                <!-- NEW BORDER RADIUS SLIDER -->
+                <div class="field-group">
+                  <label>Border Radius (<span id="wmRadiusLabel">0%</span>)</label>
+                  <input type="range" id="wmBorderRadius" class="premium-slider" min="0" max="50" value="0" style="width: 100%; margin-top: 0.2rem;" oninput="document.getElementById('wmRadiusLabel').textContent = this.value + '%'; updateWatermarkPreview()">
+                </div>
+                <span id="wmImageStatus" style="font-size: 0.75rem; color: var(--ok); font-weight: 700; display: none;">✓ Logo loaded in memory</span>
+              </div>
+            </div>
+
+            <!-- LIVE PREVIEW CANVAS -->
+            <div id="wmPreviewContainer" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1rem; align-items: center; flex-direction: column;">
+              <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Live Watermark Preview</span>
+              <canvas id="wmPreviewCanvas" style="width: 100%; max-width: 450px; border-radius: 0.4rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);"></canvas>
+            </div>
+
+          </div>
         </div>
+
         <div class="media-grid" id="mediaGrid">
           <div class="empty-media-note" id="emptyMediaNote">No photos added yet — drop some above to get started.</div>
         </div>
       </div>
 
-      <div class="form-footer">
-        <button type="button" class="btn-outline-admin" onclick="closeEditor()">Cancel</button>
+      <div class="form-footer" style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 0.75rem;">
+        {% if open_editor %}
+          <a href="{% url 'cms:gallery_list' %}" class="btn-outline-admin" style="text-decoration: none;">Close</a>
+        {% else %}
+          <button type="button" class="btn-outline-admin" onclick="closeEditor()">Close</button>
+        {% endif %}
         
-        <!-- 5. CHANGED: Wired the button to the new Interceptor script -->
-        <button type="button" id="gallerySubmitBtn" onclick="initiateBulkSecureUpload(event)" class="btn-primary-admin">
-          <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
-          Save Album
+        <button type="button" id="gallerySubmitBtn" onclick="publishAlbum()" class="btn-primary-admin">
+          <span class="material-symbols-outlined" style="font-size:1.05rem;">public</span>
+          Publish Album
         </button>
       </div>
-
     </form>
   </div>
 
-  <script>
-    /**
-   * Enterprise Edge Compression
-   * Resizes large JPEGs/PNGs to max 1920px width and converts to WebP.
-   * Leaves videos (MP4) completely untouched.
-   */
-    async function compressImageToWebP(file, maxWidth = 1920, quality = 0.8) {
-        if (!file.type.startsWith('image/')) return file; 
-        
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              let width = img.width;
-              let height = img.height;
+  <div id="publishProgressOverlay" class="publish-overlay">
+    <div class="publish-card">
+      <div class="publish-icon">
+        <span class="material-symbols-outlined spin-icon">progress_activity</span>
+      </div>
+      <h3 id="publishTitle">Deploying Album...</h3>
+      <p style="margin-bottom: 1.5rem;">Locking media assets into the public vault. Please do not close or refresh this tab.</p>
+      
+      <div class="publish-track">
+        <div class="publish-fill" id="publishFillBar"></div>
+      </div>
+      <span style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 800; color: var(--primary-green);" id="publishPercent">0%</span>
 
-              if (width > maxWidth) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-              }
-
-              canvas.width = width;
-              canvas.height = height;
-              const ctx = canvas.getContext('2d');
-              ctx.drawImage(img, 0, 0, width, height);
-
-              canvas.toBlob((blob) => {
-                const originalName = file.name.replace(/\.[^/.]+$/, "");
-                const newFile = new File([blob], `${originalName}.webp`, {
-                  type: 'image/webp',
-                  lastModified: Date.now(),
-                });
-                resolve(newFile);
-              }, 'image/webp', quality);
-            };
-          };
-        });
-      }
-
-      /**
-       * Parallel Direct-to-Cloud Interceptor
-       */
-    async function initiateBulkSecureUpload(event) {
-    event.preventDefault(); // Stop the standard HTML payload crash
-    
-    const form = document.getElementById('galleryForm');
-    const submitBtn = document.getElementById('gallerySubmitBtn');
-    const fileInput = document.getElementById('mediaFilesInput');
-    const r2KeysContainer = document.getElementById('r2KeysContainer');
-    const originalBtnText = submitBtn.innerHTML;
-
-    // 1. Lock UI
-    submitBtn.disabled = true;
-    submitBtn.style.pointerEvents = 'none';
-    submitBtn.style.opacity = '0.7';
-    submitBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">sync</span> Securing Media...';
-
-    const files = Array.from(fileInput.files);
-    r2KeysContainer.innerHTML = ''; 
-
-    try {
-      if (files.length === 0 && !document.querySelector('[name="existing_media_id"]')) {
-         throw new Error("Please add at least one photo or video to this album.");
-      }
-
-      if (files.length > 0) {
-        // 2. Parallel Edge Compression
-        const processedFiles = await Promise.all(files.map(file => compressImageToWebP(file)));
-
-        // 3. Parallel Cloudflare R2 Uploads
-        const uploadPromises = processedFiles.map(async (file) => {
-          const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
-          if (!res.ok) throw new Error("Backend connection failed.");
-          const { upload_url, file_key } = await res.json();
-
-          const uploadRes = await fetch(upload_url, {
-            method: 'PUT',
-            headers: { 'Content-Type': file.type },
-            body: file
-          });
-          
-          if (!uploadRes.ok) throw new Error(`Cloudflare rejected ${file.name}`);
-          return file_key;
-        });
-
-        const completedR2Keys = await Promise.all(uploadPromises);
-
-        // 4. Inject strict zero-trust keys into the form
-        completedR2Keys.forEach(key => {
-          const hiddenInput = document.createElement('input');
-          hiddenInput.type = 'hidden';
-          hiddenInput.name = 'r2_media_keys';
-          hiddenInput.value = key;
-          r2KeysContainer.appendChild(hiddenInput);
-        });
-
-        // 5. CRITICAL: Strip the physical files so Vercel doesn't crash on the payload limit
-        fileInput.removeAttribute('name');
-      }
-
-      // 6. Final atomic submission to Django
-      form.submit();
-
-    } catch (error) {
-      showClientToast(error.message, "error");
-      submitBtn.disabled = false;
-      submitBtn.style.pointerEvents = 'auto';
-      submitBtn.style.opacity = '1';
-      submitBtn.innerHTML = originalBtnText;
-    }
-  }
-    </script>
+      <!-- THE DEPLOYMENT TERMINAL -->
+      <div class="publish-logs" id="publishLogs">
+        <!-- JavaScript will stream logs here -->
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+
+  // 1. TOAST NOTIFICATION ENGINE
+  function showClientToast(message, type = 'error') {
+    let container = document.getElementById('admin-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'admin-toast-container';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+      
+      // Inject basic toast styles dynamically if missing
+      const style = document.createElement('style');
+      style.textContent = `
+        .toast-container { position: fixed; bottom: 2rem; right: 2rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 99999; }
+        .toast-notification { display: flex; align-items: center; gap: 0.75rem; background: var(--bg-card, #fff); border-radius: 0.5rem; padding: 1rem 1.25rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-left: 4px solid var(--text-main); animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .toast-success { border-left-color: var(--ok, #10B981); } .toast-error { border-left-color: var(--danger, #EF4444); } .toast-warning { border-left-color: #F59E0B; }
+        .toast-icon .material-symbols-outlined { font-size: 1.25rem; } .toast-success .material-symbols-outlined { color: var(--ok, #10B981); } .toast-error .material-symbols-outlined { color: var(--danger, #EF4444); } .toast-warning .material-symbols-outlined { color: #F59E0B; }
+        .toast-content p { margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${type}`;
+    let icon = type === 'error' ? 'error' : (type === 'success' ? 'check_circle' : 'warning');
+    toast.innerHTML = `
+      <div class="toast-icon"><span class="material-symbols-outlined">${icon}</span></div>
+      <div class="toast-content"><p>${message}</p></div>
+      <button class="toast-close" style="background:none; border:none; color:inherit; cursor:pointer; font-size:1.2rem; margin-left:0.5rem; opacity:0.5;">&times;</button>
+    `;
+    toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4500);
+  }
+
+
   function openEditor() {
     document.getElementById('listView').classList.add('hidden');
     document.getElementById('editorView').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  
   function closeEditor() {
     document.getElementById('editorView').classList.remove('active');
     document.getElementById('listView').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  let mediaItems = [];
-  let coverIndex = null;
+  let formToSubmit = null;
+  
+  function openDeleteModal(albumId, albumTitle) {
+    formToSubmit = document.getElementById(`delete-form-${albumId}`);
+    document.getElementById('modalAlbumTitle').textContent = albumTitle || 'this album';
+    document.getElementById('customDeleteModal').classList.add('active');
+  }
+  
+  function closeDeleteModal() {
+    document.getElementById('customDeleteModal').classList.remove('active');
+    formToSubmit = null;
+  }
+  
+  document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    if (formToSubmit) {
+      // Lock button to prevent double-clicks
+      this.disabled = true;
+      this.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">progress_activity</span> Archiving...';
+      formToSubmit.submit();
+    }
+  });
 
-  function handleMediaUpload(e) {
+  // 1. ENTERPRISE STATE MANAGEMENT (Using Zero-Trust UUIDs)
+  let albumId = {% if editing %}"{{ editing.public_id }}"{% else %}null{% endif %};
+  let syncTimer = null;
+  let isSyncing = false;
+  // 1.5 WATERMARK STATE
+  let wmConfig = {
+    enabled: false,
+    type: 'text',
+    text: 'GCPCUL',
+    font: 'Arial, sans-serif',
+    color: '#ffffff',
+    position: 'bottom-right',
+    logoImg: null
+  };
+
+  function toggleWatermark() {
+    wmConfig.enabled = document.getElementById('wmEnable').checked;
+    document.getElementById('wmSettings').style.opacity = wmConfig.enabled ? '1' : '0.4';
+    document.getElementById('wmSettings').style.pointerEvents = wmConfig.enabled ? 'auto' : 'none';
+    document.getElementById('wmPreviewContainer').style.display = wmConfig.enabled ? 'flex' : 'none';
+    if (wmConfig.enabled) updateWatermarkPreview();
+  }
+
+  function updateWmType() {
+    wmConfig.type = document.querySelector('input[name="wmType"]:checked').value;
+    document.getElementById('wmTextSettings').style.display = wmConfig.type === 'text' ? 'flex' : 'none';
+    document.getElementById('wmImageSettings').style.display = wmConfig.type === 'image' ? 'flex' : 'none';
+    updateWatermarkPreview();
+  }
+
+  function loadWatermarkImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = () => {
+            wmConfig.logoImg = img;
+            document.getElementById('wmImageStatus').style.display = 'block';
+            updateWatermarkPreview(); // Trigger preview immediately once image loads
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateWatermarkPreview() {
+    const isWmEnabled = document.getElementById('wmEnable').checked;
+    if (!isWmEnabled) return;
+    
+    const canvas = document.getElementById('wmPreviewCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const width = 800; const height = 600;
+    canvas.width = width; canvas.height = height;
+
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "#475569"); gradient.addColorStop(1, "#1E293B");
+    ctx.fillStyle = gradient; ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "rgba(255,255,255,0.05)";
+    ctx.font = "800 60px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("SAMPLE PHOTO", width/2, height/2);
+
+    // BULLETPROOF: Read directly from the DOM
+    const currentWmType = document.querySelector('input[name="wmType"]:checked').value;
+    const wmText = document.getElementById('wmText').value.trim();
+    const wmFont = document.getElementById('wmFont').value;
+    const wmColor = document.getElementById('wmColor').value;
+    const currentPosition = document.getElementById('wmPosition').value;
+    const wmScale = parseInt(document.getElementById('wmSize').value) / 100;
+    const wmOpacity = parseInt(document.getElementById('wmOpacity').value) / 100;
+    const wmRadius = parseInt(document.getElementById('wmBorderRadius').value);
+
+    const pad = Math.floor(width * 0.03); 
+    ctx.globalAlpha = wmOpacity; 
+
+    if (currentWmType === 'text' && wmText) {
+      const fontSize = Math.floor(width * wmScale);
+      ctx.font = `800 ${fontSize}px ${wmFont}`;
+      ctx.fillStyle = wmColor;
+      ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
+      ctx.textAlign = currentPosition.includes('right') ? 'right' : (currentPosition.includes('left') ? 'left' : 'center');
+      ctx.textBaseline = currentPosition.includes('bottom') ? 'bottom' : (currentPosition.includes('top') ? 'top' : 'middle');
+
+      let x = ctx.textAlign === 'right' ? width - pad : (ctx.textAlign === 'left' ? pad : width / 2);
+      let y = ctx.textBaseline === 'bottom' ? height - pad : (ctx.textBaseline === 'top' ? pad : height / 2);
+      ctx.fillText(wmText, x, y);
+      
+    } else if (currentWmType === 'image' && wmConfig.logoImg) {
+      const logoW = Math.floor(width * wmScale);
+      const logoH = Math.floor(wmConfig.logoImg.height * (logoW / wmConfig.logoImg.width));
+
+      let x = pad;
+      if (currentPosition.includes('right')) x = width - logoW - pad;
+      else if (!currentPosition.includes('left')) x = (width - logoW) / 2;
+
+      let y = pad;
+      if (currentPosition.includes('bottom')) y = height - logoH - pad;
+      else if (!currentPosition.includes('top')) y = (height - logoH) / 2;
+
+      // ENTERPRISE FIX: Dynamic Border Radius Clipping Path
+      const radiusPx = Math.min(logoW, logoH) * (wmRadius / 100);
+      if (radiusPx > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(x, y, logoW, logoH, radiusPx);
+        ctx.clip();
+        ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
+        ctx.restore();
+      } else {
+        ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
+      }
+    }
+    ctx.globalAlpha = 1.0;
+  }
+
+  let mediaItems = [
+    {% if editing %}
+      {% for media in existing_media %}
+      {
+        frontend_id: "db-{{ media.public_id }}",
+        db_id: "{{ media.public_id }}", 
+        isNew: false,
+        src: "{{ media.file.url|escapejs }}",
+        caption: "{{ media.caption|escapejs }}",
+        type: "{{ media.media_type }}",
+        r2_key: null,
+        uploading: false
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    {% endif %}
+  ];
+  
+  let coverIndex = mediaItems.length > 0 ? 0 : null;
+  {% if editing %}
+    {% for media in existing_media %}
+      {% if media.is_cover %}coverIndex = {{ forloop.counter0 }};{% endif %}
+    {% endfor %}
+  {% endif %}
+
+  let bypassUnloadWarning = false;
+
+  window.addEventListener('beforeunload', function (e) {
+    if (bypassUnloadWarning) return; 
+
+    const hasUnsavedUploads = mediaItems.some(item => item.isNew);
+    const hasTitle = document.getElementById('albumTitle').value.trim().length > 0;
+    if (hasUnsavedUploads || hasTitle) {
+      e.preventDefault(); 
+      e.returnValue = ''; 
+      return '';          
+    }
+  });
+
+  // RAILWAY-STYLE TERMINAL ENGINE
+  function pushLog(message, status = 'active') {
+    const logsContainer = document.getElementById('publishLogs');
+    
+    // Auto-complete the previous active task if a new one starts
+    if (status === 'active') {
+      const prevActive = logsContainer.querySelector('.log-line.active');
+      if (prevActive) {
+        prevActive.className = 'log-line done';
+        prevActive.querySelector('.log-icon').innerHTML = '<span class="material-symbols-outlined log-check">check</span>';
+      }
+    }
+
+    let iconHtml = '';
+    if (status === 'active') iconHtml = '<div class="log-spinner"></div>';
+    else if (status === 'done') iconHtml = '<span class="material-symbols-outlined log-check">check</span>';
+    else if (status === 'error') iconHtml = '<span class="material-symbols-outlined log-cross">close</span>';
+
+    const logEl = document.createElement('div');
+    logEl.className = `log-line ${status}`;
+    logEl.innerHTML = `<div class="log-icon">${iconHtml}</div><span>${message}</span>`;
+    
+    logsContainer.appendChild(logEl);
+    
+    // Auto-scroll the terminal to the newest line
+    logsContainer.scrollTop = logsContainer.scrollHeight; 
+    return logEl;
+  }
+
+  function markDirty() {
+    const badge = document.getElementById('syncStatus');
+    badge.className = 'sync-badge saving';
+    // Swap the span completely out for the pure CSS ring
+    document.getElementById('syncIcon').outerHTML = '<div id="syncIcon" class="premium-loader"></div>';
+    document.getElementById('syncText').textContent = 'Saving...';
+    
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => syncDraftToDatabase(false), 2000);
+  }
+
+  document.getElementById('albumTitle').addEventListener('input', markDirty);
+  document.getElementById('albumSubtitle').addEventListener('input', markDirty);
+  document.getElementById('albumCategory').addEventListener('change', markDirty);
+
+  async function syncDraftToDatabase(isPublishing = false) {
+    if (isSyncing) return;
+    isSyncing = true;
+
+    try {
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const newMediaToSave = mediaItems.filter(m => m.isNew && m.r2_key !== null && m.db_id === null);
+      const existingMediaToUpdate = mediaItems.filter(m => m.db_id !== null);
+
+      const chunkSize = 4;
+      const chunks = [];
+      if (newMediaToSave.length === 0) {
+        chunks.push([]); 
+      } else {
+        for (let i = 0; i < newMediaToSave.length; i += chunkSize) {
+          chunks.push(newMediaToSave.slice(i, i + chunkSize));
+        }
+      }
+
+      let totalProcessed = 0;
+      const totalToProcess = newMediaToSave.length;
+
+      if (isPublishing && totalToProcess > 0) {
+        pushLog(`Initiating backend verification for ${totalToProcess} new assets...`, 'active');
+      } else if (isPublishing) {
+        pushLog('Verifying album metadata...', 'active');
+      }
+
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        const isLastRequest = (i === chunks.length - 1);
+        const triggerPublish = isPublishing && isLastRequest;
+        const activeDbIds = mediaItems.map(m => m.db_id).filter(id => id !== null);
+
+        const payload = {
+          album_id: albumId,
+          title: document.getElementById('albumTitle').value.trim(),
+          subtitle: document.getElementById('albumSubtitle').value.trim(),
+          category: document.getElementById('albumCategory').value,
+          publish: triggerPublish,
+          new_media: chunk.map(m => ({ frontend_id: m.frontend_id, r2_key: m.r2_key, caption: m.caption, type: m.type })),
+          existing_media_updates: (i === 0) ? existingMediaToUpdate.map(m => ({ db_id: m.db_id, caption: m.caption, type: m.type })) : [],
+          active_db_ids: activeDbIds 
+        };
+
+        const res = await fetch("{% url 'cms:gallery_auto_save' %}", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(`Database connection lost (HTTP ${res.status}).`);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+
+        albumId = data.album_id;
+
+        if (data.saved_media) {
+          data.saved_media.forEach(savedItem => {
+            const match = mediaItems.find(m => m.frontend_id === savedItem.frontend_id);
+            if (match) {
+                match.db_id = savedItem.db_id; 
+                match.isNew = false;
+                if (match.src.startsWith('blob:')) URL.revokeObjectURL(match.src); 
+                match.src = savedItem.clean_url;
+            }
+          });
+          
+          totalProcessed += chunk.length;
+          
+          if (isPublishing && totalToProcess > 0) {
+             const trueProgress = 5 + Math.floor((totalProcessed / totalToProcess) * 85); 
+             document.getElementById('publishFillBar').style.width = trueProgress + '%';
+             document.getElementById('publishPercent').textContent = trueProgress + '%';
+             
+             pushLog(`Securely locked ${totalProcessed} / ${totalToProcess} media assets...`, 'done');
+             if (!isLastRequest) pushLog('Processing next batch...', 'active');
+          }
+        }
+      }
+
+      let finalCoverDbId = null;
+      if (coverIndex !== null && mediaItems[coverIndex].db_id) { finalCoverDbId = mediaItems[coverIndex].db_id; }
+      if (finalCoverDbId) {
+          await fetch("{% url 'cms:gallery_auto_save' %}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+            body: JSON.stringify({ 
+                album_id: albumId, 
+                cover_db_id: finalCoverDbId,
+                active_db_ids: mediaItems.map(m => m.db_id).filter(id => id !== null) 
+            })
+          });
+      }
+
+      const badge = document.getElementById('syncStatus');
+      badge.className = 'sync-badge';
+      badge.style.background = ''; badge.style.color = ''; badge.style.borderColor = '';
+      
+      const syncIcon = document.getElementById('syncIcon');
+      syncIcon.className = 'material-symbols-outlined'; 
+      syncIcon.textContent = 'cloud_done';
+      document.getElementById('syncText').textContent = 'Draft secured';
+      
+      if (isPublishing) { 
+        pushLog('Database locked & Album status updated to Published.', 'done');
+        pushLog('Success! Redirecting to dashboard...', 'active');
+
+        document.getElementById('publishFillBar').style.width = '100%';
+        document.getElementById('publishPercent').textContent = '100%';
+        document.getElementById('publishTitle').textContent = 'Deployment Successful!';
+        
+        setTimeout(() => {
+          bypassUnloadWarning = true; 
+          window.location.href = "{% url 'cms:gallery_list' %}"; 
+        }, 800);
+      }
+
+    } catch (err) {
+      console.error(err);
+      
+      const badge = document.getElementById('syncStatus');
+      badge.className = 'sync-badge';
+      badge.style.background = '#FEE2E2'; badge.style.color = '#DC2626'; badge.style.borderColor = '#FECACA';
+      document.getElementById('syncIcon').textContent = 'cloud_off';
+      document.getElementById('syncIcon').classList.remove('spin-icon');
+      document.getElementById('syncText').textContent = 'Connection issue. Retrying...';
+      
+      if (isPublishing) {
+        pushLog(`Deployment Failed: ${err.message}`, 'error');
+        document.getElementById('publishTitle').textContent = 'Deployment Failed';
+        
+        const fillBar = document.getElementById('publishFillBar');
+        fillBar.style.background = 'var(--danger, #EF4444)';
+        
+        showClientToast("Network failure. Check your connection and try again.", "error");
+
+        setTimeout(() => {
+          document.getElementById('publishProgressOverlay').classList.remove('active');
+          fillBar.style.background = 'linear-gradient(90deg, var(--primary-green), var(--accent-green))';
+          document.getElementById('gallerySubmitBtn').disabled = false;
+          document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined" style="font-size:1.05rem;">public</span> Publish Album';
+        }, 4500);
+
+      } else {
+        setTimeout(() => syncDraftToDatabase(isPublishing), 5000);
+      }
+    } finally {
+      isSyncing = false;
+    }
+  }
+
+  // 3. EAGER STREAMING UPLOADER
+  async function handleMediaUpload(e) {
     const files = Array.from(e.target.files);
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = function (ev) {
-        mediaItems.push({ src: ev.target.result, caption: '', type: 'image' });
+    if (files.length === 0) return;
+    
+    document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">progress_activity</span> Loading...';
+    document.getElementById('gallerySubmitBtn').disabled = true;
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const chunkSize = 5; 
+    for (let i = 0; i < files.length; i += chunkSize) {
+      const chunk = files.slice(i, i + chunkSize);
+      chunk.forEach(file => {
+        const item = { 
+          frontend_id: 'temp-' + Math.random().toString(36).substr(2, 9),
+          db_id: null, isNew: true, src: URL.createObjectURL(file), caption: '', 
+          type: file.type.startsWith('video/') ? 'video' : 'image',
+          r2_key: null, uploading: true
+        };
+        mediaItems.push(item);
         if (coverIndex === null) coverIndex = 0;
-        renderMediaGrid();
+        streamToCloudflare(item, file);
+      });
+      renderMediaGrid();
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    
+    e.target.value = ''; 
+    document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined" style="font-size:1.05rem;">public</span> Publish Album';
+    document.getElementById('gallerySubmitBtn').disabled = false;
+  }
+
+  async function compressImageToWebP(file, maxWidth = 1920, quality = 0.8) {
+    if (!file.type.startsWith('image/')) return file; 
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width, height = img.height;
+        if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d'); 
+        
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // BULLETPROOF: Read state directly from the DOM right before burning
+        const isWmEnabled = document.getElementById('wmEnable').checked;
+        if (isWmEnabled) {
+          const currentWmType = document.querySelector('input[name="wmType"]:checked').value;
+          const wmText = document.getElementById('wmText').value.trim();
+          const wmFont = document.getElementById('wmFont').value;
+          const wmColor = document.getElementById('wmColor').value;
+          const currentPosition = document.getElementById('wmPosition').value;
+          
+          const wmScale = parseInt(document.getElementById('wmSize').value) / 100;
+          const wmOpacity = parseInt(document.getElementById('wmOpacity').value) / 100;
+          const wmRadius = parseInt(document.getElementById('wmBorderRadius').value);
+
+          const pad = Math.floor(width * 0.03); 
+          ctx.globalAlpha = wmOpacity; 
+
+          if (currentWmType === 'text' && wmText) {
+            const fontSize = Math.floor(width * wmScale);
+            ctx.font = `800 ${fontSize}px ${wmFont}`;
+            ctx.fillStyle = wmColor;
+            ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
+            ctx.textAlign = currentPosition.includes('right') ? 'right' : (currentPosition.includes('left') ? 'left' : 'center');
+            ctx.textBaseline = currentPosition.includes('bottom') ? 'bottom' : (currentPosition.includes('top') ? 'top' : 'middle');
+
+            let x = ctx.textAlign === 'right' ? width - pad : (ctx.textAlign === 'left' ? pad : width / 2);
+            let y = ctx.textBaseline === 'bottom' ? height - pad : (ctx.textBaseline === 'top' ? pad : height / 2);
+            ctx.fillText(wmText, x, y);
+            
+          } else if (currentWmType === 'image' && wmConfig.logoImg) {
+            const logoW = Math.floor(width * wmScale);
+            const logoH = Math.floor(wmConfig.logoImg.height * (logoW / wmConfig.logoImg.width));
+
+            let x = pad;
+            if (currentPosition.includes('right')) x = width - logoW - pad;
+            else if (!currentPosition.includes('left')) x = (width - logoW) / 2;
+
+            let y = pad;
+            if (currentPosition.includes('bottom')) y = height - logoH - pad;
+            else if (!currentPosition.includes('top')) y = (height - logoH) / 2;
+
+            const radiusPx = Math.min(logoW, logoH) * (wmRadius / 100);
+            if (radiusPx > 0) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.roundRect(x, y, logoW, logoH, radiusPx);
+              ctx.clip();
+              ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
+              ctx.restore();
+            } else {
+              ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
+            }
+          }
+          ctx.globalAlpha = 1.0;
+        }
+
+        canvas.toBlob((blob) => {
+          const originalName = file.name.replace(/\.[^/.]+$/, "");
+          URL.revokeObjectURL(img.src);
+          resolve(new File([blob], `${originalName}.webp`, { type: 'image/webp' }));
+        }, 'image/webp', quality);
       };
-      reader.readAsDataURL(file);
     });
   }
 
+  async function streamToCloudflare(item, file) {
+    try {
+      const processedFile = await compressImageToWebP(file);
+      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(processedFile.name)}&content_type=${encodeURIComponent(processedFile.type)}`);
+      const { upload_url, file_key } = await res.json();
+      await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': processedFile.type }, body: processedFile });
+      item.r2_key = file_key;
+      item.uploading = false;
+      markDirty();
+      renderMediaGrid(); 
+    } catch (err) {
+      showClientToast("Upload failed for a file. Retrying...", "error");
+      item.uploading = false;
+      renderMediaGrid();
+    }
+  }
+
+  // 4. PREMIUM UI RENDERING
   function renderMediaGrid() {
     const grid = document.getElementById('mediaGrid');
     const emptyNote = document.getElementById('emptyMediaNote');
     document.getElementById('mediaCountLabel').textContent = mediaItems.length + ' media item' + (mediaItems.length === 1 ? '' : 's');
 
     if (mediaItems.length === 0) {
-      grid.innerHTML = '';
-      grid.appendChild(emptyNote);
+      grid.innerHTML = ''; 
+      grid.appendChild(emptyNote); 
       return;
     }
 
     grid.innerHTML = mediaItems.map((item, i) => `
-      <div class="media-item ${i === coverIndex ? 'is-cover' : ''}">
+      <div class="media-item ${i === coverIndex ? 'is-cover' : ''}" id="media-tile-${i}">
         <div class="media-item-thumb-wrap">
-          <img src="${item.src}" alt="">
-          <button type="button" class="media-item-cover-btn" onclick="setCover(${i})" title="Set as album cover">
-            <span class="material-symbols-outlined">star</span>
-          </button>
-          <button type="button" class="media-item-remove" onclick="removeMedia(${i})" title="Remove">
-            <span class="material-symbols-outlined">close</span>
-          </button>
+          <img src="${item.src}" alt="" decoding="async" loading="lazy" style="${item.uploading ? 'opacity: 0.3; filter: blur(2px) grayscale(1);' : ''}">
+          ${item.uploading ? `
+            <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background: rgba(16, 36, 26, 0.4);">
+              <div class="premium-loader media-loader"></div>
+              <span style="color:#fff; font-size:0.7rem; font-weight:800; margin-top:0.5rem; text-transform:uppercase; letter-spacing:0.05em;">Securing...</span>
+            </div>` : ''}
+          <div class="premium-cb-wrapper">
+            <input type="checkbox" id="cb-${i}" class="premium-cb-input media-select-cb" data-index="${i}" onchange="toggleTileSelection(${i}, this)">
+            <label for="cb-${i}" class="premium-cb-label"><span class="material-symbols-outlined">check</span></label>
+          </div>
+          <button type="button" class="media-item-cover-btn" onclick="setCover(${i})" title="Set as album cover"><span class="material-symbols-outlined">star</span></button>
+          <button type="button" class="media-item-remove" onclick="removeMedia(${i})" title="Remove"><span class="material-symbols-outlined">close</span></button>
           <div class="cover-ribbon">Cover</div>
         </div>
         <div class="media-item-body">
-          <!-- Added name="captions" so Django can read it -->
-          <input type="text" name="captions" class="media-caption-input" placeholder="Caption…" value="${item.caption}" oninput="updateCaption(${i}, this.value)">
           
-          <!-- Added name="media_types" so Django can read it -->
-          <select name="media_types" class="media-type-select" onchange="updateType(${i}, this.value)">
-            <option value="image" ${item.type === 'image' ? 'selected' : ''}>Photo</option>
-            <option value="video" ${item.type === 'video' ? 'selected' : ''}>Video</option>
-          </select>
+          <!-- Autonomous Media Type Badge (Read-Only) -->
+          <div style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.25rem; padding: 0 0.2rem;">
+            <span class="material-symbols-outlined" style="font-size: 1.05rem; color: var(--text-muted);">
+              ${item.type === 'video' ? 'movie' : 'image'}
+            </span>
+            <span style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">
+              ${item.type === 'video' ? 'Video' : 'Photo'}
+            </span>
+          </div>
+
+          <input type="text" class="media-caption-input" placeholder="Caption…" value="${item.caption}" oninput="updateCaption(${i}, this.value)">
+          ${item.isNew ? '' : `<input type="hidden" name="existing_media_id" value="${item.db_id}">`}
         </div>
       </div>
     `).join('');
+    
+    if (coverIndex !== null) {
+      document.getElementById('coverKeyInput').value = mediaItems[coverIndex].isNew ? 'new-' + coverIndex : 'existing-' + mediaItems[coverIndex].db_id;
+    }
   }
 
-  function setCover(i) { 
-    coverIndex = i; 
-    // Tells Django exactly which file to use as the cover image
-    document.getElementById('coverKeyInput').value = 'new-' + i; 
-    renderMediaGrid(); 
+  function toggleTileSelection(index, checkbox) {
+    const tile = document.getElementById(`media-tile-${index}`);
+    checkbox.checked ? tile.classList.add('is-selected') : tile.classList.remove('is-selected');
   }
+
+  function setCover(i) { coverIndex = i; markDirty(); renderMediaGrid(); }
 
   function removeMedia(i) {
+    const item = mediaItems[i];
+    if (item.isNew && item.src.startsWith('blob:')) URL.revokeObjectURL(item.src);
     mediaItems.splice(i, 1);
     if (coverIndex === i) coverIndex = mediaItems.length > 0 ? 0 : null;
     else if (coverIndex > i) coverIndex--;
+    markDirty();
     renderMediaGrid();
   }
-  function updateCaption(i, val) { mediaItems[i].caption = val; }
-  function updateType(i, val) { mediaItems[i].type = val; }
 
-  function saveAlbum() {
-    const title = document.getElementById('albumTitle').value || 'Untitled Album';
-    if (mediaItems.length === 0) {
-      alert('Add at least one photo before saving.');
-      return;
+  function updateCaption(i, val) { mediaItems[i].caption = val; markDirty(); }
+
+  function applyBatchCaption() {
+    const batchText = document.getElementById('batchCaptionInput').value.trim();
+    if (!batchText || mediaItems.length === 0) return;
+    const checkedBoxes = document.querySelectorAll('.media-select-cb:checked');
+    if (checkedBoxes.length > 0) {
+      checkedBoxes.forEach(cb => { mediaItems[cb.getAttribute('data-index')].caption = batchText; });
+      showClientToast("Caption applied to " + checkedBoxes.length + " selected items.", "success");
+    } else {
+      mediaItems.forEach(item => item.caption = batchText);
+      showClientToast("Caption applied to all items.", "success");
     }
-    alert('"' + title + '" saved with ' + mediaItems.length + ' media item(s) — wire this to your save endpoint when the backend is ready.');
-    closeEditor();
+    markDirty();
+    renderMediaGrid();
+    document.getElementById('batchCaptionInput').value = '';
   }
 
-  renderMediaGrid();
+  function publishAlbum() {
+    const title = document.getElementById('albumTitle').value.trim();
+    if (!title) { 
+        showClientToast("Album Title is required before publishing.", "warning"); 
+        document.getElementById('albumTitle').focus(); 
+        return; 
+    }
+    
+    const isStillUploading = mediaItems.some(m => m.uploading);
+    if (isStillUploading) { 
+        showClientToast("Please wait for all media to finish uploading to the cloud.", "warning"); 
+        return; 
+    }
+    
+    // RESET AND LAUNCH THE OVERLAY
+    document.getElementById('publishLogs').innerHTML = '';
+    document.getElementById('publishTitle').textContent = 'Deploying Album...';
+    document.getElementById('publishProgressOverlay').classList.add('active');
+    
+    // INITIALIZE TERMINAL STREAM
+    pushLog('Initializing deployment sequence...', 'done');
+    pushLog('Compiling media payload & metadata...', 'done');
+    
+    // Start progress at 5% just to show activity
+    document.getElementById('publishFillBar').style.width = '5%';
+    document.getElementById('publishPercent').textContent = '5%';
+    
+    syncDraftToDatabase(true);
+  }
+
+  {% if open_editor %}renderMediaGrid();{% endif %}
 </script>
 {% endblock %}

@@ -851,7 +851,7 @@
 
           <div class="doc-actions">
             {% if form.document %}
-            <a href="{% url 'cms:secure_document_download' form.id %}" target="_blank" download class="btn btn-outline btn-sm">
+            <a href="{% url 'cms:secure_document_download' form.public_id %}" target="_blank" download class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span>
               Download PDF
             </a>
@@ -914,7 +914,7 @@
           <p>{{ report.description }}</p>
           <div class="doc-actions">
             {% if report.document %}
-            <a href="{% url 'cms:secure_document_download' report.id %}" target="_blank" download class="btn btn-outline btn-sm">
+            <a href="{% url 'cms:secure_document_download' report.public_id %}" target="_blank" download class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
             </a>
             {% else %}
@@ -949,7 +949,7 @@
           <p>{{ agm.description }}</p>
           <div class="doc-actions">
             {% if agm.document %}
-            <a href="{% url 'cms:secure_document_download' agm.id %}"  target="_blank" download class="btn btn-outline btn-sm">
+            <a href="{% url 'cms:secure_document_download' agm.public_id %}"  target="_blank" download class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
             </a>
             {% else %}
@@ -984,7 +984,7 @@
           <p>{{ policy.description }}</p>
           <div class="doc-actions">
             {% if policy.document %}
-            <a href="{% url 'cms:secure_document_download' policy.id %}" target="_blank" download class="btn btn-outline btn-sm">
+            <a href="{% url 'cms:secure_document_download' policy.public_id %}" target="_blank" download class="btn btn-outline btn-sm">
               <span class="material-symbols-outlined" style="font-size: 1.05rem;">download</span> Download PDF
             </a>
             {% else %}

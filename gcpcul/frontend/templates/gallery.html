@@ -884,7 +884,7 @@
         </div>
       </div>
       <div class="hero-stat-card">
-        <span class="icon-svg"><span class="material-symbols-outlined">download_for_offline</span></span>
+        <span class="icon-svg"><span class="material-symbols-outlined">download</span></span>
         <div>
           <strong>100%</strong>
           <span>Batch Downloadable</span>
@@ -964,8 +964,10 @@
 <section class="photo-grid-view" id="photoGridViewSection">
   <div class="container">
     <div class="album-breadcrumb-bar">
+      <div class="album-breadcrumb-bar">
       <button type="button" class="back-albums-btn" onclick="closeAlbumView()">
-        <span>← Back to All Albums</span>
+        <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span>
+        <span>Back to All Albums</span>
       </button>
       <div style="text-align: right;">
         <h3 id="openedAlbumTitle"
@@ -988,7 +990,7 @@
     <span style="font-size: 0.85rem; color: #94A3B8;">Ready for group download</span>
   </div>
   <button type="button" class="btn btn-gold" id="downloadBatchGroupBtn">
-    <span class="material-symbols-outlined">download_for_offline</span>
+    <span class="material-symbols-outlined">download</span>
     <span id="batchDownloadBtnText">Download Selected Group</span>
   </button>
 </div>
@@ -1003,20 +1005,24 @@
   </div>
 
   <div class="lightbox-stage">
-    <button class="carousel-nav-btn carousel-prev" id="carouselPrevBtn" aria-label="Previous Media">‹</button>
+    <button class="carousel-nav-btn carousel-prev" id="carouselPrevBtn" aria-label="Previous Media">
+      <span class="material-symbols-outlined" style="font-size: 2rem;">chevron_left</span>
+    </button>
     <img id="lightboxMainImg" src="" alt="High Resolution Media" class="active">
     <video id="lightboxMainVideo" controls src="" style="display: none;"></video>
-    <button class="carousel-nav-btn carousel-next" id="carouselNextBtn" aria-label="Next Media">›</button>
+    <button class="carousel-nav-btn carousel-next" id="carouselNextBtn" aria-label="Next Media">
+      <span class="material-symbols-outlined" style="font-size: 2rem;">chevron_right</span>
+    </button>
   </div>
 
   <div class="lightbox-bottom-bar">
     <div class="lightbox-caption-text" id="lightboxCaptionText">Media Title Caption</div>
 
     <div class="lightbox-action-row">
-      <button type="button" id="lightboxBottomDownloadBtn" class="lightbox-download-cta">
-        <span class="material-symbols-outlined">download_for_offline</span>
-        <span id="bottomDownloadBtnText">Download High-Res Media</span>
-      </button>
+      <a href="#" id="lightboxBottomDownloadBtn" class="lightbox-download-cta" style="text-decoration: none; display: flex; align-items: center;">
+        <span class="material-symbols-outlined">download</span>
+        <span id="bottomDownloadBtnText">Download</span>
+      </a>
 
       <button type="button" id="lightboxShareBtn" class="lightbox-share-cta">
         <span class="material-symbols-outlined">share</span>
@@ -1053,9 +1059,9 @@
           {
             type: "{{ media.media_type }}",
             src: "{{ media.file.url|escapejs }}",
-            /* Videos use a generic dark placeholder for the masonry grid, Images use the actual WebP URL */
             thumb: "{% if media.media_type == 'video' %}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII={% else %}{{ media.file.url|escapejs }}{% endif %}",
-            caption: "{{ media.caption|default:album.title|escapejs }}"
+            caption: "{{ media.caption|default:album.title|escapejs }}",
+            public_id: "{{ media.public_id }}" /* ZERO-TRUST ID INJECTED */
           }{% if not forloop.last %},{% endif %}
           {% endif %}
         {% endfor %}
@@ -1093,27 +1099,42 @@
     }
   }
 
-  /* NATIVE WEB SHARE API */
   const lightboxShareBtn = document.getElementById('lightboxShareBtn');
   if (lightboxShareBtn) {
     lightboxShareBtn.addEventListener('click', async () => {
       const photo = activePhotosList[currentCarouselIndex];
       if (!photo) return;
 
+      const deepLinkUrl = window.location.origin + window.location.pathname + '?media=' + photo.public_id;
+
       if (navigator.share) {
         try {
           await navigator.share({
             title: photo.caption || 'GCPCUL Media Archive',
-            text: photo.caption || 'Check out this media from the GCPCUL Archive',
-            url: photo.src
+            text: 'Check out this photo from the official GCPCUL Gallery.',
+            url: deepLinkUrl
           });
         } catch (err) {
           console.log('Share cancelled or failed.', err);
         }
       } else {
-        showToast('Sharing is not supported on this browser. Please download the file instead.', 'warning');
+        // Fallback for desktop browsers that don't have mobile share sheets
+        navigator.clipboard.writeText(deepLinkUrl);
+        showToast('Link copied to clipboard! Paste to share.', 'success');
       }
     });
+  }
+
+  function updateLightbox(activeImageElement) {
+    // 1. Grab the UUID from the thumbnail the user just clicked
+    const publicId = activeImageElement.getAttribute('data-public-id');
+    
+    // 2. Update the main lightbox image source
+    document.getElementById('lightboxMainImage').src = activeImageElement.src;
+    
+    // 3. THE ENTERPRISE FIX: Dynamically route the download button
+    const downloadBtn = document.getElementById('lightboxBottomDownloadBtn');
+    downloadBtn.href = `/src/auth/admin/gallery/media/${publicId}/download/`;
   }
 
   /* ALBUM OPEN/CLOSE LOGIC */
@@ -1235,22 +1256,15 @@
       for (let idx of selectedPhotoSet) {
         const photo = activePhotosList[idx];
         if (photo) {
-          try {
-            const res = await fetch(photo.src);
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const ext = photo.type === 'video' ? 'mp4' : 'jpg';
-            a.download = `gcpcul-${activeAlbumKey}-media-${idx + 1}.${ext}`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            await new Promise(r => setTimeout(r, 400));
-          } catch (err) {
-            window.open(photo.src, '_blank');
-          }
+          const url = `/api/public/media/${photo.public_id}/download/`;
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank'; // Required to allow multiple simultaneous downloads
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          // Stagger the downloads so browser popup blockers don't panic
+          await new Promise(r => setTimeout(r, 600)); 
         }
       }
 
@@ -1304,10 +1318,8 @@
     lightboxIndexIndicator.textContent = `Media ${currentCarouselIndex + 1} of ${activePhotosList.length}`;
     if (albumObj) lightboxAlbumTag.textContent = albumObj.title;
 
-    const ext = media.type === 'video' ? 'mp4' : 'jpg';
-    const filename = `gcpcul-media-${currentCarouselIndex + 1}.${ext}`;
-
-    lightboxBottomDownloadBtn.onclick = (e) => forceDownload(e, media.src, filename, lightboxBottomDownloadBtn, 'bottomDownloadBtnText');
+    lightboxBottomDownloadBtn.href = `/api/public/media/${media.public_id}/download/`;
+    lightboxBottomDownloadBtn.removeAttribute('onclick');
   }
 
   function closeCarouselLightbox() {
@@ -1381,5 +1393,27 @@
       });
     });
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedMediaId = params.get('media');
+    
+    if (sharedMediaId) {
+      for (const [albumKey, albumData] of Object.entries(ALBUMS_DATA)) {
+        const photoIdx = albumData.photos.findIndex(p => p.public_id === sharedMediaId);
+        
+        if (photoIdx !== -1) {
+          openAlbum(albumKey);
+          
+          setTimeout(() => {
+            openCarouselLightbox(photoIdx);
+          }, 300); // Slight delay ensures smooth UI transition
+          
+          window.history.replaceState({}, document.title, window.location.pathname);
+          break;
+        }
+      }
+    }
+  });
 </script>
 {% endblock %}
