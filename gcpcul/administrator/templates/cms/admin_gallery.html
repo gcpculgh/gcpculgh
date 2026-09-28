@@ -1231,6 +1231,7 @@
     markDirty();
     renderMediaGrid();
     document.getElementById('batchCaptionInput').value = '';
+  } 
 
   function publishAlbum() {
     const title = document.getElementById('albumTitle').value.trim();
@@ -1246,6 +1247,7 @@
         return; 
     }
 
+    // ENTERPRISE FIX: Block publish if watermark logo is still uploading
     const wmEnabled = document.getElementById('wmEnable').checked;
     const wmType = document.querySelector('input[name="wmType"]:checked').value;
     const logoInput = document.getElementById('wmImageInput');
@@ -1254,6 +1256,7 @@
         return;
     }
     
+    // RESET AND LAUNCH THE OVERLAY
     document.getElementById('publishLogs').innerHTML = '';
     document.getElementById('publishTitle').textContent = 'Deploying Album...';
     document.getElementById('publishProgressOverlay').classList.add('active');
