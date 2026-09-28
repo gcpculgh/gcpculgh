@@ -850,7 +850,8 @@
       const newMediaToSave = mediaItems.filter(m => m.isNew && m.r2_key !== null && m.db_id === null);
       const existingMediaToUpdate = mediaItems.filter(m => m.db_id !== null);
 
-      const chunkSize = 4;
+      // INDUSTRY STANDARD: Serverless Atomicity. Exactly 1 image per Lambda invocation.
+      const chunkSize = 1;
       const chunks = [];
       if (newMediaToSave.length === 0) {
         chunks.push([]); 
@@ -864,7 +865,7 @@
       const totalToProcess = newMediaToSave.length;
 
       if (isPublishing && totalToProcess > 0) {
-        pushLog(`Initiating backend verification for ${totalToProcess} new assets...`, 'active');
+        pushLog(`Initiating atomic backend verification for ${totalToProcess} assets...`, 'active');
       } else if (isPublishing) {
         pushLog('Verifying album metadata...', 'active');
       }
@@ -897,7 +898,7 @@
           new_media: chunk.map(m => ({ frontend_id: m.frontend_id, r2_key: m.r2_key, caption: m.caption, type: m.type })),
           existing_media_updates: (i === 0) ? existingMediaToUpdate.map(m => ({ db_id: m.db_id, caption: m.caption, type: m.type })) : [],
           active_db_ids: activeDbIds,
-          watermark_config: watermarkConfig // SENT SECURELY TO PYTHON
+          watermark_config: watermarkConfig 
         };
 
         const res = await fetch("{% url 'cms:gallery_auto_save' %}", {
@@ -906,9 +907,20 @@
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error(`Database connection lost (HTTP ${res.status}).`);
-        const data = await res.json();
-        if (!data.success) throw new Error(data.error);
+        // ENTERPRISE ERROR PARSING: Stop flying blind. Read Python exceptions directly.
+        let data;
+        try {
+            data = await res.json();
+        } catch(e) {
+            throw new Error(`Server connection dropped (HTTP ${res.status}).`);
+        }
+        
+        if (!res.ok || !data.success) {
+            const errorMsg = data.error || `Server error (HTTP ${res.status}).`;
+            const errObj = new Error(errorMsg);
+            errObj.isPermanentError = (res.status === 400); // 400 means file missing or invalid config
+            throw errObj;
+        }
 
         albumId = data.album_id;
 
@@ -931,7 +943,7 @@
              document.getElementById('publishPercent').textContent = trueProgress + '%';
              
              pushLog(`Securely locked ${totalProcessed} / ${totalToProcess} media assets...`, 'done');
-             if (!isLastRequest) pushLog('Processing next batch...', 'active');
+             if (!isLastRequest) pushLog('Processing next asset...', 'active');
           }
         }
       }
@@ -990,7 +1002,7 @@
         const fillBar = document.getElementById('publishFillBar');
         fillBar.style.background = 'var(--danger, #EF4444)';
         
-        showClientToast("Network failure. Check your connection and try again.", "error");
+        showClientToast(err.isPermanentError ? "Data conflict detected. Please refresh the page." : "Network failure. Check your connection and try again.", "error");
 
         setTimeout(() => {
           document.getElementById('publishProgressOverlay').classList.remove('active');
@@ -1000,7 +1012,10 @@
         }, 4500);
 
       } else {
-        setTimeout(() => syncDraftToDatabase(isPublishing), 5000);
+        // Only blindly retry background saves if it wasn't a hard 400 error (like a missing file)
+        if (!err.isPermanentError) {
+            setTimeout(() => syncDraftToDatabase(isPublishing), 5000);
+        }
       }
     } finally {
       isSyncing = false;
@@ -1234,30 +1249,33 @@
         showClientToast("Please wait for all media to finish uploading to the cloud.", "warning"); 
         return; 
     }
+
+    const wmEnabled = document.getElementById('wmEnable').checked;
+    const wmType = document.querySelector('input[name="wmType"]:checked').value;
+    const logoInput = document.getElementById('wmImageInput');
+    if (wmEnabled && wmType === 'image' && logoInput.files.length > 0 && !watermarkLogoR2Key) {
+        showClientToast("Please wait for the watermark logo to finish syncing to the cloud.", "warning");
+        return;
+    }
     
     // RESET AND LAUNCH THE OVERLAY
     document.getElementById('publishLogs').innerHTML = '';
     document.getElementById('publishTitle').textContent = 'Deploying Album...';
     document.getElementById('publishProgressOverlay').classList.add('active');
     
-    // INITIALIZE TERMINAL STREAM
     pushLog('Initializing deployment sequence...', 'done');
     pushLog('Compiling media payload & metadata...', 'done');
     
-    // Start progress at 5% just to show activity
     document.getElementById('publishFillBar').style.width = '5%';
     document.getElementById('publishPercent').textContent = '5%';
     
-    // ENTERPRISE FIX: Queue the deployment to wait for background database locks
     attemptPublish();
   }
 
-  // Polls the system every 500ms and executes the deployment only when the database is unlocked
   function attemptPublish() {
     if (isSyncing) {
         const logs = document.getElementById('publishLogs').innerHTML;
         if (!logs.includes('Finalizing pending uploads')) {
-            // ENTERPRISE UX: Reassuring, non-technical copy
             pushLog('Finalizing pending uploads and securing recent changes...', 'active');
         }
         setTimeout(attemptPublish, 500);
@@ -1265,6 +1283,7 @@
     }
     syncDraftToDatabase(true);
   }
+  
 
   {% if open_editor %}renderMediaGrid();{% endif %}
 </script>
