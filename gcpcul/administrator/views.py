@@ -363,8 +363,6 @@ def gallery_auto_save(request):
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
 
-
-
 def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
     """
     Enterprise Server-Side Watermarking Engine using Pillow.
@@ -391,8 +389,11 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
             text = wm_config.get('text', 'GCPCUL').strip()
             if text:
                 font_size = int(width * scale)
+                
+                # Vercel-Safe Font Path Resolution
+                font_path = os.path.join(settings.BASE_DIR, 'cms', 'fonts', 'arial.ttf')
                 try:
-                    font = ImageFont.truetype("arial.ttf", font_size)
+                    font = ImageFont.truetype(font_path, font_size)
                 except IOError:
                     font = ImageFont.load_default()
 
@@ -424,45 +425,51 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
                 draw.text((x, y), text, font=font, fill=color_rgba)
 
         elif wm_type == 'image':
-            logo_r2_key = wm_config.get('logo_r2_key')
-            if logo_r2_key and s3_client and bucket_name:
-                logo_resp = s3_client.get_object(Bucket=bucket_name, Key=logo_r2_key)
-                logo_bytes = logo_resp['Body'].read()
-                logo_img = Image.open(io.BytesIO(logo_bytes)).convert("RGBA")
+            logo_base64 = wm_config.get('logo_base64')
+            if logo_base64:
+                try:
+                    # Strip data URL header if present (e.g., "data:image/png;base64,...")
+                    if ',' in logo_base64:
+                        _, logo_base64 = logo_base64.split(',', 1)
+                    
+                    logo_bytes = base64.b64decode(logo_base64)
+                    logo_img = Image.open(io.BytesIO(logo_bytes)).convert("RGBA")
 
-                logo_w = int(width * scale)
-                logo_h = int(logo_img.height * (logo_w / logo_img.width))
-                logo_img = logo_img.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
+                    logo_w = int(width * scale)
+                    logo_h = int(logo_img.height * (logo_w / logo_img.width))
+                    logo_img = logo_img.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
 
-                # Apply border radius clipping
-                wm_radius = float(wm_config.get('radius', 0)) / 100.0
-                if wm_radius > 0:
-                    radius_px = int(min(logo_w, logo_h) * wm_radius)
-                    mask = Image.new("L", (logo_w, logo_h), 0)
-                    draw_mask = ImageDraw.Draw(mask)
-                    draw_mask.rounded_rectangle((0, 0, logo_w, logo_h), radius=radius_px, fill=255)
-                    logo_img.putalpha(mask)
+                    # Apply border radius clipping
+                    wm_radius = float(wm_config.get('radius', 0)) / 100.0
+                    if wm_radius > 0:
+                        radius_px = int(min(logo_w, logo_h) * wm_radius)
+                        mask = Image.new("L", (logo_w, logo_h), 0)
+                        draw_mask = ImageDraw.Draw(mask)
+                        draw_mask.rounded_rectangle((0, 0, logo_w, logo_h), radius=radius_px, fill=255)
+                        logo_img.putalpha(mask)
 
-                if opacity < 1.0:
-                    r, g, b, alpha = logo_img.split()
-                    alpha = alpha.point(lambda p: int(p * opacity))
-                    logo_img.putalpha(alpha)
+                    if opacity < 1.0:
+                        r, g, b, alpha = logo_img.split()
+                        alpha = alpha.point(lambda p: int(p * opacity))
+                        logo_img.putalpha(alpha)
 
-                if 'right' in position:
-                    x = width - logo_w - pad
-                elif 'left' in position:
-                    x = pad
-                else:
-                    x = (width - logo_w) // 2
+                    if 'right' in position:
+                        x = width - logo_w - pad
+                    elif 'left' in position:
+                        x = pad
+                    else:
+                        x = (width - logo_w) // 2
 
-                if 'bottom' in position:
-                    y = height - logo_h - pad
-                elif 'top' in position:
-                    y = pad
-                else:
-                    y = (height - logo_h) // 2
+                    if 'bottom' in position:
+                        y = height - logo_h - pad
+                    elif 'top' in position:
+                        y = pad
+                    else:
+                        y = (height - logo_h) // 2
 
-                overlay.paste(logo_img, (x, y), logo_img)
+                    overlay.paste(logo_img, (x, y), logo_img)
+                except Exception as logo_err:
+                    print(f"Server-side logo watermark error: {logo_err}")
 
         watermarked = Image.alpha_composite(img, overlay)
         out_io = io.BytesIO()
@@ -470,8 +477,8 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
         return out_io.getvalue()
     except Exception as e:
         print(f"Watermark processing error: {e}")
-        return file_bytes # Fallback to unwatermarked image if stamping fails
-    
+        return file_bytes
+ 
 @staff_required
 def generate_upload_url(request):
     """Generates a secure, temporary direct-to-Cloudflare R2 upload URL."""

@@ -657,15 +657,15 @@
     updateWatermarkPreview();
   }
 
-  let watermarkLogoR2Key = null;
+  let watermarkLogoBase64 = null;
 
-  async function loadWatermarkImage(e) {
+  function loadWatermarkImage(e) {
     const file = e.target.files[0];
     if (!file) return;
     
-    // 1. Show local preview in memory
     const reader = new FileReader();
     reader.onload = function(event) {
+        watermarkLogoBase64 = event.target.result;
         const img = new Image();
         img.onload = () => {
             wmConfig.logoImg = img;
@@ -675,15 +675,6 @@
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
-
-    try {
-      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
-      const { upload_url, file_key } = await res.json();
-      await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
-      watermarkLogoR2Key = file_key;
-    } catch (err) {
-      console.error("Failed to upload watermark logo to quarantine:", err);
-    }
   }
 
   function updateWatermarkPreview() {
@@ -883,7 +874,7 @@
           size: document.getElementById('wmSize').value,
           opacity: document.getElementById('wmOpacity').value,
           radius: document.getElementById('wmBorderRadius').value,
-          logo_r2_key: watermarkLogoR2Key
+          logo_base64: watermarkLogoBase64 // PASSES INSTANTLY TO PYTHON
         };
 
         const payload = {
