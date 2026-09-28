@@ -287,13 +287,12 @@ def gallery_auto_save(request):
         saved_media = []
 
         # SERVERLESS OPTIMIZATION: Sequential processing avoids thread starvation and deadlocks on Vercel.
-        # Since the frontend sends micro-batches of 4, this executes instantly without blocking.
         for i, media_item in enumerate(new_media_payload):
             r2_key = media_item.get('r2_key')
             if not r2_key:
                 continue
             
-            # Verify, watermark (via Pillow), and promote
+            # Verify, watermark (via Pillow), and promote sequentially
             verification = _verify_and_promote_r2_file(r2_key, file_category="media", wm_config=watermark_config)
             
             new_obj = GalleryMedia.objects.create(
@@ -347,6 +346,7 @@ def gallery_auto_save(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
+    
 def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
     """
     Enterprise Server-Side Watermarking Engine using Pillow.

@@ -1248,6 +1248,21 @@
     document.getElementById('publishFillBar').style.width = '5%';
     document.getElementById('publishPercent').textContent = '5%';
     
+    // ENTERPRISE FIX: Queue the deployment to wait for background database locks
+    attemptPublish();
+  }
+
+  // Polls the system every 500ms and executes the deployment only when the database is unlocked
+  function attemptPublish() {
+    if (isSyncing) {
+        const logs = document.getElementById('publishLogs').innerHTML;
+        if (!logs.includes('Finalizing pending uploads')) {
+            // ENTERPRISE UX: Reassuring, non-technical copy
+            pushLog('Finalizing pending uploads and securing recent changes...', 'active');
+        }
+        setTimeout(attemptPublish, 500);
+        return;
+    }
     syncDraftToDatabase(true);
   }
 
