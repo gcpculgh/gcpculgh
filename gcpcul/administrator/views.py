@@ -274,7 +274,6 @@ def gallery_auto_save(request):
         album.subtitle = data.get('subtitle', album.subtitle)
         album.category = data.get('category', album.category)
         
-        # If the user clicks the final "Publish" button
         if data.get('publish'):
             album.status = 'published'
             
@@ -283,49 +282,36 @@ def gallery_auto_save(request):
         # 3. Process newly streamed Cloudflare files from the quarantine bucket
         new_media_payload = data.get('new_media', [])
         starting_order = album.media.filter(is_deleted=False).count()
+        watermark_config = data.get('watermark_config', {})
         
         saved_media = []
 
-        watermark_config = data.get('watermark_config', {})
-
-        def verify_asset(media_item, idx):
+        # SERVERLESS OPTIMIZATION: Sequential processing avoids thread starvation and deadlocks on Vercel.
+        # Since the frontend sends micro-batches of 4, this executes instantly without blocking.
+        for i, media_item in enumerate(new_media_payload):
             r2_key = media_item.get('r2_key')
             if not r2_key:
-                return None
+                continue
+            
+            # Verify, watermark (via Pillow), and promote
             verification = _verify_and_promote_r2_file(r2_key, file_category="media", wm_config=watermark_config)
-            return {"item": media_item, "verification": verification, "order": idx}
+            
+            new_obj = GalleryMedia.objects.create(
+                album=album,
+                file=verification['clean_key'],
+                caption=media_item.get('caption', ''),
+                media_type=media_item.get('type', 'image'),
+                order=starting_order + i,
+                file_hash=verification['sha256_hash']
+            )
+            
+            saved_media.append({
+                'frontend_id': media_item.get('frontend_id'), 
+                'db_id': str(new_obj.public_id),
+                'clean_url': new_obj.file.url
+            })
 
-        # Spin up a thread pool to execute the Cloudflare network operations SIMULTANEOUSLY
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [
-                executor.submit(verify_asset, item, starting_order + i)
-                for i, item in enumerate(new_media_payload)
-            ]
-
-            # Process the results as they finish downloading and verifying
-            for future in as_completed(futures):
-                result = future.result() # Will instantly raise ValueError if any thread spots a spoofed file
-                if result:
-                    item = result["item"]
-                    verif = result["verification"]
-
-                    # Safe, sequential database writes in the main thread
-                    new_obj = GalleryMedia.objects.create(
-                        album=album,
-                        file=verif['clean_key'],
-                        caption=item.get('caption', ''),
-                        media_type=item.get('type', 'image'),
-                        order=result["order"],
-                        file_hash=verif['sha256_hash']
-                    )
-                    
-                    # Return the new database ID to the frontend
-                    saved_media.append({
-                        'frontend_id': item.get('frontend_id'), 
-                        'db_id': str(new_obj.public_id),
-                        'clean_url': new_obj.file.url
-                    })
-
+        # 4. Handle batch text updates for existing photos
         existing_updates = data.get('existing_media_updates', [])
         for u in existing_updates:
             GalleryMedia.objects.filter(public_id=u['db_id'], album=album).update(
@@ -334,7 +320,6 @@ def gallery_auto_save(request):
             )
             
         # THE ENTERPRISE FIX: Micro-Batch Safe Garbage Collection
-        # Only execute deletions if the frontend explicitly provided the protection array.
         if 'active_db_ids' in data:
             frontend_active_ids = data.get('active_db_ids', [])
             newly_saved_uuids = [item['db_id'] for item in saved_media]
@@ -361,7 +346,6 @@ def gallery_auto_save(request):
         return JsonResponse({'success': False, 'error': f"Security Alert: {str(ve)}"}, status=400)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
-
 
 def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
     """
