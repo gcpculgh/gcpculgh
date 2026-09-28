@@ -172,6 +172,7 @@ class GalleryAlbum(models.Model):
         ("agm", "AGM Meetings"),
         ("outreach", "Community Outreach"),
         ("hospital", "Hospital Visits"),
+        ("promo", "Promotional & Media"),
     ]
     STATUS_CHOICES = [
         ("draft", "Draft"),
