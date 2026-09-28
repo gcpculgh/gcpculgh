@@ -928,7 +928,8 @@
 
     <div class="albums-grid" id="albumsGrid">
       {% for album in albums %}
-      <div class="album-card" data-category="{{ album.category }}" onclick="openAlbum('album-{{ album.id }}')">
+      <!-- ENTERPRISE FIX: Use secure UUID for click routing -->
+      <div class="album-card" data-category="{{ album.category }}" onclick="openAlbum('{{ album.public_id }}')">
         <div class="album-stack-back"></div>
         <div class="album-stack-mid"></div>
         <div class="album-cover">
@@ -1060,7 +1061,7 @@
   /* DYNAMIC DJANGO ALBUMS DATABASE (Zero-Trust R2 Links) */
   const ALBUMS_DATA = {
     {% for album in albums %}
-    "album-{{ album.id }}": {
+    "{{ album.public_id }}": { /* ENTERPRISE FIX: Secure UUID Key */
       title: "{{ album.title|escapejs }}",
       subtitle: "{{ album.subtitle|escapejs }}",
       photos: [
@@ -1148,7 +1149,7 @@
   }
 
   /* ALBUM OPEN/CLOSE LOGIC */
-  function openAlbum(albumKey) {
+  function openAlbum(albumKey, updateUrl = true) {
     const data = ALBUMS_DATA[albumKey];
     if (!data) return;
 
@@ -1197,9 +1198,14 @@
     document.getElementById('albumsDirectorySection').style.display = 'none';
     document.getElementById('photoGridViewSection').classList.add('active');
     window.scrollTo({ top: document.getElementById('photoGridViewSection').offsetTop - 100, behavior: 'smooth' });
+
+    // ENTERPRISE FIX: Push the raw UUID to the URL bar
+    if (updateUrl) {
+      window.history.pushState({ album: albumKey }, '', `?album=${albumKey}`);
+    }
   }
 
-  function closeAlbumView() {
+  function closeAlbumView(updateUrl = true) {
     document.getElementById('photoGridViewSection').classList.remove('active');
     document.getElementById('albumsDirectorySection').style.display = 'block';
 
@@ -1209,7 +1215,24 @@
     activeAlbumKey = null;
     activePhotosList = [];
     exitBatchMode();
+
+    // ENTERPRISE FIX: Revert URL when closing the album
+    if (updateUrl) {
+      window.history.pushState({}, '', window.location.pathname);
+    }
   }
+
+  // Listen for Native Back/Forward button clicks
+  window.addEventListener('popstate', (e) => {
+    const params = new URLSearchParams(window.location.search);
+    const albumParam = params.get('album');
+    
+    if (albumParam) {
+      openAlbum(albumParam, false); // Direct UUID
+    } else {
+      closeAlbumView(false);
+    }
+  });
 
   /* BATCH MULTI-SELECT DOWNLOAD LOGIC */
   const toggleBatchBtn = document.getElementById('toggleBatchModeBtn');
@@ -1407,17 +1430,24 @@
   document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const sharedMediaId = params.get('media');
+    const sharedAlbumId = params.get('album'); 
     
+    // Open Album via UUID
+    if (sharedAlbumId && ALBUMS_DATA[sharedAlbumId]) {
+        openAlbum(sharedAlbumId, false);
+    }
+    
+    // Open specific Media via UUID
     if (sharedMediaId) {
       for (const [albumKey, albumData] of Object.entries(ALBUMS_DATA)) {
         const photoIdx = albumData.photos.findIndex(p => p.public_id === sharedMediaId);
         
         if (photoIdx !== -1) {
-          openAlbum(albumKey);
+          openAlbum(albumKey, false); 
           
           setTimeout(() => {
             openCarouselLightbox(photoIdx);
-          }, 300); // Slight delay ensures smooth UI transition
+          }, 300); 
           
           window.history.replaceState({}, document.title, window.location.pathname);
           break;
