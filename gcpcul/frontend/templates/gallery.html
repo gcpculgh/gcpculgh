@@ -963,18 +963,23 @@
 
 <section class="photo-grid-view" id="photoGridViewSection">
   <div class="container">
+    
     <div class="album-breadcrumb-bar">
-      <div class="album-breadcrumb-bar">
+      
       <button type="button" class="back-albums-btn" onclick="closeAlbumView()">
         <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_back</span>
         <span>Back to All Albums</span>
       </button>
-      <div style="text-align: right;">
-        <h3 id="openedAlbumTitle"
-          style="font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">Album View</h3>
-        <p id="openedAlbumSubtitle" style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600;">Tap any
-          media for full-screen carousel view</p>
+      
+      <div style="text-align: right; flex: 1;">
+        <h3 id="openedAlbumTitle" style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.35rem; line-height: 1.2;">
+          Album View
+        </h3>
+        <p id="openedAlbumSubtitle" style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin: 0;">
+          Tap any media for full-screen carousel view
+        </p>
       </div>
+
     </div>
 
     <div class="masonry-grid" id="albumPhotosMasonryGrid">
