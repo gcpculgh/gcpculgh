@@ -657,15 +657,14 @@
     updateWatermarkPreview();
   }
 
-  let watermarkLogoBase64 = null;
+  let watermarkLogoR2Key = null;
 
-  function loadWatermarkImage(e) {
+  async function loadWatermarkImage(e) {
     const file = e.target.files[0];
     if (!file) return;
     
     const reader = new FileReader();
     reader.onload = function(event) {
-        watermarkLogoBase64 = event.target.result;
         const img = new Image();
         img.onload = () => {
             wmConfig.logoImg = img;
@@ -675,7 +674,19 @@
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
+
+    try {
+      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
+      const { upload_url, file_key } = await res.json();
+      await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+      watermarkLogoR2Key = file_key;
+      console.log("Watermark logo secured in R2 quarantine:", watermarkLogoR2Key);
+    } catch (err) {
+      console.error("Failed to upload watermark logo to quarantine:", err);
+      showClientToast("Failed to upload watermark logo to cloud storage.", "error");
+    }
   }
+  
 
   function updateWatermarkPreview() {
     const isWmEnabled = document.getElementById('wmEnable').checked;
@@ -874,7 +885,7 @@
           size: document.getElementById('wmSize').value,
           opacity: document.getElementById('wmOpacity').value,
           radius: document.getElementById('wmBorderRadius').value,
-          logo_base64: watermarkLogoBase64 // PASSES INSTANTLY TO PYTHON
+          logo_r2_key: watermarkLogoR2Key 
         };
 
         const payload = {

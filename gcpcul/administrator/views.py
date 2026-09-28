@@ -409,14 +409,12 @@ def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_n
                 draw.text((x, y), text, font=font, fill=color_rgba)
 
         elif wm_type == 'image':
-            logo_base64 = wm_config.get('logo_base64')
-            if logo_base64:
+            logo_r2_key = wm_config.get('logo_r2_key')
+            if logo_r2_key and s3_client and bucket_name:
                 try:
-                    # Strip data URL header if present (e.g., "data:image/png;base64,...")
-                    if ',' in logo_base64:
-                        _, logo_base64 = logo_base64.split(',', 1)
-                    
-                    logo_bytes = base64.b64decode(logo_base64)
+                    # Fetch logo directly from Cloudflare R2 bucket (Serverless Standard)
+                    logo_resp = s3_client.get_object(Bucket=bucket_name, Key=logo_r2_key)
+                    logo_bytes = logo_resp['Body'].read()
                     logo_img = Image.open(io.BytesIO(logo_bytes)).convert("RGBA")
 
                     logo_w = int(width * scale)
