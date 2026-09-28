@@ -844,10 +844,11 @@
 
     try {
       const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-      const newMediaToSave = mediaItems.filter(m => m.isNew && m.r2_key !== null && m.db_id === null);
+      
+      const newMediaToSave = isPublishing ? mediaItems.filter(m => m.isNew && m.r2_key !== null && m.db_id === null) : [];
+      
       const existingMediaToUpdate = mediaItems.filter(m => m.db_id !== null);
 
-      // INDUSTRY STANDARD: Serverless Atomicity. Exactly 1 image per Lambda invocation.
       const chunkSize = 1;
       const chunks = [];
       if (newMediaToSave.length === 0) {

@@ -269,7 +269,7 @@ def gallery_auto_save(request):
         else:
             album = GalleryAlbum.objects.create(status='draft')
 
-        # 2. Sync Metadata
+        # 1. Sync Metadata
         album.title = data.get('title', album.title)
         album.subtitle = data.get('subtitle', album.subtitle)
         album.category = data.get('category', album.category)
@@ -279,7 +279,7 @@ def gallery_auto_save(request):
             
         album.save()
 
-        # 3. Process newly streamed Cloudflare files from the quarantine bucket
+        # 2. Process newly streamed Cloudflare files from the quarantine bucket
         new_media_payload = data.get('new_media', [])
         starting_order = album.media.filter(is_deleted=False).count()
         watermark_config = data.get('watermark_config', {})
@@ -292,25 +292,31 @@ def gallery_auto_save(request):
             if not r2_key:
                 continue
             
-            # Verify, watermark (via Pillow), and promote sequentially
-            verification = _verify_and_promote_r2_file(r2_key, file_category="media", wm_config=watermark_config)
-            
-            new_obj = GalleryMedia.objects.create(
-                album=album,
-                file=verification['clean_key'],
-                caption=media_item.get('caption', ''),
-                media_type=media_item.get('type', 'image'),
-                order=starting_order + i,
-                file_hash=verification['sha256_hash']
-            )
-            
-            saved_media.append({
-                'frontend_id': media_item.get('frontend_id'), 
-                'db_id': str(new_obj.public_id),
-                'clean_url': new_obj.file.url
-            })
+            try:
+                # Verify, watermark (via Pillow), and promote sequentially
+                verification = _verify_and_promote_r2_file(r2_key, file_category="media", wm_config=watermark_config)
+                
+                new_obj = GalleryMedia.objects.create(
+                    album=album,
+                    file=verification['clean_key'],
+                    caption=media_item.get('caption', ''),
+                    media_type=media_item.get('type', 'image'),
+                    order=starting_order + i,
+                    file_hash=verification['sha256_hash']
+                )
+                
+                saved_media.append({
+                    'frontend_id': media_item.get('frontend_id'), 
+                    'db_id': str(new_obj.public_id),
+                    'clean_url': new_obj.file.url
+                })
+            except Exception as e:
+                # ENTERPRISE RESILIENCE: If a file is missing in Cloudflare or invalid, 
+                # skip it gracefully instead of throwing a 400 and crashing the whole batch.
+                print(f"Skipping missing or invalid media {r2_key}: {e}")
+                continue
 
-        # 4. Handle batch text updates for existing photos
+        # 3. Handle batch text updates for existing photos
         existing_updates = data.get('existing_media_updates', [])
         for u in existing_updates:
             GalleryMedia.objects.filter(public_id=u['db_id'], album=album).update(
@@ -318,7 +324,7 @@ def gallery_auto_save(request):
                 media_type=u.get('type', 'image')
             )
             
-        # THE ENTERPRISE FIX: Micro-Batch Safe Garbage Collection
+        # 4. THE ENTERPRISE FIX: Micro-Batch Safe Garbage Collection
         if 'active_db_ids' in data:
             frontend_active_ids = data.get('active_db_ids', [])
             newly_saved_uuids = [item['db_id'] for item in saved_media]
@@ -346,7 +352,7 @@ def gallery_auto_save(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
-
+    
 def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
     """
     Enterprise Server-Side Watermarking Engine using Pillow.
