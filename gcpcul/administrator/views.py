@@ -29,6 +29,7 @@ from django.core.files.base import ContentFile
 from .forms import DocumentForm
 from .models import Document
 
+from PIL import Image, ImageDraw, ImageFont
 
 import json
 from django.http import JsonResponse
@@ -192,11 +193,7 @@ def _get_s3_client():
         region_name=settings.AWS_S3_REGION_NAME or 'auto',
     )
 
-def _verify_and_promote_r2_file(r2_key, file_category="document"):
-    """
-    Zero-Trust Quarantine Inspector: 
-    Validates Magic Bytes, Hashes Payload, and Promotes File.
-    """
+def _verify_and_promote_r2_file(r2_key, file_category="document", wm_config=None):
     s3_client = _get_s3_client()
     bucket = settings.AWS_STORAGE_BUCKET_NAME
 
@@ -204,7 +201,7 @@ def _verify_and_promote_r2_file(r2_key, file_category="document"):
     file_bytes = response['Body'].read()
 
     clean_bytes = file_bytes.lstrip()
-    header = clean_bytes[:12] # Expanded to 12 bytes to catch MP4/WebP signatures
+    header = clean_bytes[:12]
     
     is_valid = False
     page_count = None
@@ -214,7 +211,6 @@ def _verify_and_promote_r2_file(r2_key, file_category="document"):
         is_docx = file_bytes.startswith(b'PK\x03\x04')
         is_doc = file_bytes.startswith(b'\xd0\xcf\x11\xe0')
         is_valid = is_pdf or is_docx or is_doc
-        
         if is_pdf:
             try:
                 reader = PdfReader(io.BytesIO(file_bytes))
@@ -223,29 +219,31 @@ def _verify_and_promote_r2_file(r2_key, file_category="document"):
                 page_count = None
                 
     elif file_category == "media":
-        # Image formats (WebP is the target from our edge interceptor, plus fallbacks)
         is_webp = header.startswith(b'RIFF') and clean_bytes[8:12] == b'WEBP'
         is_jpeg = header.startswith(b'\xff\xd8\xff')
         is_png = header.startswith(b'\x89PNG')
-        # Video format (MP4 ftyp box)
         is_mp4 = clean_bytes[4:8] == b'ftyp'
-        
         is_valid = is_webp or is_jpeg or is_png or is_mp4
 
     if not is_valid:
         s3_client.delete_object(Bucket=bucket, Key=r2_key)
-        raise ValueError(f"Spoofed or invalid {file_category} detected. Header: {header!r}")
+        raise ValueError(f"Spoofed or invalid {file_category} detected.")
+
+    # APPLY SERVER-SIDE WATERMARK IF MEDIA
+    if file_category == "media" and wm_config and wm_config.get('enabled'):
+        file_bytes = _apply_server_side_watermark(file_bytes, wm_config, s3_client, bucket)
 
     sha256_hash = hashlib.sha256(file_bytes).hexdigest()
 
-    ext = r2_key.split('.')[-1].lower()
+    ext = 'webp' if file_category == "media" else r2_key.split('.')[-1].lower()
     folder = "gallery" if file_category == "media" else "documents"
     clean_key = f"{folder}/{uuid.uuid4().hex}.{ext}"
 
-    s3_client.copy_object(
+    s3_client.put_object(
         Bucket=bucket,
-        CopySource={'Bucket': bucket, 'Key': r2_key},
         Key=clean_key,
+        Body=file_bytes,
+        ContentType='image/webp' if file_category == "media" else 'application/octet-stream'
     )
     s3_client.delete_object(Bucket=bucket, Key=r2_key)
 
@@ -288,13 +286,13 @@ def gallery_auto_save(request):
         
         saved_media = []
 
-        # ENTERPRISE FIX: Multi-Threaded I/O for Zero-Trust Verification
-        # This helper function isolates the heavy Cloudflare network operations
+        watermark_config = data.get('watermark_config', {})
+
         def verify_asset(media_item, idx):
             r2_key = media_item.get('r2_key')
             if not r2_key:
                 return None
-            verification = _verify_and_promote_r2_file(r2_key, file_category="media")
+            verification = _verify_and_promote_r2_file(r2_key, file_category="media", wm_config=watermark_config)
             return {"item": media_item, "verification": verification, "order": idx}
 
         # Spin up a thread pool to execute the Cloudflare network operations SIMULTANEOUSLY
@@ -364,6 +362,115 @@ def gallery_auto_save(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
+
+
+
+def _apply_server_side_watermark(file_bytes, wm_config, s3_client=None, bucket_name=None):
+    """
+    Enterprise Server-Side Watermarking Engine using Pillow.
+    Applies text or image watermarks with dynamic scaling, opacity, and border-radius clipping.
+    """
+    if not wm_config or not wm_config.get('enabled'):
+        return file_bytes
+
+    try:
+        img = Image.open(io.BytesIO(file_bytes)).convert("RGBA")
+        width, height = img.size
+
+        overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
+
+        opacity = float(wm_config.get('opacity', 80)) / 100.0
+        scale = float(wm_config.get('size', 15)) / 100.0
+        position = wm_config.get('position', 'bottom-right')
+        pad = int(width * 0.03)
+
+        wm_type = wm_config.get('type', 'text')
+
+        if wm_type == 'text':
+            text = wm_config.get('text', 'GCPCUL').strip()
+            if text:
+                font_size = int(width * scale)
+                try:
+                    font = ImageFont.truetype("arial.ttf", font_size)
+                except IOError:
+                    font = ImageFont.load_default()
+
+                bbox = draw.textbbox((0, 0), text, font=font)
+                text_w = bbox[2] - bbox[0]
+                text_h = bbox[3] - bbox[1]
+
+                if 'right' in position:
+                    x = width - text_w - pad
+                elif 'left' in position:
+                    x = pad
+                else:
+                    x = (width - text_w) // 2
+
+                if 'bottom' in position:
+                    y = height - text_h - pad
+                elif 'top' in position:
+                    y = pad
+                else:
+                    y = (height - text_h) // 2
+
+                color_hex = wm_config.get('color', '#ffffff').lstrip('#')
+                rgb = tuple(int(color_hex[i:i+2], 16) for i in (0, 2, 4))
+                color_rgba = rgb + (int(255 * opacity),)
+
+                # Text drop-shadow for contrast
+                shadow_rgba = (0, 0, 0, int(255 * opacity * 0.6))
+                draw.text((x + 2, y + 2), text, font=font, fill=shadow_rgba)
+                draw.text((x, y), text, font=font, fill=color_rgba)
+
+        elif wm_type == 'image':
+            logo_r2_key = wm_config.get('logo_r2_key')
+            if logo_r2_key and s3_client and bucket_name:
+                logo_resp = s3_client.get_object(Bucket=bucket_name, Key=logo_r2_key)
+                logo_bytes = logo_resp['Body'].read()
+                logo_img = Image.open(io.BytesIO(logo_bytes)).convert("RGBA")
+
+                logo_w = int(width * scale)
+                logo_h = int(logo_img.height * (logo_w / logo_img.width))
+                logo_img = logo_img.resize((logo_w, logo_h), Image.Resampling.LANCZOS)
+
+                # Apply border radius clipping
+                wm_radius = float(wm_config.get('radius', 0)) / 100.0
+                if wm_radius > 0:
+                    radius_px = int(min(logo_w, logo_h) * wm_radius)
+                    mask = Image.new("L", (logo_w, logo_h), 0)
+                    draw_mask = ImageDraw.Draw(mask)
+                    draw_mask.rounded_rectangle((0, 0, logo_w, logo_h), radius=radius_px, fill=255)
+                    logo_img.putalpha(mask)
+
+                if opacity < 1.0:
+                    r, g, b, alpha = logo_img.split()
+                    alpha = alpha.point(lambda p: int(p * opacity))
+                    logo_img.putalpha(alpha)
+
+                if 'right' in position:
+                    x = width - logo_w - pad
+                elif 'left' in position:
+                    x = pad
+                else:
+                    x = (width - logo_w) // 2
+
+                if 'bottom' in position:
+                    y = height - logo_h - pad
+                elif 'top' in position:
+                    y = pad
+                else:
+                    y = (height - logo_h) // 2
+
+                overlay.paste(logo_img, (x, y), logo_img)
+
+        watermarked = Image.alpha_composite(img, overlay)
+        out_io = io.BytesIO()
+        watermarked.convert("RGB").save(out_io, format="WEBP", quality=85)
+        return out_io.getvalue()
+    except Exception as e:
+        print(f"Watermark processing error: {e}")
+        return file_bytes # Fallback to unwatermarked image if stamping fails
     
 @staff_required
 def generate_upload_url(request):

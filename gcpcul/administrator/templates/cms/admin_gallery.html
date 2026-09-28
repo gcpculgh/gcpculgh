@@ -657,21 +657,33 @@
     updateWatermarkPreview();
   }
 
-  function loadWatermarkImage(e) {
+  let watermarkLogoR2Key = null;
+
+  async function loadWatermarkImage(e) {
     const file = e.target.files[0];
     if (!file) return;
     
+    // 1. Show local preview in memory
     const reader = new FileReader();
     reader.onload = function(event) {
         const img = new Image();
         img.onload = () => {
             wmConfig.logoImg = img;
             document.getElementById('wmImageStatus').style.display = 'block';
-            updateWatermarkPreview(); // Trigger preview immediately once image loads
+            updateWatermarkPreview(); 
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
+
+    try {
+      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
+      const { upload_url, file_key } = await res.json();
+      await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+      watermarkLogoR2Key = file_key;
+    } catch (err) {
+      console.error("Failed to upload watermark logo to quarantine:", err);
+    }
   }
 
   function updateWatermarkPreview() {
@@ -861,6 +873,19 @@
         const triggerPublish = isPublishing && isLastRequest;
         const activeDbIds = mediaItems.map(m => m.db_id).filter(id => id !== null);
 
+        const watermarkConfig = {
+          enabled: document.getElementById('wmEnable').checked,
+          type: document.querySelector('input[name="wmType"]:checked').value,
+          text: document.getElementById('wmText').value.trim(),
+          font: document.getElementById('wmFont').value,
+          color: document.getElementById('wmColor').value,
+          position: document.getElementById('wmPosition').value,
+          size: document.getElementById('wmSize').value,
+          opacity: document.getElementById('wmOpacity').value,
+          radius: document.getElementById('wmBorderRadius').value,
+          logo_r2_key: watermarkLogoR2Key
+        };
+
         const payload = {
           album_id: albumId,
           title: document.getElementById('albumTitle').value.trim(),
@@ -869,7 +894,8 @@
           publish: triggerPublish,
           new_media: chunk.map(m => ({ frontend_id: m.frontend_id, r2_key: m.r2_key, caption: m.caption, type: m.type })),
           existing_media_updates: (i === 0) ? existingMediaToUpdate.map(m => ({ db_id: m.db_id, caption: m.caption, type: m.type })) : [],
-          active_db_ids: activeDbIds 
+          active_db_ids: activeDbIds,
+          watermark_config: watermarkConfig // SENT SECURELY TO PYTHON
         };
 
         const res = await fetch("{% url 'cms:gallery_auto_save' %}", {
