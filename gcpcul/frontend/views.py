@@ -21,7 +21,36 @@ def products(request):
     return render(request, 'products.html')
 
 def about(request):
-    return render(request, 'about.html')
+    # Static Data Hydration for the Team Page
+    team_data = {
+        "Board of Directors": [
+            {"name": "Dr. Paul Owusu Donkor", "role": "BOD Chairman", "image": "dr-paul-donkor.jpg"},
+            {"name": "Dr. Brenda Yayra Opong", "role": "BOD Vice Chairperson", "image": "dr-brenda-opong.jpg"},
+            {"name": "Dr. Anna Kwarley Quartey", "role": "BOD Member", "image": "dr-anna-quartey.jpg"},
+        ],
+        "Supervisory Committee": [
+            {"name": "Dr. Mahmood Oppong Brobbery", "role": "Supervisory Committee Chairperson", "image": "dr-mahmood-brobbey.png"}, 
+            {"name": "Dr. Kwasi Yelarge", "role": "Supervisory Committee Secretary", "image": "dr-kwasi-yelarge.jpg"},
+            {"name": "Dr. Eleazer Ofei", "role": "Supervisory Committee Member", "image": "dr-eleazer-ofei.jpg"},
+        ],
+        "Loans Committee": [
+            {"name": "Mr. Eric Forson", "role": "Loans Committee Chairperson", "image": "mr-eric-forson.jpg"}, 
+            {"name": "Leticia Baah", "role": "Loan Committee Secretary", "image": "leticia-baah.jpeg"},
+            {"name": "Dr. Kofi Panyin Boakye", "role": "Loan Committee Member", "image": "dr-kofi-boakye.jpeg"}, 
+        ],
+        "Management & Staff": [
+            {"name": "Benette Anokye", "role": "Accounts Officer", "image": "benette-anokye.jpg"},
+            {"name": "Emelia Laar", "role": "Facility Officer", "image": "emelia-laar.jpg"},
+            {"name": "Francis Abebio Mensah", "role": "Relationship Officer", "image": "francis-abebio-mensah.jpg"}, 
+            {"name": "Hamidatu Abubakar", "role": "Relationship Officer", "image": "hamidatu-abubakar.jpg"},
+            {"name": "Ekow Akomeah Sekyi", "role": "Relationship Officer - Takoradi", "image": "ekow-sekyi.jpeg"}, 
+            {"name": "Jonathan Wornyo", "role": "Transport Officer", "image": "jonathan-wornyo.png"}, 
+        ]
+    }
+    
+    return render(request, 'about.html', {"team_groups": team_data})
+
+
 
 def calculator(request): 
     return render(request, 'calculator.html')

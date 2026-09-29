@@ -220,11 +220,10 @@
   </div>
   {% endfor %}
 </div>
+{% endif %} <!-- ENTERPRISE FIX: Move the endif here so the script below is ALWAYS loaded -->
 
 <!-- Auto-dismiss logic -->
 <script>
-
-
   function dismissToast(toastElement) {
     // Add the fade-out class to trigger the CSS animation
     toastElement.classList.add('toast-fade-out');
@@ -382,9 +381,37 @@
     });
   }
 
-  // These sidebar sections aren't built yet — honest placeholder rather than a dead link.
+  // Premium Client-Side Toast Generator for Stub Links
   function notifyStub(name) {
-    alert(name + ' management is planned but not built yet — News, Downloads, and Gallery are ready now.');
+    // 1. Find or create the toast container
+    let container = document.getElementById('admin-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'admin-toast-container';
+      container.className = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    // 2. Create the toast element using your existing CSS classes
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification toast-warning';
+    
+    // 3. Inject the HTML structure
+    toast.innerHTML = `
+      <div class="toast-icon"><span class="material-symbols-outlined">construction</span></div>
+      <div class="toast-content">
+        <p><strong>${name}</strong> management is planned but not built yet. News, Vault, and Gallery are ready.</p>
+      </div>
+      <button class="toast-close" onclick="dismissToast(this.parentElement)" aria-label="Close notification">&times;</button>
+    `;
+    
+    // 4. Add to screen and auto-dismiss after 4 seconds
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+      if (document.body.contains(toast)) dismissToast(toast);
+    }, 4000);
+
     return false;
   }
 </script>

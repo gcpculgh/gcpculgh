@@ -1021,38 +1021,69 @@
     }
   }
 
-  // 3. EAGER STREAMING UPLOADER
-  async function handleMediaUpload(e) {
+  // 3. EAGER STREAMING UPLOADER & MICRO-BATCHING QUEUE
+  let uploadQueue = [];
+  let isProcessingQueue = false;
+
+  function handleMediaUpload(e) {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
-    
-    document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">progress_activity</span> Loading...';
-    document.getElementById('gallerySubmitBtn').disabled = true;
-    await new Promise(resolve => setTimeout(resolve, 50));
 
-    const chunkSize = 5; 
-    for (let i = 0; i < files.length; i += chunkSize) {
-      const chunk = files.slice(i, i + chunkSize);
-      chunk.forEach(file => {
-        const item = { 
-          frontend_id: 'temp-' + Math.random().toString(36).substr(2, 9),
-          db_id: null, isNew: true, src: URL.createObjectURL(file), caption: '', 
-          type: file.type.startsWith('video/') ? 'video' : 'image',
-          r2_key: null, uploading: true
-        };
-        mediaItems.push(item);
-        if (coverIndex === null) coverIndex = 0;
-        streamToCloudflare(item, file);
-      });
-      renderMediaGrid();
-      await new Promise(resolve => setTimeout(resolve, 0));
-    }
+    // Lock the publish button so they don't deploy early, but DON'T freeze the screen
+    document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">progress_activity</span> Processing Queue...';
+    document.getElementById('gallerySubmitBtn').disabled = true;
+
+    // Push raw files to the queue, but do not process them yet
+    uploadQueue = uploadQueue.concat(files);
     
+    // Clear the input so the user can drag more files in immediately
     e.target.value = ''; 
-    document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined" style="font-size:1.05rem;">public</span> Publish Album';
-    document.getElementById('gallerySubmitBtn').disabled = false;
+
+    if (!isProcessingQueue) {
+      processQueueInChunks();
+    }
   }
 
+  function processQueueInChunks() {
+    isProcessingQueue = true;
+
+    // Take exactly 5 files off the top of the queue (Saves CPU)
+    const chunk = uploadQueue.splice(0, 5);
+
+    if (chunk.length === 0) {
+      // The queue is empty. Unlock the UI!
+      isProcessingQueue = false;
+      document.getElementById('gallerySubmitBtn').innerHTML = '<span class="material-symbols-outlined" style="font-size:1.05rem;">public</span> Publish Album';
+      document.getElementById('gallerySubmitBtn').disabled = false;
+      return;
+    }
+
+    // Process just these 5 files
+    chunk.forEach(file => {
+      const item = { 
+        frontend_id: 'temp-' + Math.random().toString(36).substr(2, 9),
+        db_id: null, isNew: true, 
+        src: URL.createObjectURL(file), // Temporary heavy RAM URL
+        caption: '', 
+        type: file.type.startsWith('video/') ? 'video' : 'image',
+        r2_key: null, uploading: true
+      };
+      mediaItems.push(item);
+      if (coverIndex === null) coverIndex = 0;
+      
+      streamToCloudflare(item, file);
+    });
+
+    renderMediaGrid();
+
+    // CRITICAL: requestAnimationFrame tells the browser: 
+    // "Paint the photos to the screen, take a 15ms breath, and then grab the next batch."
+    requestAnimationFrame(() => {
+        setTimeout(processQueueInChunks, 15);
+    });
+  }
+
+  // (Keep your existing compressImageToWebP function exactly as it is right here)
   async function compressImageToWebP(file, maxWidth = 1920, quality = 0.8) {
     if (!file.type.startsWith('image/')) return file; 
     return new Promise((resolve) => {
@@ -1066,61 +1097,6 @@
         const ctx = canvas.getContext('2d'); 
         
         ctx.drawImage(img, 0, 0, width, height);
-
-        // BULLETPROOF: Read state directly from the DOM right before burning
-        const isWmEnabled = document.getElementById('wmEnable').checked;
-        if (isWmEnabled) {
-          const currentWmType = document.querySelector('input[name="wmType"]:checked').value;
-          const wmText = document.getElementById('wmText').value.trim();
-          const wmFont = document.getElementById('wmFont').value;
-          const wmColor = document.getElementById('wmColor').value;
-          const currentPosition = document.getElementById('wmPosition').value;
-          
-          const wmScale = parseInt(document.getElementById('wmSize').value) / 100;
-          const wmOpacity = parseInt(document.getElementById('wmOpacity').value) / 100;
-          const wmRadius = parseInt(document.getElementById('wmBorderRadius').value);
-
-          const pad = Math.floor(width * 0.03); 
-          ctx.globalAlpha = wmOpacity; 
-
-          if (currentWmType === 'text' && wmText) {
-            const fontSize = Math.floor(width * wmScale);
-            ctx.font = `800 ${fontSize}px ${wmFont}`;
-            ctx.fillStyle = wmColor;
-            ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 2;
-            ctx.textAlign = currentPosition.includes('right') ? 'right' : (currentPosition.includes('left') ? 'left' : 'center');
-            ctx.textBaseline = currentPosition.includes('bottom') ? 'bottom' : (currentPosition.includes('top') ? 'top' : 'middle');
-
-            let x = ctx.textAlign === 'right' ? width - pad : (ctx.textAlign === 'left' ? pad : width / 2);
-            let y = ctx.textBaseline === 'bottom' ? height - pad : (ctx.textBaseline === 'top' ? pad : height / 2);
-            ctx.fillText(wmText, x, y);
-            
-          } else if (currentWmType === 'image' && wmConfig.logoImg) {
-            const logoW = Math.floor(width * wmScale);
-            const logoH = Math.floor(wmConfig.logoImg.height * (logoW / wmConfig.logoImg.width));
-
-            let x = pad;
-            if (currentPosition.includes('right')) x = width - logoW - pad;
-            else if (!currentPosition.includes('left')) x = (width - logoW) / 2;
-
-            let y = pad;
-            if (currentPosition.includes('bottom')) y = height - logoH - pad;
-            else if (!currentPosition.includes('top')) y = (height - logoH) / 2;
-
-            const radiusPx = Math.min(logoW, logoH) * (wmRadius / 100);
-            if (radiusPx > 0) {
-              ctx.save();
-              ctx.beginPath();
-              ctx.roundRect(x, y, logoW, logoH, radiusPx);
-              ctx.clip();
-              ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
-              ctx.restore();
-            } else {
-              ctx.drawImage(wmConfig.logoImg, x, y, logoW, logoH);
-            }
-          }
-          ctx.globalAlpha = 1.0;
-        }
 
         canvas.toBlob((blob) => {
           const originalName = file.name.replace(/\.[^/.]+$/, "");
@@ -1137,8 +1113,17 @@
       const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(processedFile.name)}&content_type=${encodeURIComponent(processedFile.type)}`);
       const { upload_url, file_key } = await res.json();
       await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': processedFile.type }, body: processedFile });
+      
       item.r2_key = file_key;
       item.uploading = false;
+      
+      // ENTERPRISE FIX: Aggressive Garbage Collection
+      // Destroy the 12MB raw JPEG in RAM and replace the preview with the 200KB WebP
+      if (item.src.startsWith('blob:')) {
+          URL.revokeObjectURL(item.src); 
+      }
+      item.src = URL.createObjectURL(processedFile);
+
       markDirty();
       renderMediaGrid(); 
     } catch (err) {

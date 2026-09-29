@@ -56,14 +56,21 @@ def dashboard(request):
     published_count = NewsArticle.objects.filter(status="published").count()
     draft_count = NewsArticle.objects.filter(status="draft").count()
 
-    documents_total = Document.objects.count()
-    documents_uploaded = Document.objects.exclude(document="").count()
+    # 1. DOCUMENT VAULT LOGIC (Ignoring archived files)
+    active_docs = Document.objects.filter(is_deleted=False)
+    documents_total = active_docs.count()
+    documents_uploaded = active_docs.exclude(document="").count()
     documents_pending = documents_total - documents_uploaded
+    archived_docs_count = Document.objects.filter(is_deleted=True).count()
 
-    albums = GalleryAlbum.objects.all()
-    album_count = albums.count()
-    media_count = GalleryMedia.objects.count()
-    stock_album_count = sum(1 for a in albums if a.uses_placeholder_media)
+    # 2. GALLERY LOGIC (Separating Live, Drafts, and Archived)
+    active_albums = GalleryAlbum.objects.filter(is_deleted=False)
+    published_album_count = active_albums.filter(status='published').count()
+    draft_album_count = active_albums.filter(status='draft').count()
+    archived_album_count = GalleryAlbum.objects.filter(is_deleted=True).count()
+    
+    active_media_count = GalleryMedia.objects.filter(is_deleted=False).count()
+    stock_album_count = sum(1 for a in active_albums if a.uses_placeholder_media)
 
     pending_agm_docs = Document.objects.filter(category="agm").filter(document="")
 
@@ -92,29 +99,48 @@ def dashboard(request):
             "url_name": "cms:news_list",
         })
 
-    # Editorial items with no backing model yet — honestly labeled as
-    # checklist entries rather than dressed up as live query results.
-    attention_items += [
-        {"severity": "med", "icon": "groups", "title": "Board & Committee photos are placeholders",
-         "body": "Committee member management isn't built yet — tracked here as a reminder.", "url_name": None},
-        {"severity": "med", "icon": "link_off", "title": "6 social media links are inactive",
-         "body": "Footer links still point to placeholder URLs.", "url_name": None},
-        {"severity": "med", "icon": "flag", "title": "Mission, Vision & Core Values need sign-off",
-         "body": "Current wording needs official Board approval.", "url_name": None},
-    ]
+    recent_activity = []
+
+    for article in NewsArticle.objects.order_by("-updated_at")[:3]:
+        recent_activity.append({
+            "type": "article", "title": article.title,
+            "author": getattr(article, "author", "Admin"),
+            "status": article.status, "timestamp": article.updated_at, "icon": "edit_square"
+        })
+
+    for doc in Document.objects.exclude(document="").order_by("-created_at")[:3]:
+        recent_activity.append({
+            "type": "document", "title": doc.title,
+            "author": "Admin", "timestamp": doc.created_at, "icon": "upload_file"
+        })
+
+    # Bring Gallery Albums into the timeline
+    for album in GalleryAlbum.objects.filter(is_deleted=False).order_by("-id")[:3]:
+        ts = getattr(album, 'updated_at', getattr(album, 'created_at', timezone.now()))
+        recent_activity.append({
+            "type": "album", "title": album.title,
+            "author": "Admin", "timestamp": ts, "icon": "photo_library"
+        })
+
+    # Sort the combined list chronologically (newest first)
+    recent_activity.sort(key=lambda x: x["timestamp"], reverse=True)
 
     context = {
         "published_count": published_count,
         "draft_count": draft_count,
-        "documents_total": documents_total,
+        
         "documents_uploaded": documents_uploaded,
         "documents_pending": documents_pending,
-        "album_count": album_count,
-        "media_count": media_count,
+        "archived_docs_count": archived_docs_count, 
+        
+        "published_album_count": published_album_count, 
+        "draft_album_count": draft_album_count,         
+        "archived_album_count": archived_album_count,   
+        "active_media_count": active_media_count,       
+        
         "attention_items": attention_items,
         "attention_count": len(attention_items),
-        "recent_articles": NewsArticle.objects.order_by("-updated_at")[:3],
-        "recent_documents": Document.objects.exclude(document="").order_by("-created_at")[:2],
+        "recent_activity": recent_activity[:5], 
     }
     return render(request, "cms/admin_dashboard.html", context)
 

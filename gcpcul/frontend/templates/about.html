@@ -382,9 +382,10 @@
     height: 3.5rem;
     border-radius: 50%;
     object-fit: cover;
+    object-position: top center; 
     flex-shrink: 0;
     border: 2px solid var(--border-color);
-    background: var(--stack-back);
+    background: var(--bg-section-alt);
   }
 
   .committee-info h4 {
@@ -967,7 +968,7 @@
       <button class="committee-filter-btn" data-filter="board">Board of Directors</button>
       <button class="committee-filter-btn" data-filter="supervisory">Supervisory Committee</button>
       <button class="committee-filter-btn" data-filter="loans">Loans Committee</button>
-      <button class="committee-filter-btn" data-filter="education">Education & Editorial</button>
+      <!-- <button class="committee-filter-btn" data-filter="education">Education & Editorial</button> -->
       <button class="committee-filter-btn" data-filter="staff">Management & Staff</button>
     </div>
 
@@ -976,198 +977,20 @@
     </div>
 
     <div class="committee-grid" id="committeeGrid">
-      <div class="committee-card" data-category="board">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Dr. Richard K. Awuah">
-        <div class="committee-info">
-          <h4>Dr. Richard K. Awuah</h4>
-          <p>Board Chairman</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="board">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3765114/pexels-photo-3765114.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mrs. Abena Osei-Bonsu">
-        <div class="committee-info">
-          <h4>Mrs. Abena Osei-Bonsu</h4>
-          <p>Vice Chairperson</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="board">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Kwame Darko">
-        <div class="committee-info">
-          <h4>Mr. Kwame Darko</h4>
-          <p>Board Secretary</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="board">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3781539/pexels-photo-3781539.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Comfort Nyarko">
-        <div class="committee-info">
-          <h4>Pharm. Comfort Nyarko</h4>
-          <p>Board Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="board">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Solomon Tetteh">
-        <div class="committee-info">
-          <h4>Mr. Solomon Tetteh</h4>
-          <p>Board Member</p>
-        </div>
-      </div>
-
-      <div class="committee-card" data-category="supervisory">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Linda Amoako">
-        <div class="committee-info">
-          <h4>Pharm. Linda Amoako</h4>
-          <p>Committee Chairperson</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="supervisory">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/936119/pexels-photo-936119.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Ibrahim Mahama">
-        <div class="committee-info">
-          <h4>Mr. Ibrahim Mahama</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="supervisory">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3767392/pexels-photo-3767392.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mrs. Grace Ofori-Attah">
-        <div class="committee-info">
-          <h4>Mrs. Grace Ofori-Attah</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="supervisory">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Yaw Boateng">
-        <div class="committee-info">
-          <h4>Mr. Yaw Boateng</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-
-      <div class="committee-card" data-category="loans">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3573351/pexels-photo-3573351.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Sarah Asiamah">
-        <div class="committee-info">
-          <h4>Pharm. Sarah Asiamah</h4>
-          <p>Committee Head</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="loans">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Daniel Quaye">
-        <div class="committee-info">
-          <h4>Mr. Daniel Quaye</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="loans">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3778603/pexels-photo-3778603.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Priscilla Mensah">
-        <div class="committee-info">
-          <h4>Pharm. Priscilla Mensah</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="loans">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/1587009/pexels-photo-1587009.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Kojo Amankwah">
-        <div class="committee-info">
-          <h4>Mr. Kojo Amankwah</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-
-      <div class="committee-card" data-category="education">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3812743/pexels-photo-3812743.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Nana Yaa Asantewaa">
-        <div class="committee-info">
-          <h4>Pharm. Nana Yaa Asantewaa</h4>
-          <p>Committee Chairperson</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="education">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/2381463/pexels-photo-2381463.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Emmanuel Larbi">
-        <div class="committee-info">
-          <h4>Mr. Emmanuel Larbi</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="education">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3790811/pexels-photo-3790811.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Pharm. Rebecca Adjei">
-        <div class="committee-info">
-          <h4>Pharm. Rebecca Adjei</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="education">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=150">
-        <div class="committee-info">
-          <h4>Mrs. Efua Sarpong</h4>
-          <p>Committee Member</p>
-        </div>
-      </div>
-
-      <div class="committee-card" data-category="staff">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Michael Owusu">
-        <div class="committee-info">
-          <h4>Michael Owusu</h4>
-          <p>General Manager</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="staff">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3796229/pexels-photo-3796229.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mrs. Joyce Appiah">
-        <div class="committee-info">
-          <h4>Mrs. Joyce Appiah</h4>
-          <p>Operations Manager</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="staff">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/2381070/pexels-photo-2381070.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Mr. Felix Owusu-Ansah">
-        <div class="committee-info">
-          <h4>Mr. Felix Owusu-Ansah</h4>
-          <p>Finance Manager</p>
-        </div>
-      </div>
-      <div class="committee-card" data-category="staff">
-        <img class="committee-photo"
-          src="https://images.pexels.com/photos/3760263/pexels-photo-3760263.jpeg?auto=compress&cs=tinysrgb&w=150"
-          alt="Ms. Abigail Nkrumah">
-        <div class="committee-info">
-          <h4>Ms. Abigail Nkrumah</h4>
-          <p>Member Services Lead</p>
-        </div>
-      </div>
+      {% for group_name, members in team_groups.items %}
+        {% for member in members %}
+          <div class="committee-card" 
+               data-category="{% if group_name == 'Board of Directors' %}board{% elif group_name == 'Supervisory Committee' %}supervisory{% elif group_name == 'Loans Committee' %}loans{% else %}staff{% endif %}">
+            <img class="committee-photo"
+              src="{% static 'assets/images/team/' %}{{ member.image }}"
+              alt="{{ member.name }}">
+            <div class="committee-info">
+              <h4>{{ member.name }}</h4>
+              <p>{{ member.role }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
     </div>
   </div>
 </section>
