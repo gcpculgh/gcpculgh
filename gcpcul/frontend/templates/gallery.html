@@ -407,6 +407,41 @@
     border-bottom: 2px dashed var(--border-color);
   }
 
+  /* Desktop Layout (Default) */
+  .album-header-text {
+    text-align: right;
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .album-header-title {
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+
+  .album-header-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  @media (max-width: 48rem) {
+    .album-breadcrumb-bar {
+      flex-direction: column;      
+      align-items: flex-start;     
+      gap: 1.25rem;
+    }
+    
+    .album-header-text {
+      text-align: left;            
+      width: 100%;
+    }
+  }
+
   .back-albums-btn {
     background: var(--bg-card);
     border: 1.5px solid var(--border-color);
@@ -977,11 +1012,12 @@
         <span>Back to All Albums</span>
       </button>
       
-      <div style="text-align: right; flex: 1;">
-        <h3 id="openedAlbumTitle" style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.35rem; line-height: 1.2;">
+      <!-- ENTERPRISE FIX: Replaced inline styles with proper CSS classes -->
+      <div class="album-header-text">
+        <h3 id="openedAlbumTitle" class="album-header-title">
           Album View
         </h3>
-        <p id="openedAlbumSubtitle" style="font-size: 0.95rem; color: var(--text-muted); font-weight: 600; margin: 0;">
+        <p id="openedAlbumSubtitle" class="album-header-subtitle">
           Tap any media for full-screen carousel view
         </p>
       </div>
