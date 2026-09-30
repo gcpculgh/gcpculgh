@@ -111,7 +111,6 @@ class Document(models.Model):
         ("legal", "Policy & By-Laws"),
     ]
    
-
     title = models.CharField(max_length=220)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default="form")
     year = models.PositiveIntegerField(
@@ -131,6 +130,10 @@ class Document(models.Model):
 
     file_hash = models.CharField(max_length=64, blank=True, null=True, help_text="SHA-256 cryptographic checksum")
     page_count = models.PositiveIntegerField(blank=True, null=True)
+    
+    # NEW: The local cache column to eliminate the Cloudflare N+1 bottleneck
+    file_size = models.PositiveIntegerField(blank=True, null=True, help_text="Cached file size in bytes to prevent N+1 Cloudflare queries")
+    
     thumbnail = models.ImageField(upload_to='document_thumbs/', blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -158,8 +161,10 @@ class Document(models.Model):
 
     @property
     def safe_file_size(self):
-        """Never let a missing/moved file crash the public Downloads page —
-        matches the defensive property name the live template already calls."""
+        """Read locally first for instant page loads. Fallback to AWS only if missing."""
+        if self.file_size:
+            return self.file_size
+            
         if not self.document:
             return 0
         try:

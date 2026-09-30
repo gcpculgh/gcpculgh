@@ -277,6 +277,7 @@ def _verify_and_promote_r2_file(r2_key, file_category="document", wm_config=None
         'clean_key': clean_key,
         'sha256_hash': sha256_hash,
         'page_count': page_count,
+        'file_size': len(file_bytes), # The new file size calculation
     }
 
 @require_POST
@@ -532,7 +533,7 @@ def secure_document_download(request, public_id):
     No login required for members, but keeps R2 fully private.
     Issues a short-lived (15-minute) signed link to prevent permanent hotlinking.
     """
-    doc = get_object_or_404(Document, public_id)
+    doc = get_object_or_404(Document, public_id=public_id)
     
     if not doc.document:
         messages.error(request, "This document file is not yet available.")
@@ -625,6 +626,9 @@ def document_create(request):
 
                     if hasattr(doc, 'file_hash'):
                         doc.file_hash = verification['sha256_hash']
+                        
+                    if hasattr(doc, 'file_size'):
+                        doc.file_size = verification['file_size']
 
                 except ValueError as ve:
                     messages.error(request, f"Security Alert: {str(ve)}")
@@ -681,6 +685,9 @@ def document_update(request, public_id):
 
                     if hasattr(doc, 'file_hash'):
                         doc.file_hash = verification['sha256_hash']
+                        
+                    if hasattr(doc, 'file_size'):
+                        doc.file_size = verification['file_size']
 
                 except ValueError as ve:
                     messages.error(request, f"Security Alert: {str(ve)}")
