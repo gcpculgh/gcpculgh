@@ -63,7 +63,7 @@ His professional strength lies in combining account management, business develop
         {"slug": "dr-eleazer-ofei", "name": "Dr. Eleazer Ofei", "role": "Supervisory Committee Member", "image": "dr-eleazer-ofei.jpg", "bio": "Detailed biography coming soon."},
     ],
     "Loans Committee": [
-        {"slug": "mr-eric-forson", "name": "Mr. Eric Forson", "role": "Loans Committee Chairperson", "image": "dr-eric-forson.jpg", "bio": "Detailed biography coming soon."},
+        {"slug": "mr-eric-forson", "name": "Mr. Eric Forson", "role": "Loans Committee Chairperson", "image": "mr-eric-forson.jpg", "bio": "Detailed biography coming soon."},
         {"slug": "leticia-baah", "name": "Leticia Baah", "role": "Loan Committee Secretary", "image": "leticia-baah.jpeg", "bio": "Detailed biography coming soon."},
         {"slug": "dr-kofi-panyin-boakye", "name": "Dr. Kofi Panyin Boakye", "role": "Loan Committee Member", "image": "dr-kofi-boakye.jpeg", "bio": "Detailed biography coming soon."},
     ],
@@ -73,7 +73,7 @@ His professional strength lies in combining account management, business develop
         {"slug": "francis-abebio-mensah", "name": "Francis Abebio Mensah", "role": "Relationship Officer", "image": "francis-abebio-mensah.jpg", "bio": "Detailed biography coming soon."},
         {"slug": "hamidatu-abubakar", "name": "Hamidatu Abubakar", "role": "Relationship Officer", "image": "hamidatu-abubakar.jpg", "bio": "Detailed biography coming soon."},
         {"slug": "ekow-akomeah-sekyi", "name": "Ekow Akomeah Sekyi", "role": "Relationship Officer - Takoradi", "image": "ekow-sekyi.jpeg", "bio": "Detailed biography coming soon."},
-        {"slug": "jonathan-wornyo", "name": "Jonathan Wornyo", "role": "Transport Officer", "image": "jonarhan-wornyo.png", "bio": "Detailed biography coming soon."},
+        {"slug": "jonathan-wornyo", "name": "Jonathan Wornyo", "role": "Transport Officer", "image": "jonathan-wornyo.png", "bio": "Detailed biography coming soon."},
     ]
 }
 

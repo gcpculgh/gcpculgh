@@ -742,7 +742,7 @@
     <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem;">
       {% for leader in leadership %}
       <a href="{% url 'team_bio' leader.slug %}" class="team-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2.5rem 2rem; text-align: center; box-shadow: var(--shadow-sm); text-decoration: none; display: block; transition: transform 0.2s ease;">
-        <img src="{% static 'assets/images/team/' %}{{ leader.image }}" alt="{{ leader.name }}" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; object-position: top center; margin: 0 auto 1.5rem auto; border: 4px solid var(--primary-light); display: block;" onerror="this.src='{% static 'assets/images/placeholder-avatar.jpg' %}'">
+        <img src="{% static 'assets/images/team/' %}{{ leader.image }}" alt="{{ leader.name }}" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; object-position: top center; margin: 0 auto 1.5rem auto; border: 4px solid var(--primary-light); display: block;" >
         <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">{{ leader.name }}</h4>
         <span style="display: block; font-size: 0.85rem; color: var(--coop-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">{{ leader.role }}</span>
         <span class="btn btn-outline btn-sm">Read Full Profile</span>
@@ -783,8 +783,7 @@
             <a href="{% url 'team_bio' member.slug %}" class="committee-card" style="text-decoration: none;"
                data-category="{% if group_name == 'Board of Directors' %}board{% elif group_name == 'Supervisory Committee' %}supervisory{% elif group_name == 'Loans Committee' %}loans{% else %}staff{% endif %}">
               
-              <img class="committee-photo" src="{% static 'assets/images/team/' %}{{ member.image }}" alt="{{ member.name }}" onerror="this.src='{% static 'assets/images/placeholder-avatar.jpg' %}'">
-              
+              <img class="committee-photo" src="{% static 'assets/images/team/' %}{{ member.image }}" alt="{{ member.name }}" >
               <div class="committee-info">
                 <h4>{{ member.name }}</h4>
                 <p>{{ member.role }}</p>
