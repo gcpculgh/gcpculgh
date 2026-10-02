@@ -1117,7 +1117,24 @@
         {% endfor %}
       </tbody>
     </table>
-    <div class="table-footer" id="docTableFooter">Showing {{ documents|length }} of {{ total_count }} documents</div>
+    <div class="table-footer" id="docTableFooter">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Showing {{ documents|length }} of {{ documents.paginator.count }} documents</span>
+        
+        <!-- Pagination Controls -->
+        <div style="display: flex; gap: 0.5rem;">
+          {% if documents.has_previous %}
+            <a href="?page={{ documents.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category != 'all' %}&category={{ category }}{% endif %}" class="btn-outline-admin" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Previous</a>
+          {% endif %}
+          
+          <span style="font-size: 0.8rem; padding-top: 0.2rem;">Page {{ documents.number }} of {{ documents.paginator.num_pages }}</span>
+          
+          {% if documents.has_next %}
+            <a href="?page={{ documents.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category != 'all' %}&category={{ category }}{% endif %}" class="btn-outline-admin" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Next</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endif %}

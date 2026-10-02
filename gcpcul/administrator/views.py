@@ -43,6 +43,8 @@ from .utils import optimize_and_convert_to_webp
 from django.utils import timezone
 from django.utils.text import slugify
 
+from django.core.paginator import Paginator 
+
 # Every view below is content-management, not member-facing — staff_member_required
 # (checks request.user.is_staff) is deliberate here instead of login_required, which
 # only checks "is someone logged in." Once the public Member Portal is live, an
@@ -583,9 +585,10 @@ def secure_media_download(request, public_id):
     )
     return redirect(presigned_url)
 
+
+
 @staff_required
 def document_list(request):
-    # Only fetch active documents
     documents = Document.objects.filter(is_deleted=False)
 
     query = request.GET.get("q", "").strip()
@@ -596,8 +599,13 @@ def document_list(request):
     if category in dict(Document.CATEGORY_CHOICES):
         documents = documents.filter(category=category)
 
+    # ADD PAGINATION (15 documents per page)
+    paginator = Paginator(documents, 15) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "documents": documents,
+        "documents": page_obj, # Pass the paginated object instead of the full queryset
         "query": query,
         "category": category,
         "total_count": Document.objects.filter(is_deleted=False).count(),

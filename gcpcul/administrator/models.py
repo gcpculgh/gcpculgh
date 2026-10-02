@@ -161,16 +161,11 @@ class Document(models.Model):
 
     @property
     def safe_file_size(self):
-        """Read locally first for instant page loads. Fallback to AWS only if missing."""
-        if self.file_size:
-            return self.file_size
-            
-        if not self.document:
-            return 0
-        try:
-            return self.document.size
-        except (FileNotFoundError, ValueError, OSError):
-            return 0
+        """
+        STRICT LOCAL READ: Never ping AWS/Cloudflare during page load. 
+        Returns the cached DB size, or 0 for legacy files.
+        """
+        return self.file_size or 0
 
 class GalleryAlbum(models.Model):
     CATEGORY_CHOICES = [

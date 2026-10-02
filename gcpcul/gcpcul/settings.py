@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'administrator',
     'users',
     'django_summernote',
+    'compressor',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gcpcul.middleware.VercelSecurityHeadersMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
+    'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'gcpcul.urls'
@@ -208,3 +211,18 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+
+# Only crush the code when DEBUG is False (so you can still read your comments locally)
+HTML_MINIFY = not DEBUG 
+
+# This is the security rule that actively deletes <!-- comments -->
+KEEP_COMMENTS_ON_MINIFYING = False 
+
+# Setup Django Compressor for CSS/JS
+COMPRESS_ENABLED = not DEBUG
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)

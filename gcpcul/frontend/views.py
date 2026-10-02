@@ -135,18 +135,40 @@ def gallery(request):
     })
 
 
+from django.core.paginator import Paginator
+
 def downloads(request):
-    # Query the unified table by category
-    forms = Document.objects.filter(category="form").exclude(document="")
-    reports = Document.objects.filter(category="report").exclude(document="")
-    agm_docs = Document.objects.filter(category="agm").exclude(document="")
-    policies = Document.objects.filter(category="legal").exclude(document="")
+    category = request.GET.get('category', 'all')
+    query = request.GET.get('q', '').strip()
+
+    # 1. Base query: Only show active documents that actually have a file uploaded
+    docs = Document.objects.filter(is_deleted=False).exclude(document="")
+
+    # 2. Apply Server-Side Filters
+    if category != 'all':
+        docs = docs.filter(category=category)
+    if query:
+        docs = docs.filter(title__icontains=query)
+
+    # 3. Industry-Standard Pagination (12 items per page for mobile speed)
+    paginator = Paginator(docs, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 4. Generate lightning-fast counts for the category tabs
+    counts = {
+        'all': Document.objects.filter(is_deleted=False).exclude(document="").count(),
+        'form': Document.objects.filter(category='form', is_deleted=False).exclude(document="").count(),
+        'report': Document.objects.filter(category='report', is_deleted=False).exclude(document="").count(),
+        'agm': Document.objects.filter(category='agm', is_deleted=False).exclude(document="").count(),
+        'legal': Document.objects.filter(category='legal', is_deleted=False).exclude(document="").count(),
+    }
 
     context = {
-        "forms": forms,
-        "reports": reports,
-        "agm_docs": agm_docs,
-        "policies": policies,
+        'page_obj': page_obj,
+        'current_category': category,
+        'query': query,
+        'counts': counts,
     }
     return render(request, 'downloads.html', context)
 
