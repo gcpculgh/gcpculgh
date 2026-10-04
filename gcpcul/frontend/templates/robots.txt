@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+User-agent: SeltzSitemapFetcher
+Disallow: /
+
+Sitemap: https://www.gcpculgh.com/sitemap.xml
