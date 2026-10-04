@@ -57,8 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gcpcul.middleware.VercelSecurityHeadersMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
-    'htmlmin.middleware.HtmlMinifyMiddleware',
-    'htmlmin.middleware.MarkRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'gcpcul.urls'
