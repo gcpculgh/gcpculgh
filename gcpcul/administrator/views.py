@@ -907,4 +907,4 @@ def custom_csrf_failure(request, reason=""):
     from django.shortcuts import redirect
     
     messages.error(request, "Your secure session expired due to inactivity. Please try saving again.")
-    return redirect("cms:dashboard")
+    return redirect("administrator:dashboard")
