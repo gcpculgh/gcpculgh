@@ -118,16 +118,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-htmlmin"
-version = "0.11.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "beautifulsoup4" },
-    { name = "html5lib" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/52/37/df97e6f60662e2545fa4349c48fbf2166eb8a4902c9bf1f179b7ee5aa0f0/django-htmlmin-0.11.0.tar.gz", hash = "sha256:e41b2a2157570846645cc636a9bddde8aa3e03f6834a9211e61a17f2ed42b87e", size = 8017, upload-time = "2019-03-18T01:25:14.71Z" }
-
-[[package]]
 name = "django-storages"
 version = "1.14.6"
 source = { registry = "https://pypi.org/simple" }
@@ -174,7 +164,6 @@ dependencies = [
     { name = "django" },
     { name = "django-appconf" },
     { name = "django-compressor" },
-    { name = "django-htmlmin" },
     { name = "django-storages" },
     { name = "django-summernote" },
     { name = "dotenv" },
@@ -210,7 +199,6 @@ requires-dist = [
     { name = "django", specifier = "==6.1" },
     { name = "django-appconf", specifier = "==1.2.0" },
     { name = "django-compressor", specifier = "==4.6.0" },
-    { name = "django-htmlmin", specifier = "==0.11.0" },
     { name = "django-storages", specifier = "==1.14.6" },
     { name = "django-summernote", specifier = "==0.8.20.0" },
     { name = "dotenv", specifier = "==0.9.9" },

@@ -17,7 +17,6 @@ dependencies = [
     "django==6.1",
     "django-appconf==1.2.0",
     "django-compressor==4.6.0",
-    "django-htmlmin==0.11.0",
     "django-storages==1.14.6",
     "django-summernote==0.8.20.0",
     "dotenv==0.9.9",
