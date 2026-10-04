@@ -1,0 +1,52 @@
+[project]
+name = "gcpc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "gcpculgh", email = "infolinkghana@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "asgiref==3.12.1",
+    "beautifulsoup4==4.15.0",
+    "bleach==6.4.0",
+    "boto3==1.43.89",
+    "botocore==1.43.89",
+    "dj-database-url==3.1.2",
+    "django==6.1",
+    "django-appconf==1.2.0",
+    "django-compressor==4.6.0",
+    "django-htmlmin==0.11.0",
+    "django-storages==1.14.6",
+    "django-summernote==0.8.20.0",
+    "dotenv==0.9.9",
+    "html5lib==1.1",
+    "jmespath==1.1.0",
+    "markdown==3.10.3",
+    "pillow==12.3.0",
+    "pip==26.2.1",
+    "psycopg2-binary==2.9.12",
+    "pypdf==6.19.0",
+    "python-dateutil==2.9.0.post0",
+    "python-decouple==3.8",
+    "python-dotenv==1.2.3",
+    "python-magic==0.4.27",
+    "rcssmin==1.2.2",
+    "rjsmin==1.2.5",
+    "s3transfer==0.19.2",
+    "six==1.17.0",
+    "soupsieve==2.10",
+    "sqlparse==0.6.0",
+    "typing-extensions==4.16.0",
+    "urllib3==2.7.0",
+    "uv==0.12.23",
+    "webencodings==0.6.1",
+]
+
+[project.scripts]
+gcpc = "gcpc:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
