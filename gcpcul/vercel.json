@@ -12,5 +12,10 @@
       "src": "/(.*)",
       "dest": "gcpcul/wsgi.py"
     }
-  ]
+  ],
+  "functions": {
+    "gcpcul/wsgi.py": {
+      "excludeFiles": "{db.sqlite3,media/**,og-generator/**,*.docx,*.pdf}"
+    }
+  }
 }
