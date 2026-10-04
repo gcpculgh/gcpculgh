@@ -4,19 +4,27 @@ set -o errexit
 echo "--- 1. Installing dependencies ---"
 pip install -r requirements.txt
 
-echo "--- 2. Executing surgical AWS bloat removal ---"
-# Find where botocore was installed and strip heavy unused service data
+echo "--- 2. Stripping AWS and Django-Summernote site-package bloat ---"
 python3 -c "
 import os, shutil
+
+# Walk through the environment to find and clean heavy package assets
 for root, dirs, files in os.walk('/'):
+    # Strip unused AWS botocore data
     if 'botocore' in dirs:
-        botocore_data = os.path.join(root, 'botocore', 'data')
-        if os.path.exists(botocore_data):
-            print('Found botocore data at:', botocore_data)
-            for item in os.listdir(botocore_data):
+        b_data = os.path.join(root, 'botocore', 'data')
+        if os.path.exists(b_data):
+            for item in os.listdir(b_data):
                 if item not in ['s3', 's3control', 'sts', 'iam']:
-                    shutil.rmtree(os.path.join(botocore_data, item), ignore_errors=True)
-            print('Stripped unused AWS service definitions from botocore.')
+                    shutil.rmtree(os.path.join(b_data, item), ignore_errors=True)
+            print('Cleaned botocore data definitions.')
+
+    # Strip heavy frontend static files bundled inside django-summernote
+    if 'django_summernote' in dirs:
+        ds_static = os.path.join(root, 'django_summernote', 'static')
+        if os.path.exists(ds_static):
+            shutil.rmtree(ds_static, ignore_errors=True)
+            print('Stripped django_summernote static assets from backend bundle.')
 "
 
 echo "--- 3. Compiling Django static assets ---"
