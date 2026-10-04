@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "gcpculgh", email = "infolinkghana@gmail.com" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "asgiref==3.12.1",
     "bleach==6.4.0",
