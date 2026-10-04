@@ -1,0 +1,16 @@
+# Exclude Virtual Environments
+.venv/
+venv/
+
+# Exclude Heavy Office Documents
+*.docx
+*.pdf
+*.xlsx
+
+# Exclude Local Databases and Caches
+db.sqlite3
+__pycache__/
+*.pyc
+
+# Exclude Markdown/Docs
+*.md
