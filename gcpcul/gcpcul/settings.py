@@ -222,6 +222,7 @@ KEEP_COMMENTS_ON_MINIFYING = False
 
 # Setup Django Compressor for CSS/JS
 COMPRESS_ENABLED = not DEBUG
+COMPRESS_OFFLINE = True 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
