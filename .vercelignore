@@ -14,7 +14,6 @@ __pycache__/
 
 # Exclude Utility & Frontend Folders
 og-generator/
-src/
 node_modules/
 
 # Exclude Uploaded Media (Should stream from Cloudflare R2)
