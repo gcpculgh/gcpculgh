@@ -9,7 +9,6 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "asgiref==3.12.1",
-    "beautifulsoup4==4.15.0",
     "bleach==6.4.0",
     "boto3==1.43.89",
     "botocore==1.43.89",
@@ -20,12 +19,10 @@ dependencies = [
     "django-storages==1.14.6",
     "django-summernote==0.8.20.0",
     "dotenv==0.9.9",
-    "html5lib==1.1",
     "jmespath==1.1.0",
     "markdown==3.10.3",
     "pillow==12.3.0",
     "psycopg2-binary==2.9.12",
-    "pypdf==6.19.0",
     "python-dateutil==2.9.0.post0",
     "python-decouple==3.8",
     "python-dotenv==1.2.3",
@@ -34,7 +31,6 @@ dependencies = [
     "rjsmin==1.2.5",
     "s3transfer==0.19.2",
     "six==1.17.0",
-    "soupsieve==2.10",
     "sqlparse==0.6.0",
     "typing-extensions==4.16.0",
     "urllib3==2.7.0",
