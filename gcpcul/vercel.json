@@ -15,7 +15,7 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
-      "excludeFiles": "{db.sqlite3,media/**,og-generator/**,*.docx,*.pdf}"
+      "excludeFiles": "{**/botocore/data/sagemaker/**,**/botocore/data/ec2/**,**/botocore/data/rds/**,**/botocore/data/glue/**,**/botocore/data/quicksight/**,**/__pycache__/**,**/*.pyc}"
     }
   }
 }
