@@ -1,20 +1,14 @@
-# Exclude Virtual Environments
+# Exclude globally, regardless of which folder they hide in
+**/db.sqlite3
+**/__pycache__/
+**/*.pyc
+**/media/
+**/*.docx
+**/*.pdf
+**/*.xlsx
+
+# Exclude Root utility folders
 .venv/
 venv/
-
-# Exclude Heavy Office Documents
-*.docx
-*.pdf
-*.xlsx
-
-# Exclude Local Databases and Caches
-db.sqlite3
-__pycache__/
-*.pyc
-
-# Exclude Utility & Frontend Folders
 og-generator/
 node_modules/
-
-# Exclude Uploaded Media (Should stream from Cloudflare R2)
-media/
