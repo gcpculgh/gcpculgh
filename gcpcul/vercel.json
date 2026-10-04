@@ -15,7 +15,17 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
-      "excludeFiles": "{**/botocore/data/sagemaker/**,**/botocore/data/ec2/**,**/botocore/data/rds/**,**/botocore/data/glue/**,**/botocore/data/quicksight/**,**/__pycache__/**,**/*.pyc}"
+      "excludeFiles": [
+        "_vendor/botocore/data/sagemaker/**",
+        "_vendor/botocore/data/ec2/**",
+        "_vendor/botocore/data/rds/**",
+        "_vendor/botocore/data/glue/**",
+        "_vendor/botocore/data/quicksight/**",
+        "**/*.pyc",
+        "**/__pycache__/**",
+        "db.sqlite3",
+        "media/**"
+      ]
     }
   }
 }
