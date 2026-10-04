@@ -10,28 +10,7 @@ function showToast(message, type = 'success') {
     setTimeout(() => { toast.classList.remove('show'); }, 3500);
 }
 
-/* DYNAMIC DJANGO ALBUMS DATABASE (Zero-Trust R2 Links) */
-const ALBUMS_DATA = {
-    {% for album in albums %}
-"{{ album.public_id }}": { /* ENTERPRISE FIX: Secure UUID Key */
-    title: "{{ album.title|escapejs }}",
-        subtitle: "{{ album.subtitle|escapejs }}",
-            photos: [
-                {% for media in album.media.all %}
-{% if not media.is_deleted and media.file %}
-{
-    type: "{{ media.media_type }}",
-        src: "{{ media.file.url|escapejs }}",
-            thumb: "{% if media.media_type == 'video' %}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII={% else %}{{ media.file.url|escapejs }}{% endif %}",
-                caption: "{{ media.caption|default:album.title|escapejs }}",
-                    public_id: "{{ media.public_id }}" /* ZERO-TRUST ID INJECTED */
-} {% if not forloop.last %}, {% endif %}
-{% endif %}
-{% endfor %}
-      ]
-    }{% if not forloop.last %}, {% endif %}
-{% endfor %}
-  };
+
 
 let activeAlbumKey = null;
 let activePhotosList = [];

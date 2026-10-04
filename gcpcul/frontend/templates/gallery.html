@@ -198,5 +198,31 @@
 {% endblock %}
 
 {% block extra_js %}
+<script>
+  /* DYNAMIC DJANGO ALBUMS DATABASE (Rendered by Server) */
+  const ALBUMS_DATA = {
+    {% for album in albums %}
+      "{{ album.public_id }}": {
+        title: "{{ album.title|escapejs }}",
+        subtitle: "{{ album.subtitle|escapejs }}",
+        photos: [
+          {% for media in album.media.all %}
+            {% if not media.is_deleted and media.file %}
+            {
+              type: "{{ media.media_type }}",
+              src: "{{ media.file.url|escapejs }}",
+              thumb: "{% if media.media_type == 'video' %}data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII={% else %}{{ media.file.url|escapejs }}{% endif %}",
+              caption: "{{ media.caption|default:album.title|escapejs }}",
+              public_id: "{{ media.public_id }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endif %}
+          {% endfor %}
+        ]
+      }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  };
+</script>
+
+<!-- Now load the external script that relies on ALBUMS_DATA -->
 <script src="{% static 'assets/js/gallery.js' %}"></script>
 {% endblock %}
