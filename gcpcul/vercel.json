@@ -16,11 +16,9 @@
   "functions": {
     "gcpcul/wsgi.py": {
       "excludeFiles": [
-        "_vendor/botocore/data/sagemaker/**",
-        "_vendor/botocore/data/ec2/**",
-        "_vendor/botocore/data/rds/**",
-        "_vendor/botocore/data/glue/**",
-        "_vendor/botocore/data/quicksight/**",
+        "**/django_summernote/static/**",
+        "**/botocore/data/sagemaker/**",
+        "**/botocore/data/ec2/**",
         "**/*.pyc",
         "**/__pycache__/**",
         "db.sqlite3",
