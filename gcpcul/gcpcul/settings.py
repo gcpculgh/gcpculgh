@@ -212,12 +212,6 @@ STORAGES = {
 }
 
 
-# Only crush the code when DEBUG is False (so you can still read your comments locally)
-HTML_MINIFY = not DEBUG 
-
-# This is the security rule that actively deletes <!-- comments -->
-KEEP_COMMENTS_ON_MINIFYING = False 
-
 # Setup Django Compressor for CSS/JS
 COMPRESS_ENABLED = not DEBUG
 COMPRESS_OFFLINE = True 
