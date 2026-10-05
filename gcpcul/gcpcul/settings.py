@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'gcpcul.settings.VercelStealthDebugMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -242,3 +243,15 @@ LOGGING = {
         },
     },
 }
+
+import traceback
+
+class VercelStealthDebugMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+    def __call__(self, request):
+        return self.get_response(request)
+    def process_exception(self, request, exception):
+        # This prints the exact error to your Vercel logs, but keeps the site secure
+        print(f"CRITICAL VERCEL CRASH: {traceback.format_exc()}")
+        return None
