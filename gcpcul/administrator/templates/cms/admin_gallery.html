@@ -306,10 +306,10 @@
           <h4>{{ album.title|default:"Untitled Album" }}</h4>
           
           <div class="album-admin-actions">
-            <a href="{% url 'cms:gallery_update' album.public_id %}" class="btn-outline-admin" style="text-decoration: none; text-align: center; display: inline-flex; justify-content: center; align-items: center;">Edit / Add Photos</a>
+            <a href="{% url 'administrator:gallery_update' album.public_id %}" class="btn-outline-admin" style="text-decoration: none; text-align: center; display: inline-flex; justify-content: center; align-items: center;">Edit / Add Photos</a>
             
             <!-- Upgraded Delete Button -->
-            <form method="post" action="{% url 'cms:gallery_delete' album.public_id %}" style="margin:0; display:flex;" id="delete-form-{{ album.public_id }}" onsubmit="event.preventDefault(); openDeleteModal('{{ album.public_id }}', '{{ album.title|escapejs }}');">
+            <form method="post" action="{% url 'administrator:gallery_delete' album.public_id %}" style="margin:0; display:flex;" id="delete-form-{{ album.public_id }}" onsubmit="event.preventDefault(); openDeleteModal('{{ album.public_id }}', '{{ album.title|escapejs }}');">
               {% csrf_token %}
               <button type="submit" class="btn-outline-admin" style="color: var(--danger); border-color: var(--danger);">
                 <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
@@ -345,7 +345,7 @@
     
     <!-- Smart Back Button: Navigates URLs if editing, or toggles UI if creating -->
     {% if open_editor %}
-      <a href="{% url 'cms:gallery_list' %}" class="back-to-list" style="text-decoration: none;">
+      <a href="{% url 'administrator:gallery_list' %}" class="back-to-list" style="text-decoration: none;">
         <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
         Back to Gallery
       </a>
@@ -521,7 +521,7 @@
 
       <div class="form-footer" style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 0.75rem;">
         {% if open_editor %}
-          <a href="{% url 'cms:gallery_list' %}" class="btn-outline-admin" style="text-decoration: none;">Close</a>
+          <a href="{% url 'administrator:gallery_list' %}" class="btn-outline-admin" style="text-decoration: none;">Close</a>
         {% else %}
           <button type="button" class="btn-outline-admin" onclick="closeEditor()">Close</button>
         {% endif %}
@@ -900,7 +900,7 @@
           watermark_config: watermarkConfig 
         };
 
-        const res = await fetch("{% url 'cms:gallery_auto_save' %}", {
+        const res = await fetch("{% url 'administrator:gallery_auto_save' %}", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
           body: JSON.stringify(payload)
@@ -950,7 +950,7 @@
       let finalCoverDbId = null;
       if (coverIndex !== null && mediaItems[coverIndex].db_id) { finalCoverDbId = mediaItems[coverIndex].db_id; }
       if (finalCoverDbId) {
-          await fetch("{% url 'cms:gallery_auto_save' %}", {
+          await fetch("{% url 'administrator:gallery_auto_save' %}", {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
             body: JSON.stringify({ 
@@ -980,7 +980,7 @@
         
         setTimeout(() => {
           bypassUnloadWarning = true; 
-          window.location.href = "{% url 'cms:gallery_list' %}"; 
+          window.location.href = "{% url 'administrator:gallery_list' %}"; 
         }, 800);
       }
 
@@ -1110,7 +1110,7 @@
   async function streamToCloudflare(item, file) {
     try {
       const processedFile = await compressImageToWebP(file);
-      const res = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(processedFile.name)}&content_type=${encodeURIComponent(processedFile.type)}`);
+      const res = await fetch(`{% url 'administrator:generate_upload_url' %}?filename=${encodeURIComponent(processedFile.name)}&content_type=${encodeURIComponent(processedFile.type)}`);
       const { upload_url, file_key } = await res.json();
       await fetch(upload_url, { method: 'PUT', headers: { 'Content-Type': processedFile.type }, body: processedFile });
       

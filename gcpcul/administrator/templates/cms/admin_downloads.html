@@ -868,14 +868,14 @@
 {% if open_upload %}
 <!-- ============ UPLOAD / EDIT FORM VIEW ============ -->
 <div id="uploadView">
-  <a href="{% url 'cms:document_list' %}" class="back-to-list">
+  <a href="{% url 'administrator:document_list' %}" class="back-to-list">
     <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
     Back to Document Vault
   </a>
 
   <!-- True Server-Side Form Routing -->
   <form class="form-panel" method="post" enctype="multipart/form-data"
-    action="{% if editing %}{% url 'cms:document_update' editing.pk %}{% else %}{% url 'cms:document_create' %}{% endif %}">
+    action="{% if editing %}{% url 'administrator:document_update' editing.pk %}{% else %}{% url 'administrator:document_create' %}{% endif %}">
     {% csrf_token %}
     <input type="hidden" name="thumbnail_base64" id="thumbBase64">
     <div class="field-row">
@@ -971,7 +971,7 @@
     <div class="file-drop-sub" id="fileDropSub">
       {% if editing and editing.document %}
       {{ editing.document.size|filesizeformat }} — currently active<br>
-      <a href="{% url 'cms:secure_document_download' editing.id %}" target="_blank"
+      <a href="{% url 'administrator:secure_document_download' editing.id %}" target="_blank"
         style="color: var(--primary-green); text-decoration: underline; font-weight: 700; position: relative; z-index: 10; margin-top: 0.5rem; display: inline-block;"
         onclick="event.stopPropagation()">Preview Current File</a>
       {% else %}
@@ -1005,7 +1005,7 @@
 <input type="hidden" name="r2_file_key" id="r2FileKey">
 
 <div class="form-footer">
-  <a href="{% url 'cms:document_list' %}" class="btn-outline-admin">Cancel</a>
+  <a href="{% url 'administrator:document_list' %}" class="btn-outline-admin">Cancel</a>
   <button type="button" onclick="initiateSecureUpload()" class="btn-primary-admin">
     <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
     {% if editing %}Update{% else %}Save{% endif %} Document
@@ -1023,7 +1023,7 @@
       <h1>Document Vault</h1>
       <p>{{ uploaded_count }} of {{ total_count }} document{{ total_count|pluralize }} uploaded with valid files.</p>
     </div>
-    <a href="{% url 'cms:document_create' %}" class="btn-primary-admin">
+    <a href="{% url 'administrator:document_create' %}" class="btn-primary-admin">
       <span class="material-symbols-outlined" style="font-size:1.05rem;">upload_file</span>
       Upload Document
     </a>
@@ -1087,15 +1087,15 @@
           <td>
             <div class="row-actions">
               {% if doc.document %}
-              <a href="{% url 'cms:secure_document_download' doc.public_id %}" target="_blank" class="row-action-btn"
+              <a href="{% url 'administrator:secure_document_download' doc.public_id %}" target="_blank" class="row-action-btn"
                 title="Download Document">
                 <span class="material-symbols-outlined">download</span>
               </a>
               {% endif %}
-              <a href="{% url 'cms:document_update' doc.public_id %}" class="row-action-btn"><span
+              <a href="{% url 'administrator:document_update' doc.public_id %}" class="row-action-btn"><span
                   class="material-symbols-outlined">edit</span></a>
               <!-- Secure, custom modal trigger -->
-              <form method="post" action="{% url 'cms:document_delete' doc.public_id %}" style="margin:0;"
+              <form method="post" action="{% url 'administrator:document_delete' doc.public_id %}" style="margin:0;"
                 id="delete-form-{{ doc.public_id }}"
                 onsubmit="event.preventDefault(); openDeleteModal('{{ doc.pk }}', '{{ doc.title|escapejs }}');">
                 {% csrf_token %}
@@ -1431,7 +1431,7 @@
     try {
       statusText.innerHTML = '<span class="material-symbols-outlined">key</span> Requesting secure uplink...';
 
-      const presignedRes = await fetch(`{% url 'cms:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
+      const presignedRes = await fetch(`{% url 'administrator:generate_upload_url' %}?filename=${encodeURIComponent(file.name)}&content_type=${encodeURIComponent(file.type)}`);
       if (!presignedRes.ok) {
         const errText = await presignedRes.text();
         console.error("Backend Error:", errText);

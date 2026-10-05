@@ -260,18 +260,18 @@
 
     <nav class="sidebar-nav">
       <div class="nav-label">Overview</div>
-      <a href="{% url 'cms:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+      <a href="{% url 'administrator:dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
         <span class="material-symbols-outlined">space_dashboard</span> Dashboard
       </a>
 
       <div class="nav-label">Content — Active</div>
-      <a href="{% url 'cms:news_list' %}" class="nav-item {% block nav_news %}{% endblock %}">
+      <a href="{% url 'administrator:news_list' %}" class="nav-item {% block nav_news %}{% endblock %}">
         <span class="material-symbols-outlined">news</span> News &amp; Blog
       </a>
-      <a href="{% url 'cms:document_list' %}" class="nav-item {% block nav_downloads %}{% endblock %}">
+      <a href="{% url 'administrator:document_list' %}" class="nav-item {% block nav_downloads %}{% endblock %}">
         <span class="material-symbols-outlined">folder_open</span> Document Vault
       </a>
-      <a href="{% url 'cms:gallery_list' %}" class="nav-item {% block nav_gallery %}{% endblock %}">
+      <a href="{% url 'administrator:gallery_list' %}" class="nav-item {% block nav_gallery %}{% endblock %}">
         <span class="material-symbols-outlined">photo_library</span> Gallery
       </a>
 
@@ -424,7 +424,7 @@
 
     // Background Heartbeat
     setInterval(() => {
-      fetch("{% url 'cms:dashboard' %}", { method: 'HEAD' })
+      fetch("{% url 'administrator:dashboard' %}", { method: 'HEAD' })
         .then(res => {
           if (res.redirected) window.location.reload();
         }).catch(() => {});

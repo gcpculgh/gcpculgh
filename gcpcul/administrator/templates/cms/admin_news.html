@@ -795,11 +795,11 @@
           <td>
             <div class="row-actions">
               <!-- Edit points to your update view -->
-              <a href="{% url 'cms:news_update' article.public_id %}" class="row-action-btn" aria-label="Edit" style="text-decoration:none;">
+              <a href="{% url 'administrator:news_update' article.public_id %}" class="row-action-btn" aria-label="Edit" style="text-decoration:none;">
                 <span class="material-symbols-outlined">edit</span>
               </a>
               <!-- Delete uses a POST form for security -->
-              <form method="POST" action="{% url 'cms:news_delete' article.public_id %}" style="display:inline;" onsubmit="return confirm('Delete this article?');">
+              <form method="POST" action="{% url 'administrator:news_delete' article.public_id %}" style="display:inline;" onsubmit="return confirm('Delete this article?');">
                 {% csrf_token %}
                 <button type="submit" class="row-action-btn danger" aria-label="Delete"><span class="material-symbols-outlined">delete</span></button>
               </form>
@@ -833,7 +833,7 @@
     </div>
   </div>
 
-  <form id="articleForm" method="POST" enctype="multipart/form-data" action="{% if editing %}{% url 'cms:news_update' editing.public_id %}{% else %}{% url 'cms:news_create' %}{% endif %}">
+  <form id="articleForm" method="POST" enctype="multipart/form-data" action="{% if editing %}{% url 'administrator:news_update' editing.public_id %}{% else %}{% url 'administrator:news_create' %}{% endif %}">
     {% csrf_token %}
 
     <!-- Hidden fields to catch the JS data -->
