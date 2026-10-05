@@ -1059,13 +1059,12 @@
         <tr data-cat="{{ doc.category }}" data-search="{{ doc.title|lower }}">
           <td>
             <div class="doc-row-title">
-              <div class="doc-row-icon"><span class="material-symbols-outlined">{{ doc.icon|default:"description"
-                  }}</span></div>
-              <div>
-                <strong>{{ doc.title }}</strong>
-                {% if doc.description %}<div class="doc-row-desc">{{ doc.description|truncatechars:45 }}</div>{% endif
-                %}
-              </div>
+              <div class="doc-row-icon"><span class="material-symbols-outlined">{{ doc.icon|default:"description" }}</span></div>
+            <div>
+            <strong>{{ doc.title }}</strong>
+            {% if doc.description %}
+            <div class="doc-row-desc">{{ doc.description|truncatechars:45 }}</div>{% endif %}
+          </div>
             </div>
           </td>
           <td>
@@ -1105,19 +1104,17 @@
             </div>
           </td>
         </tr>
-      {% endfor %}
-
-      {% if not documents %}
-      <tr>
-        <td colspan="5" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
-          <span class="material-symbols-outlined" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;">folder_open</span><br>
-          <strong>No documents found.</strong><br>
-          Adjust your search or upload a new one.
-        </td>
-      </tr>
-      {% endif %}
-  </tbody>
-</table>
+      {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            <span class="material-symbols-outlined" style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;">folder_open</span><br>
+            <strong>No documents found.</strong><br>
+            Adjust your search or upload a new one.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     <div class="table-footer" id="docTableFooter">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span>Showing {{ documents|length }} of {{ documents.paginator.count }} documents</span>
