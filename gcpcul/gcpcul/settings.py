@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gcpcul.middleware.VercelSecurityHeadersMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
+    'gcpcul.middleware.StripHtmlCommentsMiddleware',
 ]
 
 ROOT_URLCONF = 'gcpcul.urls'
