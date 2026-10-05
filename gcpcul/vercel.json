@@ -10,7 +10,7 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
-      "excludeFiles": "{gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/django_summernote/static/**,**/botocore/data/**}"
+      "excludeFiles": "{static/**,gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/django_summernote/static/**,**/botocore/data/**}"
     }
   }
 }   
