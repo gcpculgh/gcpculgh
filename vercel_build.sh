@@ -20,8 +20,20 @@ python manage.py collectstatic --noinput
 python manage.py compress --force
 cd ..
 
-echo "--- 3. Nuking staticfiles and media from disk so Vercel doesn't zip them ---"
+echo "--- 3. Nuking media (and preserving Compressor manifest) ---"
+# Save the CACHE folder before nuking staticfiles
+if [ -d "gcpcul/staticfiles/CACHE" ]; then
+    mv gcpcul/staticfiles/CACHE ./compressor_cache_backup
+fi
+
 rm -rf gcpcul/staticfiles/
+mkdir -p gcpcul/staticfiles/
+
+# Restore the CACHE folder so Vercel can find the manifest
+if [ -d "./compressor_cache_backup" ]; then
+    mv ./compressor_cache_backup gcpcul/staticfiles/CACHE
+fi
+
 rm -rf gcpcul/media/
 rm -rf og-generator/
 
