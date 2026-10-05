@@ -1,16 +1,6 @@
 {
   "version": 2,
-  "build": {
-    "env": {
-      "DISABLE_COLLECTSTATIC": "1"
-    }
-  },
-  "builds": [
-    {
-      "src": "gcpcul/wsgi.py",
-      "use": "@vercel/python"
-    }
-  ],
+  "buildCommand": "bash vercel_build.sh",
   "routes": [
     { "handle": "filesystem" },
     {
@@ -20,15 +10,7 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
-      "excludeFiles": [
-        "media/**",
-        "**/django_summernote/static/**",
-        "**/botocore/data/sagemaker/**",
-        "**/botocore/data/ec2/**",
-        "**/*.pyc",
-        "**/__pycache__/**",
-        "db.sqlite3"
-      ]
+      "excludeFiles": "{gcpcul/staticfiles/**,gcpcul/static/**,gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/django_summernote/static/**,**/botocore/data/sagemaker/**,**/botocore/data/ec2/**}"
     }
   }
-}
+}   
