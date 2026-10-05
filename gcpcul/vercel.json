@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": "bash vercel_build.sh",
   "routes": [
-    { "handle": "filesystem" },
     {
       "src": "/(.*)",
       "dest": "gcpcul/wsgi.py"
@@ -10,7 +9,7 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
-      "excludeFiles": "{static/**,gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/django_summernote/static/**,**/botocore/data/**}"
+      "excludeFiles": "{gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/botocore/data/**}"
     }
   }
 }   
