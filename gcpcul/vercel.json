@@ -16,7 +16,6 @@
   "functions": {
     "gcpcul/wsgi.py": {
       "excludeFiles": [
-        "staticfiles/**",
         "media/**",
         "**/django_summernote/static/**",
         "**/botocore/data/sagemaker/**",
