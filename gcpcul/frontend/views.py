@@ -3,6 +3,8 @@ from administrator.models import *
 from django.contrib import messages
 from administrator.forms import * 
 from administrator.models import Document 
+from django.db.models import Count, Q
+from django.core.paginator import Paginator
 
 from django.http import Http404
 
@@ -135,8 +137,6 @@ def gallery(request):
     })
 
 
-from django.core.paginator import Paginator
-
 def downloads(request):
     category = request.GET.get('category', 'all')
     query = request.GET.get('q', '').strip()
@@ -156,13 +156,13 @@ def downloads(request):
     page_obj = paginator.get_page(page_number)
 
     # 4. Generate lightning-fast counts for the category tabs
-    counts = {
-        'all': Document.objects.filter(is_deleted=False).exclude(document="").count(),
-        'form': Document.objects.filter(category='form', is_deleted=False).exclude(document="").count(),
-        'report': Document.objects.filter(category='report', is_deleted=False).exclude(document="").count(),
-        'agm': Document.objects.filter(category='agm', is_deleted=False).exclude(document="").count(),
-        'legal': Document.objects.filter(category='legal', is_deleted=False).exclude(document="").count(),
-    }
+    counts = Document.objects.filter(is_deleted=False).exclude(document="").aggregate(
+        all=Count('id'),
+        form=Count('id', filter=Q(category='form')),
+        report=Count('id', filter=Q(category='report')),
+        agm=Count('id', filter=Q(category='agm')),
+        legal=Count('id', filter=Q(category='legal')),
+    )
 
     context = {
         'page_obj': page_obj,
