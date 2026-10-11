@@ -970,7 +970,7 @@
 
     <div class="file-drop-sub" id="fileDropSub">
       {% if editing and editing.document %}
-      {{ editing.document.size|filesizeformat }} — currently active<br>
+      {{ editing.safe_file_size|filesizeformat }} — currently active<br>
       <a href="{% url 'administrator:secure_document_download' editing.id %}" target="_blank"
         style="color: var(--primary-green); text-decoration: underline; font-weight: 700; position: relative; z-index: 10; margin-top: 0.5rem; display: inline-block;"
         onclick="event.stopPropagation()">Preview Current File</a>

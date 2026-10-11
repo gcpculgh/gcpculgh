@@ -850,7 +850,7 @@
       
       const existingMediaToUpdate = mediaItems.filter(m => m.db_id !== null);
 
-      const chunkSize = 1;
+      const chunkSize = 10; 
       const chunks = [];
       if (newMediaToSave.length === 0) {
         chunks.push([]); 
@@ -956,7 +956,8 @@
             body: JSON.stringify({ 
                 album_id: albumId, 
                 cover_db_id: finalCoverDbId,
-                active_db_ids: mediaItems.map(m => m.db_id).filter(id => id !== null) 
+                active_db_ids: mediaItems.map(m => m.db_id).filter(id => id !== null),
+                publish: isPublishing // ENTERPRISE FIX: Prevents the server from reverting to draft
             })
           });
       }
@@ -1139,6 +1140,24 @@
     const emptyNote = document.getElementById('emptyMediaNote');
     document.getElementById('mediaCountLabel').textContent = mediaItems.length + ' media item' + (mediaItems.length === 1 ? '' : 's');
 
+    // Automatically lock/unlock the publish button based on active uploads
+    const isUploading = mediaItems.some(m => m.uploading) || (typeof uploadQueue !== 'undefined' && uploadQueue.length > 0);
+    const submitBtn = document.getElementById('gallerySubmitBtn');
+    
+    if (submitBtn) {
+        if (isUploading) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+            submitBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:1.05rem;">progress_activity</span> Uploading assets...';
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.05rem;">public</span> Publish Album';
+        }
+    }
+
     if (mediaItems.length === 0) {
       grid.innerHTML = ''; 
       grid.appendChild(emptyNote); 
@@ -1184,6 +1203,7 @@
       document.getElementById('coverKeyInput').value = mediaItems[coverIndex].isNew ? 'new-' + coverIndex : 'existing-' + mediaItems[coverIndex].db_id;
     }
   }
+
 
   function toggleTileSelection(index, checkbox) {
     const tile = document.getElementById(`media-tile-${index}`);

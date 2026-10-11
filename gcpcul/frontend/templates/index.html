@@ -381,7 +381,7 @@
     </div>
     <div class="blog-grid">
       {% for blog in blogs %}
-      <a href="#" class="blog-card" style="color: inherit;">
+        <a href="{% url 'article_detail' blog.slug %}" class="blog-card" style="color: inherit;">
         {% if blog.cover_image %}
         <div class="blog-thumb" style="background-image: url('{{ blog.cover_image.url }}');"></div>
         {% endif %}

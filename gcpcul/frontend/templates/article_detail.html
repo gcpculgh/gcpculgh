@@ -70,7 +70,7 @@
   </div>
   <div class="read-next-grid">
     {% for rel in related %}
-    <a href="{% url 'article_detail' rel.id %}" class="blog-card">
+    <a href="{% url 'article_detail' rel.slug %}" class="blog-card">
       <div class="blog-thumb">
         {% if rel.featured_image %}
         <img src="{{ rel.featured_image.url }}" alt="{{ rel.title }}" loading="lazy" onerror="this.style.display='none';">

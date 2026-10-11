@@ -9,6 +9,7 @@
   ],
   "functions": {
     "gcpcul/wsgi.py": {
+      "maxDuration": 60,
       "excludeFiles": "{gcpcul/media/**,og-generator/**,docs/**,tests/**,**/__pycache__/**,**/*.pyc,*.sqlite3,db.sqlite3,**/botocore/data/**}"
     }
   }

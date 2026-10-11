@@ -305,6 +305,8 @@ def gallery_auto_save(request):
         
         if data.get('publish'):
             album.status = 'published'
+        else:
+            album.status = 'draft' # instantly pulls it offline during edits
             
         album.save()
 

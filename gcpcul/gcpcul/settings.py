@@ -169,6 +169,9 @@ MAILERS = {
     },
 }
 
+GALLERY_DOWNLOAD_SECRET = os.environ.get("GALLERY_DOWNLOAD_SECRET")
+
+
 # Tells Django to trust Vercel's edge network when it says the original request was HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 

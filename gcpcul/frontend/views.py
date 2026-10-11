@@ -8,6 +8,25 @@ from django.core.paginator import Paginator
 
 from django.http import Http404
 
+import io
+import zipfile
+import json
+import logging
+from django.http import JsonResponse, StreamingHttpResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+
+import hashlib
+import hmac
+import time
+import base64
+from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
+MAX_FILES = 30  # hard cap to stay within Vercel function limits
+
 # GLOBAL STATIC DATA HYDRATION
 TEAM_DATA = {
     "Operational Leadership": [
@@ -129,13 +148,53 @@ def team_bio_view(request, slug):
 def calculator(request): 
     return render(request, 'calculator.html')
 
-def gallery(request):
+
+@require_POST
+@csrf_exempt
+def issue_download_token(request):
+    """
+    POST /api/gallery/download-token/
+    Body: {"keys": ["media/.../a.webp", "media/.../b.webp"]}
+    Returns: {"token": "...", "timestamp": 1728518400}
+    """
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    keys = data.get("keys", [])
+    if not keys or len(keys) > 30:
+        return JsonResponse({"error": "Invalid keys"}, status=400)
+
+    # Validate all keys belong to published, non-deleted media
+    valid_count = MediaItem.objects.filter(
+        file__in=keys,
+        is_deleted=False,
+        album__status='published',
+        album__is_deleted=False
+    ).count()
+
+    if valid_count != len(keys):
+        return JsonResponse({"error": "Invalid media keys"}, status=403)
+
+    timestamp = int(time.time())
+    payload = f"{timestamp}:{','.join(sorted(keys))}"
+    signature = hmac.new(
+        settings.GALLERY_DOWNLOAD_SECRET.encode(),
+        payload.encode(),
+        hashlib.sha256
+    ).digest()
+    token = base64.b64encode(signature).decode()
+
+    return JsonResponse({"token": token, "timestamp": timestamp})
+
+
+def gallery(request, slug=None):
     albums = GalleryAlbum.objects.filter(is_deleted=False, status='published').prefetch_related('media')
-    
     return render(request, "gallery.html", {
         "albums": albums,
-    })
-
+        "target_album": slug,
+    })    
 
 def downloads(request):
     category = request.GET.get('category', 'all')
@@ -173,17 +232,12 @@ def downloads(request):
     return render(request, 'downloads.html', context)
 
 def news(request):
-    # Fetch all published articles once, ordered by newest first
-    published_articles = NewsArticle.objects.filter(status='published').order_by('-created_at')
+    # Hit the database EXACTLY once and store it in memory as a list
+    published_articles = list(NewsArticle.objects.filter(status='published').order_by('-created_at'))
     
-    # Grab the newest one for the hero section
-    featured_article = published_articles.first()
-
-    # Exclude the featured article from the grid below so it doesn't appear twice
-    if featured_article:
-        articles = published_articles.exclude(pk=featured_article.pk)
-    else:
-        articles = published_articles
+    # Slice the list in Python (zero database trips)
+    featured_article = published_articles[0] if published_articles else None
+    articles = published_articles[1:] if published_articles else []
 
     context = {
         'featured': featured_article,
@@ -192,11 +246,14 @@ def news(request):
     return render(request, 'news.html', context)
 
 
-def article_detail_view(request, public_id):
-    article = get_object_or_404(NewsArticle, public_id=public_id)
+def article_detail_view(request, slug):
+    # Swap public_id for slug to pull the SEO-friendly URL
+    article = get_object_or_404(NewsArticle, slug=slug)
     
-    # Grab two random articles for the "Keep Reading" footer
-    related = NewsArticle.objects.exclude(id=article.id).order_by('?')[:2]
+    related = NewsArticle.objects.filter(
+        status='published', 
+        category=article.category
+    ).exclude(id=article.id).order_by('-created_at')[:2]
     
     return render(request, 'article_detail.html', {'article': article, 'related': related})
 

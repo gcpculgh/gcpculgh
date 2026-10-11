@@ -49,14 +49,22 @@ class NewsArticle(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        # Automatically compress & convert featured image to WebP if newly uploaded
         if self.featured_image and not self.featured_image.name.endswith('.webp'):
             self.featured_image = optimize_and_convert_to_webp(self.featured_image)
 
         if not self.slug:
-            base_slug = slugify(self.title)[:230] or "article"
+            # 1. Truncate to a max of 70 characters for optimal SEO
+            base_slug = slugify(self.title)[:70]
+            
+            # 2. Trim back to the last hyphen so we don't chop words in half
+            if '-' in base_slug and len(slugify(self.title)) > 70:
+                base_slug = base_slug.rsplit('-', 1)[0]
+            
+            base_slug = base_slug or "article"
             slug_candidate = base_slug
             i = 2
+            
+            # 3. Handle duplicates gracefully
             while NewsArticle.objects.filter(slug=slug_candidate).exclude(pk=self.pk).exists():
                 slug_candidate = f"{base_slug}-{i}"
                 i += 1
@@ -129,7 +137,6 @@ class Document(models.Model):
     )
 
     file_hash = models.CharField(max_length=64, blank=True, null=True, help_text="SHA-256 cryptographic checksum")
-    page_count = models.PositiveIntegerField(blank=True, null=True)
     
     # NEW: The local cache column to eliminate the Cloudflare N+1 bottleneck
     file_size = models.PositiveIntegerField(blank=True, null=True, help_text="Cached file size in bytes to prevent N+1 Cloudflare queries")
@@ -167,6 +174,7 @@ class Document(models.Model):
         """
         return self.file_size or 0
 
+
 class GalleryAlbum(models.Model):
     CATEGORY_CHOICES = [
         ("agm", "AGM Meetings"),
@@ -183,6 +191,7 @@ class GalleryAlbum(models.Model):
     title = models.CharField(max_length=180, blank=True) 
     subtitle = models.CharField(max_length=280, blank=True)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default="agm")
+    slug = models.SlugField(max_length=240, unique=True, blank=True)
     public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     # The new Enterprise Draft State
@@ -208,6 +217,20 @@ class GalleryAlbum(models.Model):
         self.deleted_at = now
         self.save()
         self.media.update(is_deleted=True, deleted_at=now)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)[:70]
+            if '-' in base_slug and len(slugify(self.title)) > 70:
+                base_slug = base_slug.rsplit('-', 1)[0]
+            base_slug = base_slug or "album"
+            slug_candidate = base_slug
+            i = 2
+            while GalleryAlbum.objects.filter(slug=slug_candidate).exclude(pk=self.pk).exists():
+                slug_candidate = f"{base_slug}-{i}"
+                i += 1
+            self.slug = slug_candidate
+        super().save(*args, **kwargs)
 
     @property
     def cover(self):

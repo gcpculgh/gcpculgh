@@ -31,7 +31,7 @@
           <span>Official Board Communication</span>
         </div>
       </div>
-      <a href="{% url 'article_detail' featured.public_id %}" class="btn btn-gold" style="text-decoration: none;">Read Featured
+      <a href="{% url 'article_detail' featured.slug %}" class="btn btn-gold" style="text-decoration: none;">Read Featured
         Story</a>
     </div>
     {% else %}
@@ -79,7 +79,7 @@
     <div class="container">
       <div class="blog-grid" id="blogGrid">
         {% for article in articles %}
-        <a href="{% url 'article_detail' article.public_id %}" class="blog-card" data-category="{{ article.category }}">
+        <a href="{% url 'article_detail' article.slug %}" class="blog-card" data-category="{{ article.category }}">
           <div class="blog-thumb">
             {% if article.featured_image %}
             <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" loading="lazy"
