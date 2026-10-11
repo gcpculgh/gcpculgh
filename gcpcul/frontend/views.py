@@ -167,12 +167,12 @@ def issue_download_token(request):
         return JsonResponse({"error": "Invalid keys"}, status=400)
 
     # Validate all keys belong to published, non-deleted media
-    valid_count = MediaItem.objects.filter(
+    valid_count = GalleryMedia.objects.filter(
         file__in=keys,
         is_deleted=False,
         album__status='published',
         album__is_deleted=False
-    ).count()
+    ).count()   
 
     if valid_count != len(keys):
         return JsonResponse({"error": "Invalid media keys"}, status=403)
