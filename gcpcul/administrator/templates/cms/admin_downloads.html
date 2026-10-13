@@ -3,7 +3,6 @@
 
 {% block admin_title %}Document Vault{% endblock %}
 {% block nav_downloads %}active{% endblock %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 {% block extra_css %}
 <style>
   .page-head {
@@ -867,17 +866,27 @@
 
 {% if open_upload %}
 <!-- ============ UPLOAD / EDIT FORM VIEW ============ -->
+<!-- ============ UPLOAD / EDIT FORM VIEW ============ -->
 <div id="uploadView">
   <a href="{% url 'administrator:document_list' %}" class="back-to-list">
     <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
     Back to Document Vault
   </a>
 
+  <!-- ENTERPRISE FIX 1: Proper Page Header -->
+  <div class="page-head" style="margin-bottom: 1.5rem; margin-top: 0.5rem;">
+    <div>
+      <h1>{% if editing %}Edit Document{% else %}Upload to Vault{% endif %}</h1>
+      <p>{% if editing %}Update metadata or replace the secure file for "{{ editing.title }}".{% else %}Add a new secure document to the credit union vault.{% endif %}</p>
+    </div>
+  </div>
+
   <!-- True Server-Side Form Routing -->
   <form class="form-panel" method="post" enctype="multipart/form-data"
-    action="{% if editing %}{% url 'administrator:document_update' editing.pk %}{% else %}{% url 'administrator:document_create' %}{% endif %}">
+    action="{% if editing %}{% url 'administrator:document_update' editing.public_id %}{% else %}{% url 'administrator:document_create' %}{% endif %}">
     {% csrf_token %}
     <input type="hidden" name="thumbnail_base64" id="thumbBase64">
+    
     <div class="field-row">
       <div class="field-group">
         <label for="docCategory">Category</label>
@@ -938,81 +947,80 @@
           <span class="material-symbols-outlined dropdown-arrow">expand_more</span>
         </button>
 
-        <!-- The Searchable Popover -->
         <div class="icon-picker-popover" id="iconPickerPopover">
           <div class="icon-search-wrap">
             <span class="material-symbols-outlined">search</span>
             <input type="text" id="iconSearchInput" placeholder="Search icons..." autocomplete="off">
           </div>
-          <div class="icon-grid" id="iconGrid">
-            <!-- JavaScript will populate this grid instantly -->
-          </div>
+          <div class="icon-grid" id="iconGrid"></div>
         </div>
       </div>
     </div>
-</div>
 
-<!-- Secure File Upload & Progress UI -->
-<div class="field-group" id="dropzoneContainer">
-  <label>File Upload <span class="hint">(PDF, DOC, DOCX — Max 300MB)</span></label>
+    <!-- Secure File Upload & Progress UI -->
+    <div class="field-group" id="dropzoneContainer">
+      <label>File Upload <span class="hint">(PDF, DOC, DOCX — Max 300MB)</span></label>
 
-  <div class="file-drop {% if editing and editing.document %}has-file{% endif %}" id="fileDrop"
-    onclick="document.getElementById('docFile').click()">
-    <span class="material-symbols-outlined">{% if editing and editing.document %}task{% else %}cloud_upload{% endif %}</span>
+      <div class="file-drop {% if editing and editing.document %}has-file{% endif %}" id="fileDrop"
+        onclick="document.getElementById('docFile').click()">
+        <span class="material-symbols-outlined">{% if editing and editing.document %}task{% else %}cloud_upload{% endif %}</span>
 
-    <div class="file-drop-label" id="fileDropLabel">
-      {% if editing and editing.document %}
-      {{ editing.document.name }}
-      {% else %}
-      Click or drag a file here
-      {% endif %}
+        <div class="file-drop-label" id="fileDropLabel">
+          {% if editing and editing.document %}
+            <!-- ENTERPRISE FIX 2: Human-readable filename -->
+            {{ editing.title|default:"Document" }}.pdf
+          {% else %}
+            Click or drag a file here
+          {% endif %}
+        </div>
+
+        <div class="file-drop-sub" id="fileDropSub">
+          {% if editing and editing.document %}
+            <!-- ENTERPRISE FIX 3: Handle R2 0-byte reporting safely -->
+            {% if editing.file_size and editing.file_size > 0 %}
+              {{ editing.file_size|filesizeformat }} — currently active
+            {% else %}
+              Secure File Active in Vault
+            {% endif %}
+            <br>
+            <a href="{% url 'administrator:secure_document_download' editing.public_id %}" target="_blank"
+              style="color: var(--primary-green); text-decoration: underline; font-weight: 700; position: relative; z-index: 10; margin-top: 0.5rem; display: inline-block;"
+              onclick="event.stopPropagation()">Preview Current File</a>
+          {% else %}
+            Up to 300MB limit
+          {% endif %}
+        </div>
+
+        <input type="file" id="docFile" name="document"
+          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          onchange="handleFileSelect(event)">
+      </div>
+      {% if form.document.errors %}<span class="error-text">{{ form.document.errors.0 }}</span>{% endif %}
     </div>
 
-    <div class="file-drop-sub" id="fileDropSub">
-      {% if editing and editing.document %}
-      {{ editing.safe_file_size|filesizeformat }} — currently active<br>
-      <a href="{% url 'administrator:secure_document_download' editing.id %}" target="_blank"
-        style="color: var(--primary-green); text-decoration: underline; font-weight: 700; position: relative; z-index: 10; margin-top: 0.5rem; display: inline-block;"
-        onclick="event.stopPropagation()">Preview Current File</a>
-      {% else %}
-      Up to 300MB limit
-      {% endif %}
+    <div class="upload-progress-wrapper" id="progressWrapper">
+      <div class="progress-header">
+        <div class="progress-status" id="progressStatusText">
+          <span class="material-symbols-outlined">cloud_sync</span>
+          Starting secure upload...
+        </div>
+        <div class="progress-percentage" id="progressPercentText">0%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFillBar"></div>
+      </div>
     </div>
 
-    <!-- File input (Hides visually, triggered by clicking the dropzone) -->
-    <input type="file" id="docFile" name="document"
-      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      onchange="handleFileSelect(event)">
-  </div>
-  {% if form.document.errors %}<span class="error-text">{{ form.document.errors.0 }}</span>{% endif %}
-</div>
+    <input type="hidden" name="r2_file_key" id="r2FileKey">
 
-<!-- The Progress UI (Shows when upload starts) -->
-<div class="upload-progress-wrapper" id="progressWrapper">
-  <div class="progress-header">
-    <div class="progress-status" id="progressStatusText">
-      <span class="material-symbols-outlined">cloud_sync</span>
-      Starting secure upload...
+    <div class="form-footer">
+      <a href="{% url 'administrator:document_list' %}" class="btn-outline-admin">Cancel</a>
+      <button type="button" onclick="initiateSecureUpload()" class="btn-primary-admin">
+        <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
+        {% if editing %}Update{% else %}Save{% endif %} Document
+      </button>
     </div>
-    <div class="progress-percentage" id="progressPercentText">0%</div>
-  </div>
-  <div class="progress-track">
-    <div class="progress-fill" id="progressFillBar"></div>
-  </div>
-</div>
-
-<!-- Hidden input to store the Cloudflare R2 Key to send to Django -->
-<input type="hidden" name="r2_file_key" id="r2FileKey">
-
-<div class="form-footer">
-  <a href="{% url 'administrator:document_list' %}" class="btn-outline-admin">Cancel</a>
-  <button type="button" onclick="initiateSecureUpload()" class="btn-primary-admin">
-    <span class="material-symbols-outlined" style="font-size:1.05rem;">save</span>
-    {% if editing %}Update{% else %}Save{% endif %} Document
-  </button>
-</div>
-
-</form>
+  </form>
 </div>
 
 {% else %}
@@ -1077,8 +1085,7 @@
           <td class="mono">{% if doc.pages %}{{ doc.pages }}{% else %}—{% endif %}</td>
           <td>
             {% if doc.document %}
-            <span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>{{
-              doc.document.size|filesizeformat }}</span>
+            <span class="status-pill uploaded"><span class="material-symbols-outlined">check_circle</span>{{ doc.file_size|filesizeformat }}</span>
             {% else %}
             <span class="status-pill pending"><span class="material-symbols-outlined">schedule</span>Pending File</span>
             {% endif %}
@@ -1096,7 +1103,7 @@
               <!-- Secure, custom modal trigger -->
               <form method="post" action="{% url 'administrator:document_delete' doc.public_id %}" style="margin:0;"
                 id="delete-form-{{ doc.public_id }}"
-                onsubmit="event.preventDefault(); openDeleteModal('{{ doc.pk }}', '{{ doc.title|escapejs }}');">
+                onsubmit="event.preventDefault(); openDeleteModal('{{ doc.public_id }}', '{{ doc.title|escapejs }}');">
                 {% csrf_token %}
                 <button type="submit" class="row-action-btn danger" aria-label="Delete"><span
                     class="material-symbols-outlined">delete</span></button>
@@ -1154,6 +1161,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   // 1. TOAST NOTIFICATION ENGINE
   function showClientToast(message, type = 'error') {
@@ -1462,7 +1470,7 @@
       });
 
       fillBar.classList.add('verifying');
-      statusText.innerHTML = '<span class="material-symbols-outlined">policy</span> Verifying security signatures...';
+      statusText.innerHTML = '<span class="material-symbols-outlined">policy</span> Verifying uploaded file\'s security signatures...';
       percentText.textContent = 'Processing';
 
       document.getElementById('r2FileKey').value = file_key;

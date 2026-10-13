@@ -17,6 +17,7 @@ import boto3
 from django.conf import settings
 
 import io
+import os 
 import uuid
 import base64
 import hashlib
@@ -84,21 +85,21 @@ def dashboard(request):
             "severity": "high", "icon": "description",
             "title": f"{pending_agm_docs.count()} AGM document(s) awaiting upload",
             "body": f"{years} AGM minutes & reports haven't been added to the Vault yet." if years else "Some AGM documents are missing their file.",
-            "url_name": "cms:document_list",
+            "url_name": "administrator:document_list",
         })
     if stock_album_count > 0:
         attention_items.append({
             "severity": "high", "icon": "image",
             "title": f"{stock_album_count} gallery album(s) still on stock photography",
             "body": "Real event photos are needed before these go live publicly.",
-            "url_name": "cms:gallery_list",
+            "url_name": "administrator:gallery_list",
         })
     if draft_count > 0:
         attention_items.append({
             "severity": "med", "icon": "edit_note",
             "title": f"{draft_count} article(s) saved as drafts",
             "body": "Review and publish, or continue editing.",
-            "url_name": "cms:news_list",
+            "url_name": "administrator:news_list",
         })
 
     recent_activity = []
@@ -178,7 +179,7 @@ def news_create(request):
         if form.is_valid():
             article = form.save()
             messages.success(request, f'"{article.title}" saved as {article.get_status_display().lower()}.')
-            return redirect("cms:news_list")
+            return redirect("administrator:news_list")
     else:
         form = NewsArticleForm(initial={"status": "draft"})
     return render(request, "cms/admin_news.html", {"form": form, "editing": None, "open_editor": True})
@@ -192,7 +193,7 @@ def news_update(request, public_id):
         if form.is_valid():
             article = form.save()
             messages.success(request, f'"{article.title}" updated.')
-            return redirect("cms:news_list")
+            return redirect("administrator:news_list")
     else:
         form = NewsArticleForm(instance=article)
     return render(request, "cms/admin_news.html", {"form": form, "editing": article, "open_editor": True})
@@ -205,7 +206,7 @@ def news_delete(request, public_id):
     title = article.title
     article.delete()
     messages.success(request, f'"{title}" deleted.')
-    return redirect("cms:news_list")
+    return redirect("administrator:news_list")
 
 
 # ============================================================
@@ -541,7 +542,7 @@ def secure_document_download(request, public_id):
     
     if not doc.document:
         messages.error(request, "This document file is not yet available.")
-        return redirect("cms:document_list")
+        return redirect("administrator:document_list")
 
     s3_client = _get_s3_client()
     presigned_url = s3_client.generate_presigned_url(
@@ -664,7 +665,7 @@ def document_create(request):
 
             doc.save()
             messages.success(request, f'"{doc.title}" saved successfully.')
-            return redirect("cms:document_list")
+            return redirect("administrator:document_list")
         else:
             for field, errors in form.errors.items():
                 messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
@@ -723,7 +724,7 @@ def document_update(request, public_id):
 
             doc.save()
             messages.success(request, f'"{doc.title}" updated successfully.')
-            return redirect("cms:document_list")
+            return redirect("administrator:document_list")
         else:
             for field, errors in form.errors.items():
                 messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
@@ -742,7 +743,7 @@ def document_delete(request, public_id):
     document.save()
     
     messages.success(request, f'"{document.title}" has been archived and removed from the vault.')
-    return redirect("cms:document_list")
+    return redirect("administrator:document_list")
 
 
 @staff_required
@@ -844,7 +845,7 @@ def gallery_create(request):
                     first.save()
                     
             messages.success(request, f'"{album.title}" created with {album.media_count} item(s).')
-            return redirect("cms:gallery_list")
+            return redirect("administrator:gallery_list")
         else:
             for field, errors in form.errors.items():
                 messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
@@ -864,7 +865,7 @@ def gallery_update(request, public_id):
             _process_parallel_media(request, album)
             _apply_cover_selection(request, album)
             messages.success(request, f'"{album.title}" updated.')
-            return redirect("cms:gallery_list")
+            return redirect("administrator:gallery_list")
         else:
             for field, errors in form.errors.items():
                 messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
@@ -887,7 +888,7 @@ def gallery_delete(request, public_id):
     album.soft_delete()
     
     messages.success(request, f'"{title}" and its media have been archived.')
-    return redirect("cms:gallery_list")
+    return redirect("administrator:gallery_list")
 
 
 @require_POST
@@ -900,7 +901,7 @@ def gallery_media_delete(request, public_id):
     media.deleted_at = timezone.now()
     media.save()
     
-    return redirect("cms:gallery_update", public_id=album_public_id)
+    return redirect("administrator:gallery_update", public_id=album_public_id)
 
 
 def custom_csrf_failure(request, reason=""):

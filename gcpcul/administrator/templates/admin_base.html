@@ -183,6 +183,17 @@
     animation: fadeOutToast 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
   }
 
+  /* GLOBAL ALERTS IN ADMIN */
+  #global-alert-container { width: 100%; display: flex; flex-direction: column; z-index: 9999; }
+  .top-alert-banner { width: 100%; padding: 0.65rem 1.5rem; display: flex; justify-content: center; align-items: center; position: relative; font-size: 0.85rem; font-weight: 600; }
+  .alert-warning { background-color: #FEF3C7; color: #92400E; border-bottom: 1px solid #FDE68A; }
+  .alert-urgent { background-color: #FEE2E2; color: #991B1B; border-bottom: 1px solid #FECACA; }
+  .alert-info { background-color: #EEF2FF; color: #3730A3; border-bottom: 1px solid #C7D2FE; }
+  .alert-content-wrapper { display: inline-flex; align-items: center; gap: 0.65rem; }
+  .alert-icon { font-size: 1.15rem; }
+  .close-alert-btn { position: absolute; right: 1.5rem; background: none; border: none; color: inherit; cursor: pointer; opacity: 0.6; }
+  .close-alert-btn:hover { opacity: 1; }
+
   @media (max-width: 68rem) {
     .sidebar { transform: translateX(-100%); }
     .sidebar.open { transform: translateX(0); box-shadow: 0 0 0 100vmax rgba(0,0,0,.4); }
@@ -314,6 +325,25 @@
   </aside>
 
   <div class="main">
+    <div id="global-alert-container">
+      {% for alert in global_alerts %}
+      <div class="top-alert-banner alert-{{ alert.message_type|lower }}" id="admin-alert-{{ alert.id }}">
+        <div class="alert-content-wrapper">
+          <span class="material-symbols-outlined alert-icon">
+            {% if alert.message_type|lower == 'warning' %}warning
+            {% elif alert.message_type|lower == 'urgent' %}error
+            {% else %}info{% endif %}
+          </span>
+          <span class="alert-msg">{{ alert.message|safe }}</span>
+        </div>
+        <button type="button" class="close-alert-btn"
+          onclick="document.getElementById('admin-alert-{{ alert.id }}').style.display='none'">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+
     <header class="topbar">
       <button class="menu-toggle" id="sidebarToggle" aria-label="Toggle menu">
         <span class="material-symbols-outlined">menu</span>

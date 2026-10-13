@@ -36,7 +36,7 @@ TEAM_DATA = {
             "role": "Chief Executive Officer", 
             "image": "eric-adjei-yeboah.jpeg",
             "email": "eric.adjei-yeboah@gcpcul.com",  
-            "linkedin": "https://linkedin.com/in/eric-adjei",
+            "linkedin": "https://www.linkedin.com/in/eric-adjei-yeboah-628b0bb4 ",
             "bio": """Eric Adjei – Yeboah, is a professional Finance and Investment Banker with over twenty (21) years of experience. Eric is results-driven Financial Service Professional, Investment Banker and a Legal Student. Currently working with Ghana Co-operative Pharmacists Credit Union Limited as the Chief Executive Officer.
 
 Prior to this position, Eric was the Head of Wealth Management Department at UMB Investment Holdings Limited now Merban Capital Ltd. Eric was in charge of Collective Investment Schemes, Trustee Business, High Net Worth Portfolio Management and a Legal Deponent for the company.
@@ -53,7 +53,7 @@ Eric holds Bachelor of Laws (LLB), Professional Executive Master in Alternative 
             "role": "Senior Accountant", 
             "image": "yompab-joseph.jpeg",
             "email": "yompab-joseph@gcpcul.com",  
-            "linkedin": "https://linkedin.com/in/yompab-joseph-baaman",
+            "linkedin": "https://www.linkedin.com/in/joseph-yompab-ca-2583b58a/",
             "bio": """Yompab Joseph Nanoni Baaman-C. A possesses an extensive 18-year career in Accounting and Finance, including 6 years of experience as a Chartered Accountant. He is a qualified Chartered Accountant and a member of The Institute of Chartered Accountants, Ghana (ICAG).
 
 He holds a Master of Science in Accounting and Finance and a Bachelor of Science in Business Administration with a concentration in Accounting, both from the Kwame Nkrumah University of Science and Technology (KNUST) Business School. Currently, he is pursuing final-level professional courses with the Chartered Institute of Bankers Ghana and the Chartered Institute of Taxation Ghana.
@@ -62,6 +62,7 @@ His professional experience includes significant roles within the Rural and Comm
         },
         {
             "slug": "okyere-michael-owusu", "name": "Okyere Michael Owusu", "role": "Business Dev. Executive", "image": "okyere-michael.jpeg",
+            "email": "okyere.michael@gcpculgh.com", "linkedin": "",
             "bio": """Okyere Michael Owusu is a Business Development and Account Management professional with over 15 years of experience in sales, business development, client relationship management and revenue growth across the financial, services and development sectors.
 
 At Ghana Co-operative Pharmacists’ Credit Union Limited (GCPCUL), he is responsible for driving business development initiatives, managing member relationships across all branches, spearheading deposits and loan portfolio growth, and identifying opportunities for membership and business expansion. He also coordinates sales activities, relationship management and market engagement through various channels.

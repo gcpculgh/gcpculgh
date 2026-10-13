@@ -37,11 +37,11 @@
   <!-- GLOBAL ANNOUNCEMENT STACK -->
   <div id="global-alert-container">
     {% for alert in global_alerts %}
-    <div class="top-alert-banner alert-{{ alert.alert_type }}" id="alert-{{ alert.id }}">
+    <div class="top-alert-banner alert-{{ alert.message_type|lower }}" id="alert-{{ alert.id }}">
       <div class="alert-content-wrapper">
         <span class="material-symbols-outlined alert-icon">
-          {% if alert.alert_type == 'warning' %}warning
-          {% elif alert.alert_type == 'urgent' %}error
+          {% if alert.message_type|lower == 'warning' %}warning
+          {% elif alert.message_type|lower == 'urgent' %}error
           {% else %}info{% endif %}
         </span>
         <span class="alert-msg">{{ alert.message|safe }}</span>

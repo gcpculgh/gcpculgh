@@ -87,6 +87,7 @@ class NewsArticle(models.Model):
     def read_time_display(self):
         return f"{self.read_time_minutes} min read"
 
+
 def validate_secure_document(file):
     valid_extensions = ['.pdf', '.doc', '.docx']
     ext = os.path.splitext(file.name)[1].lower()
@@ -246,6 +247,7 @@ class GalleryAlbum(models.Model):
         active_media = self.media.filter(is_deleted=False)
         return active_media.exists() and not active_media.exclude(file="").exists()
 
+
 class GalleryMedia(models.Model):
     TYPE_CHOICES = [("image", "Photo"), ("video", "Video")]
 
@@ -302,6 +304,13 @@ class Announcement(models.Model):
         default=False,
         help_text="Check this to display the announcement site-wide. Uncheck to hide it."
     )
+    CHOICES = [
+        ("warning", "Warning"),
+        ("urgent", "Urgent"),
+        ("info", "Info"),   
+    ]
+
+    message_type = models.CharField(choices = CHOICES)
 
     def save(self, *args, **kwargs):
         if self.message:
