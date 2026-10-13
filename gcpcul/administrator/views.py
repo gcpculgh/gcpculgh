@@ -38,21 +38,59 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from django.shortcuts import get_object_or_404, redirect
 
-from .forms import DocumentForm, GalleryAlbumForm, NewsArticleForm
-from .models import Document, GalleryAlbum, GalleryMedia, NewsArticle
+from .forms import DocumentForm, GalleryAlbumForm, NewsArticleForm, AnnouncementForm
+from .models import Document, GalleryAlbum, GalleryMedia, NewsArticle, Announcement
 from .utils import optimize_and_convert_to_webp
 from django.utils import timezone
 from django.utils.text import slugify
 
 from django.core.paginator import Paginator 
 
-# Every view below is content-management, not member-facing — staff_member_required
-# (checks request.user.is_staff) is deliberate here instead of login_required, which
-# only checks "is someone logged in." Once the public Member Portal is live, an
-# ordinary authenticated member must NOT be able to reach these views.
 
 # Checks if user is logged in AND has staff privileges
 staff_required = user_passes_test(lambda u: u.is_active and u.is_staff)
+
+# GLOBAL ANNOUNCEMENTS & ALERTS
+@staff_required
+def announcement_list(request):
+    # Order by newest first
+    announcements = Announcement.objects.all().order_by('-id')
+    return render(request, "cms/admin_announcements.html", {"announcements": announcements})
+
+@staff_required
+def announcement_create(request):
+    if request.method == "POST":
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Site announcement published successfully.")
+            return redirect("administrator:announcement_list")
+    else:
+        form = AnnouncementForm(initial={"is_active": True})
+    return render(request, "cms/admin_announcements.html", {"form": form, "editing": None, "open_form": True})
+
+@staff_required
+def announcement_update(request, pk):
+    announcement = get_object_or_404(Announcement, pk=pk)
+    if request.method == "POST":
+        form = AnnouncementForm(request.POST, instance=announcement)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Announcement updated successfully.")
+            return redirect("administrator:announcement_list")
+    else:
+        form = AnnouncementForm(instance=announcement)
+    return render(request, "cms/admin_announcements.html", {"form": form, "editing": announcement, "open_form": True})
+
+@require_POST
+@staff_required
+def announcement_delete(request, pk):
+    announcement = get_object_or_404(Announcement, pk=pk)
+    announcement.delete()
+    messages.success(request, "Announcement permanently deleted.")
+    return redirect("administrator:announcement_list")
+
+
 
 @staff_required
 def dashboard(request):

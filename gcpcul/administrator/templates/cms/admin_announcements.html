@@ -1,0 +1,551 @@
+{% extends 'admin_base.html' %}
+
+{% block admin_title %}Site Announcements{% endblock %}
+{% block nav_alerts %}active{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-head h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -.01em;
+  }
+
+  .page-head p {
+    color: var(--text-muted);
+    font-size: .88rem;
+    margin-top: .25rem;
+  }
+
+  .btn-primary-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--primary-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: .87rem;
+    padding: .68rem 1.25rem;
+    border-radius: .6rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .btn-primary-admin:hover {
+    background: var(--accent-green);
+  }
+
+  .btn-outline-admin {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: .85rem;
+    padding: .6rem 1.1rem;
+    border-radius: .6rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .btn-outline-admin:hover {
+    border-color: var(--primary-green);
+  }
+
+  /* Table Styles */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  table.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .doc-table th {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    padding: .9rem 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-section-alt);
+  }
+
+  .doc-table td {
+    padding: .85rem 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: .87rem;
+    vertical-align: middle;
+  }
+
+  .doc-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .doc-table tr:hover td {
+    background: var(--bg-section-alt);
+  }
+
+  .type-chip {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    padding: .18rem .55rem;
+    border-radius: 50px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .type-info {
+    background: #EEF2FF;
+    color: #4F46E5;
+  }
+
+  .type-warning {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+
+  .type-urgent {
+    background: #FEE2E2;
+    color: #991B1B;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .78rem;
+    font-weight: 700;
+  }
+
+  .status-pill.active {
+    color: var(--ok);
+  }
+
+  .status-pill.inactive {
+    color: var(--text-muted);
+  }
+
+  .status-pill .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  .row-actions {
+    display: flex;
+    gap: .35rem;
+  }
+
+  .row-action-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .row-action-btn:hover {
+    color: var(--text-main);
+    border-color: var(--primary-green);
+  }
+
+  .row-action-btn.danger:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+    background: var(--danger-bg);
+  }
+
+  /* Form Styles */
+  #formView {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
+  .back-to-list {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-color);
+    padding: .55rem 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    text-decoration: none;
+  }
+
+  .back-to-list:hover {
+    color: var(--text-main);
+    border-color: var(--primary-green);
+  }
+
+  .form-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: .82rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .field-control {
+    width: 100%;
+    box-sizing: border-box;
+    padding: .68rem .9rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: .55rem;
+    background: var(--bg-page);
+    font-family: inherit;
+    font-size: .9rem;
+    color: var(--text-main);
+    outline: none;
+  }
+
+  .field-control:focus {
+    border-color: var(--primary-green);
+  }
+
+  textarea.field-control {
+    resize: vertical;
+    min-height: 10rem;
+    line-height: 1.6;
+    padding: 1rem;
+  }
+
+  /* iOS Style Toggle Switch */
+  .switch-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 34px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  input:checked+.slider {
+    background-color: var(--primary-green);
+  }
+
+  input:checked+.slider:before {
+    transform: translateX(20px);
+  }
+
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-card {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 24rem;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transform: translateY(15px);
+    transition: 0.2s;
+  }
+
+  .modal-overlay.active .modal-card {
+    transform: translateY(0);
+  }
+
+  .modal-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50px;
+    background: var(--danger-bg);
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem auto;
+  }
+
+  .modal-card h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .modal-actions button {
+    flex: 1;
+  }
+
+  .danger-btn {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+{% if open_form %}
+<div id="formView">
+  <a href="{% url 'administrator:announcement_list' %}" class="back-to-list">
+    <span class="material-symbols-outlined" style="font-size:1.05rem;">arrow_back</span>
+    Back to Announcements
+  </a>
+
+  <div class="page-head" style="margin-bottom: 1.5rem; margin-top: 0.5rem;">
+    <div>
+      <h1>{% if editing %}Edit Announcement{% else %}New Announcement{% endif %}</h1>
+      <p>Global alerts appear at the very top of both the public website and the admin console.</p>
+    </div>
+  </div>
+
+  <form class="form-panel" method="post"
+    action="{% if editing %}{% url 'administrator:announcement_update' editing.pk %}{% else %}{% url 'administrator:announcement_create' %}{% endif %}">
+    {% csrf_token %}
+
+    <div class="field-group">
+      <label>Alert Status</label>
+      <div class="switch-wrap">
+        <label class="switch">
+          <input type="checkbox" name="is_active" {% if form.is_active.value %}checked{% endif %}>
+          <span class="slider"></span>
+        </label>
+        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Display this alert live on the
+          website</span>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label for="messageType">Alert Color & Priority</label>
+      <select id="messageType" name="message_type" class="field-control">
+        <option value="info" {% if form.message_type.value == 'info' %}selected{% endif %}>Info (Blue)</option>
+        <option value="warning" {% if form.message_type.value == 'warning' %}selected{% endif %}>Warning (Yellow)</option>
+        <option value="urgent" {% if form.message_type.value == 'urgent' %}selected{% endif %}>Urgent (Red)</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label for="docDescription">Announcement Message</label>
+      <textarea name="message" class="field-control"
+        placeholder="E.g. The portal will be under maintenance this weekend. [Click here](https://example.com) for details."
+        required>{{ form.message.value|default_if_none:'' }}</textarea>
+      <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.4rem;">Supports basic
+        Markdown links: <code>[Text](https://link.com)</code></span>
+    </div>
+
+    <div class="form-footer">
+      <a href="{% url 'administrator:announcement_list' %}" class="btn-outline-admin">Cancel</a>
+      <button type="submit" class="btn-primary-admin">
+        <span class="material-symbols-outlined" style="font-size:1.05rem;">campaign</span>
+        {% if editing %}Update Alert{% else %}Publish Alert{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+
+{% else %}
+<div id="listView">
+  <div class="page-head">
+    <div>
+      <h1>Site Announcements</h1>
+      <p>Manage the global alert banners displayed across the platform.</p>
+    </div>
+    <a href="{% url 'administrator:announcement_create' %}" class="btn-primary-admin">
+      <span class="material-symbols-outlined" style="font-size:1.05rem;">add_alert</span>
+      New Alert
+    </a>
+  </div>
+
+  <div class="table-wrap">
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Type</th>
+          <th style="width: 50%;">Message Snippet</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in announcements %}
+        <tr>
+          <td>
+            {% if item.is_active %}
+            <span class="status-pill active"><span class="material-symbols-outlined">visibility</span>Live</span>
+            {% else %}
+            <span class="status-pill inactive"><span
+                class="material-symbols-outlined">visibility_off</span>Hidden</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="type-chip type-{{ item.message_type|lower }}">{{ item.get_message_type_display }}</span>
+          </td>
+          <td>
+            <span
+              style="display: block; max-width: 35rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ item.html_message|striptags }}
+            </span>
+          </td>
+          <td>
+            <div class="row-actions" style="justify-content: flex-end;">
+              <a href="{% url 'administrator:announcement_update' item.pk %}" class="row-action-btn"><span
+                  class="material-symbols-outlined">edit</span></a>
+              <form method="post" action="{% url 'administrator:announcement_delete' item.pk %}" style="margin:0;"
+                id="delete-form-{{ item.pk }}" onsubmit="event.preventDefault(); openDeleteModal('{{ item.pk }}');">
+                {% csrf_token %}
+                <button type="submit" class="row-action-btn danger"><span
+                    class="material-symbols-outlined">delete</span></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            <span class="material-symbols-outlined"
+              style="font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5;">notifications_off</span><br>
+            <strong>No announcements found.</strong><br>Create one to notify your members.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="customDeleteModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-icon"><span class="material-symbols-outlined">warning</span></div>
+    <h3>Delete Announcement</h3>
+    <p>Are you sure you want to permanently delete this alert? It will be removed immediately.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-outline-admin" onclick="closeDeleteModal()">Cancel</button>
+      <button type="button" class="btn-primary-admin danger-btn" id="confirmDeleteBtn">Delete It</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formToSubmit = null;
+  function openDeleteModal(id) {
+    formToSubmit = document.getElementById(`delete-form-${id}`);
+    document.getElementById('customDeleteModal').classList.add('active');
+  }
+  function closeDeleteModal() {
+    document.getElementById('customDeleteModal').classList.remove('active');
+    formToSubmit = null;
+  }
+  document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+    if (formToSubmit) {
+      this.disabled = true;
+      this.innerHTML = 'Deleting...';
+      formToSubmit.submit();
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

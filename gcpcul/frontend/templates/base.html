@@ -44,7 +44,7 @@
           {% elif alert.message_type|lower == 'urgent' %}error
           {% else %}info{% endif %}
         </span>
-        <span class="alert-msg">{{ alert.message|safe }}</span>
+        <span class="alert-msg">{{ alert.html_message|safe }}</span>
       </div>
       <button type="button" class="close-alert-btn"
         onclick="document.getElementById('alert-{{ alert.id }}').style.display='none'">

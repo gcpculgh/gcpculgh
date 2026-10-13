@@ -68,3 +68,9 @@ class GalleryAlbumForm(forms.ModelForm):
         if not title:
             raise forms.ValidationError("Every album needs a title.")
         return title
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ['message_type', 'is_active', 'message']

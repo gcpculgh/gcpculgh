@@ -279,6 +279,9 @@
       <a href="{% url 'administrator:news_list' %}" class="nav-item {% block nav_news %}{% endblock %}">
         <span class="material-symbols-outlined">news</span> News &amp; Blog
       </a>
+      <a href="{% url 'administrator:announcement_list' %}" class="nav-item {% block nav_alerts %}{% endblock %}">
+        <span class="material-symbols-outlined">campaign</span> Site Alerts
+      </a>
       <a href="{% url 'administrator:document_list' %}" class="nav-item {% block nav_downloads %}{% endblock %}">
         <span class="material-symbols-outlined">folder_open</span> Document Vault
       </a>
@@ -334,7 +337,7 @@
             {% elif alert.message_type|lower == 'urgent' %}error
             {% else %}info{% endif %}
           </span>
-          <span class="alert-msg">{{ alert.message|safe }}</span>
+          <span class="alert-msg">{{ alert.html_message|safe }}</span>
         </div>
         <button type="button" class="close-alert-btn"
           onclick="document.getElementById('admin-alert-{{ alert.id }}').style.display='none'">

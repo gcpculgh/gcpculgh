@@ -309,40 +309,38 @@ class Announcement(models.Model):
         ("urgent", "Urgent"),
         ("info", "Info"),   
     ]
+    message_type = models.CharField(choices=CHOICES)
 
-    message_type = models.CharField(choices = CHOICES)
+    @property
+    def html_message(self):
+        """Compiles Markdown to HTML on the fly without overwriting the raw DB text."""
+        if not self.message:
+            return ""
+            
+        # 1. Parse custom Markdown tags
+        html_content = markdown.markdown(self.message)
 
-    def save(self, *args, **kwargs):
-        if self.message:
-            # 1. Parse custom Markdown tags first
-            html_content = markdown.markdown(self.message)
+        # 2. Sanitize and destroy any raw malicious HTML
+        clean_html = bleach.clean(
+            html_content,
+            tags=['a', 'p', 'strong', 'em', 'br'],
+            attributes={'a': ['href']},
+            protocols=['http', 'https', 'mailto'],
+            strip=True
+        )
 
-            # 2. Sanitize and destroy any raw malicious HTML
-            clean_html = bleach.clean(
-                html_content,
-                tags=['a', 'p', 'strong', 'em', 'br'],
-                attributes={'a': ['href']},
-                protocols=['http', 'https', 'mailto'],
-                strip=True
-            )
+        # 3. Intercept all links to enforce security and UX standards
+        def secure_link_attributes(attrs, new=False):
+            href = attrs.get((None, 'href'), '')
+            if not href.startswith(('http:', 'https:', 'mailto:')):
+                return None
 
-            # 3. Intercept all links to enforce security and UX standards
-            def secure_link_attributes(attrs, new=False):
-                href = attrs.get((None, 'href'), '')
-                if not href.startswith(('http:', 'https:', 'mailto:')):
-                    return None
+            attrs[(None, 'target')] = '_blank'
+            attrs[(None, 'rel')] = 'noopener noreferrer'
+            if new:
+                attrs['_text'] = 'View Link'
+            return attrs
 
-                # Enforce anti-tabnabbing
-                attrs[(None, 'target')] = '_blank'
-                attrs[(None, 'rel')] = 'noopener noreferrer'
-
-                # THE UX FIX: If this is a raw URL (new=True), replace the long text with a clean default
-                if new:
-                    attrs['_text'] = 'View Link'
-
-                return attrs
-
-            linker = Linker(callbacks=[secure_link_attributes])
-            self.message = linker.linkify(clean_html)
-
-        super().save(*args, **kwargs)
+        linker = Linker(callbacks=[secure_link_attributes])
+        return linker.linkify(clean_html)
+    

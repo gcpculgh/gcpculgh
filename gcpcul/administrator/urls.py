@@ -14,6 +14,11 @@ urlpatterns = [
     path(f"{URL_PREFIX}/news/<uuid:public_id>/edit/", views.news_update, name="news_update"),
     path(f"{URL_PREFIX}/news/<uuid:public_id>/delete/", views.news_delete, name="news_delete"),
 
+    path(f'{URL_PREFIX}/announcements/', views.announcement_list, name='announcement_list'),
+    path(f'{URL_PREFIX}/announcements/create/', views.announcement_create, name='announcement_create'),
+    path(f'{URL_PREFIX}/announcements/<int:pk>/edit/', views.announcement_update, name='announcement_update'),
+    path(f'{URL_PREFIX}/announcements/<int:pk>/delete/', views.announcement_delete, name='announcement_delete'),
+
     path(f"{URL_PREFIX}/documents/", views.document_list, name="document_list"),
     path(f"{URL_PREFIX}/documents/new/", views.document_create, name="document_create"),
     path(f"{URL_PREFIX}/documents/<uuid:public_id>/edit/", views.document_update, name="document_update"),
