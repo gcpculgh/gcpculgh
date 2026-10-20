@@ -3,6 +3,15 @@
 
 {% block title %}{{ article.title }} | GCPCUL{% endblock %}
 
+{% block extra_head %}
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{ article.title }}" />
+<meta property="og:description" content="{{ article.excerpt }}" />
+{% if article.featured_image %}
+<meta property="og:image" content="{% if 'http' in article.featured_image.url %}{{ article.featured_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ article.featured_image.url }}{% endif %}" />
+{% endif %}
+{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'assets/css/article_detail.css' %}"/>
 {% endblock %}
@@ -15,7 +24,7 @@
 <div class="article-hero-wrapper">
   {% if article.featured_image %}
   <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" class="article-hero-bg"
-    onerror="this.style.display='none';">
+    fetchpriority="high" onerror="this.style.display='none';">
   {% endif %}
   <div class="article-hero-overlay"></div>
 
@@ -44,7 +53,7 @@
       </div>
       <div class="article-hero-date-time">
         <div class="icon-svg"><span class="material-symbols-outlined">schedule</span></div>
-        {{ article.published_at|date:"F j, Y" }}
+        <span>{{ article.published_at|date:"F j, Y" }} · {{ article.read_time_display }}</span>
       </div>
     </div>
   </div>
@@ -73,7 +82,7 @@
     <a href="{% url 'article_detail' rel.slug %}" class="blog-card">
       <div class="blog-thumb">
         {% if rel.featured_image %}
-        <img src="{{ rel.featured_image.url }}" alt="{{ rel.title }}" loading="lazy" onerror="this.style.display='none';">
+        <img src="{{ rel.featured_image.url }}" alt="{{ rel.title }}" loading="lazy" decoding="async" onerror="this.style.display='none';">
         {% endif %}
       </div>
       <div class="blog-body">
@@ -104,6 +113,7 @@
     <p style="padding: 0 2rem; color: var(--text-muted);">More articles coming soon.</p>
     {% endfor %}
   </div>
+</div> <!-- FIXED: Properly closed .read-next-section -->
 {% endblock %}
 
 {% block extra_js %}
@@ -144,6 +154,9 @@
       } else {
         if (typeof copyText === 'function') {
           copyText(articleUrl, readerShareBtn);
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(articleUrl);
+          readerShareBtn.innerHTML = '<span class="icon-svg"><span class="material-symbols-outlined">check</span></span> Link Copied';
         }
       }
     });

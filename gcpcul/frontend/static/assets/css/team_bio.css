@@ -1,11 +1,9 @@
-/* Base Page Wrapper */
 .bio-page-wrapper {
     padding: 3rem 0 8rem 0;
     background: var(--bg-page);
     min-height: 80vh;
 }
 
-/* Navigation */
 .bio-back-link {
     display: inline-flex;
     align-items: center;
@@ -21,7 +19,6 @@
     color: var(--primary-green);
 }
 
-/* Premium Split Layout */
 .bio-grid {
     display: grid;
     grid-template-columns: 340px 1fr;
@@ -29,9 +26,6 @@
     align-items: start;
 }
 
-/* =========================================
-     LEFT COLUMN: EDITORIAL PROFILE CARD
-     ========================================= */
 .bio-sidebar {
     position: sticky;
     top: 6rem;
@@ -48,7 +42,6 @@
     box-shadow: var(--shadow-md);
 }
 
-/* The Magazine Portrait */
 .bio-photo {
     width: 100%;
     aspect-ratio: 4/5;
@@ -100,7 +93,6 @@
     margin-bottom: 1.5rem;
 }
 
-/* Action Hierarchy */
 .bio-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -150,9 +142,6 @@
     font-size: 1.15rem;
 }
 
-/* =========================================
-     RIGHT COLUMN: RICH TYPOGRAPHY
-     ========================================= */
 .bio-content-area {
     padding-top: 0.5rem;
     max-width: 65ch;
@@ -183,7 +172,6 @@
     color: var(--text-main);
 }
 
-/* Executive Summary Drop Cap */
 .bio-rich-text p:first-of-type::first-letter {
     float: left;
     font-size: 3.8rem;
@@ -194,7 +182,6 @@
     margin-top: 0.3rem;
 }
 
-/* Executive Summary Lead Text */
 .bio-rich-text p:first-of-type {
     font-size: 1.25rem;
     font-weight: 600;
@@ -206,7 +193,6 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-/* Standard Paragraphs */
 .bio-rich-text p {
     font-size: 1.1rem;
     line-height: 1.85;
@@ -223,9 +209,6 @@
     font-weight: 700;
 }
 
-/* =========================================
-     RELATED MEMBERS FOOTER
-     ========================================= */
 .related-section {
     background: var(--bg-card);
     border-top: 1px solid var(--border-color);
@@ -315,9 +298,6 @@
     color: var(--text-muted);
 }
 
-/* =========================================
-     MOBILE RESPONSIVENESS
-     ========================================= */
 @media (max-width: 64rem) {
     .bio-grid {
         grid-template-columns: 1fr;

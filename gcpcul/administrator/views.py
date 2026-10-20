@@ -45,7 +45,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from django.core.paginator import Paginator 
-
+from django.core.files.storage import default_storage
 
 # Checks if user is logged in AND has staff privileges
 staff_required = user_passes_test(lambda u: u.is_active and u.is_staff)
@@ -218,6 +218,10 @@ def news_create(request):
             article = form.save()
             messages.success(request, f'"{article.title}" saved as {article.get_status_display().lower()}.')
             return redirect("administrator:news_list")
+        else:
+            for field, errors in form.errors.items():
+                messages.error(request, f"{field.replace('_', ' ').title()}: {errors[0]}")
+            return render(request, "cms/admin_news.html", {"form": form, "editing": form.instance, "open_editor": True})
     else:
         form = NewsArticleForm(initial={"status": "draft"})
     return render(request, "cms/admin_news.html", {"form": form, "editing": None, "open_editor": True})
@@ -949,3 +953,55 @@ def custom_csrf_failure(request, reason=""):
     
     messages.error(request, "Your secure session expired due to inactivity. Please try saving again.")
     return redirect("administrator:dashboard")
+
+@require_POST
+@staff_required
+def upload_rte_image(request):
+    """Asynchronous uploader for the Rich Text Editor."""
+    file = request.FILES.get('image')
+    optimize_and_convert_to_webp(file, max_width=1200, max_height=1200, quality=80)
+    if not file:
+        return JsonResponse({'error': 'No file provided.'}, status=400)
+        
+    try:
+        # 1. Optimize and compress to WebP using your existing utility
+        optimized_file = optimize_and_convert_to_webp(file)
+        
+        # 2. Save securely to Cloudflare R2 via Django's default storage
+        filename = f"news/inline/{uuid.uuid4().hex}.webp"
+        saved_path = default_storage.save(filename, optimized_file)
+        
+        # 3. Get the public CDN URL
+        public_url = default_storage.url(saved_path)
+        
+        return JsonResponse({'url': public_url})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_POST
+@staff_required
+def news_auto_save(request):
+    """Enterprise Cloud Sync: Silently saves drafts to the database in the background."""
+    try:
+        data = json.loads(request.body)
+        article_id = data.get('article_id')
+        
+        # 1. Find the existing draft, or create a new one if they just clicked "New Article"
+        if article_id:
+            article = get_object_or_404(NewsArticle, public_id=article_id)
+        else:
+            article = NewsArticle.objects.create(status='draft', title='Untitled Draft')
+            
+        # 2. Sync the text fields
+        article.title = data.get('title', article.title)
+        article.category = data.get('category', article.category)
+        article.author = data.get('author', article.author)
+        article.excerpt = data.get('excerpt', article.excerpt)
+        article.body = data.get('body', article.body)
+        
+        article.save()
+        
+        return JsonResponse({'success': True, 'article_id': str(article.public_id)})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)

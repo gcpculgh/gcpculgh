@@ -51,7 +51,7 @@ if (toggleSalaryDrawerBtn && optionalSalaryBox && salaryDrawerIcon) {
         toggleSalaryDrawerBtn.classList.toggle('open', isSalaryDrawerOpen);
         if (isSalaryDrawerOpen) {
             optionalSalaryBox.classList.add('open');
-            salaryDrawerIcon.textContent = 'add';
+            salaryDrawerIcon.textContent = 'remove';
             if (affordabilityBadge) affordabilityBadge.classList.add('open');
         } else {
             optionalSalaryBox.classList.remove('open');
@@ -306,9 +306,6 @@ function runFullCalculation() {
         affordabilityBadge.className = 'affordability-badge';
     }
 
-    // Fast-Track eligibility is capped at the category's own published limit —
-    // otherwise a high savings balance could imply an entitlement (e.g. GH¢300,000
-    // on a Personal & Emergency Loan) that exceeds what that facility actually allows.
     const maxFastTrackLimit = Math.min(savings * 3, categoryMaxAmt);
     if (eligibilityBanner && eligibilityTitleText && eligibilityDescText && eligibilityIconBox) {
         if (amount <= maxFastTrackLimit) {

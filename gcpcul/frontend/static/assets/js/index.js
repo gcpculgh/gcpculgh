@@ -34,12 +34,11 @@ function calculateEMI(isTyping) {
     if (loanAmount.max !== String(maxLoan)) loanAmount.max = maxLoan;
 
     const n = parseInt(loanMonths.value, 10) || 1;
-    const r = (annualRate / 100) / 12;
-    const emi = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    const totalInterest = P * ((annualRate / 100) * (n / 12));
+    const emi = (P + totalInterest) / n;
     monthlyDisplay.textContent = formatGHS(emi) + ' / mo';
 }
 
-// ---- Select Logic for ALL dropdowns ----
 const customSelectWraps = document.querySelectorAll('.custom-select-wrap');
 
 customSelectWraps.forEach(wrap => {
@@ -96,7 +95,6 @@ customSelectWraps.forEach(wrap => {
         opt.addEventListener('mouseenter', () => { highlightedIndex = i; highlightOption(i); });
     });
 
-    // Keyboard navigation
     panel.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
@@ -115,7 +113,6 @@ customSelectWraps.forEach(wrap => {
         }
     });
 
-    // Close when clicking outside
     document.addEventListener('click', (e) => {
         if (!wrap.contains(e.target)) closePanel();
     });

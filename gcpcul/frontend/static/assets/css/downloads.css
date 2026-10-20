@@ -391,33 +391,7 @@
     }
 }
 
-@media (max-width: 48rem) {
-    .page-header-grid {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-    }
 
-    .hero-mockup-wrapper {
-        justify-content: center;
-    }
-
-    .mockup-img {
-        max-width: 65%;
-        transform: none;
-    }
-
-    .hero-mockup-wrapper:hover .mockup-img {
-        transform: translateY(-5px);
-    }
-
-    .digital-advantage-banner {
-        padding: 1.5rem;
-    }
-
-    .benefits-grid {
-        gap: 1rem 1.5rem;
-    }
-}
 
 @media (max-width: 48rem) {
     .page-header-grid {
@@ -553,7 +527,6 @@
     font-size: 1.1rem;
 }
 
-/* Count badge inside filter tabs */
 .filter-tab-btn .tab-count {
     font-family: var(--font-mono);
     font-size: 0.78rem;
@@ -561,7 +534,6 @@
     margin-left: 0.4rem;
 }
 
-/* Results counter line */
 .vault-results-line {
     font-size: 0.88rem;
     color: var(--text-muted);
@@ -583,7 +555,6 @@
     color: var(--heading-green);
 }
 
-/* Official documents trust strip */
 .vault-trust-strip {
     display: flex;
     align-items: flex-start;

@@ -10,7 +10,6 @@
 {% block content %}
 <div id="toastNotification" class="toast-notification"></div>
 
-<!-- HERO SECTION -->
 <section class="gallery-hero">
   <img src="{% static 'assets/images/gallery-backdrop.png' %}" alt="Gallery Hero Background" class="hero-bg-anim">
   <div class="hero-bg-overlay"></div>
@@ -28,7 +27,7 @@
       <div class="hero-stat-card">
         <span class="icon-svg"><span class="material-symbols-outlined">collections_bookmark</span></span>
         <div>
-          <strong>4+</strong>
+          <strong>{{ albums|length }}</strong>
           <span>Event Albums</span>
         </div>
       </div>
@@ -50,11 +49,10 @@
   </div>
 </section>
 
-<!-- FILTER & BATCH CONTROLS BAR -->
 <div class="filter-bar-wrapper">
   <div class="container filter-container">
     <div class="filter-tabs" id="categoryFilterBar">
-      <button class="filter-tab-btn active" data-filter="all">All Albums (4)</button>
+      <button class="filter-tab-btn active" data-filter="all">All Albums ({{ albums|length }})</button>
       <button class="filter-tab-btn" data-filter="agm">AGM Meetings</button>
       <button class="filter-tab-btn" data-filter="outreach">Community Outreach</button>
       <button class="filter-tab-btn" data-filter="hospital">Hospital Visits</button>
@@ -80,7 +78,6 @@
 
     <div class="albums-grid" id="albumsGrid">
       {% for album in albums %}
-      <!-- ENTERPRISE FIX: Use secure UUID for click routing -->
       <a href="{% url 'gallery_album' album.slug %}" class="album-card" data-category="{{ album.category }}" onclick="event.preventDefault(); openAlbum('{{ album.slug }}', true);" style="text-decoration: none; display: block;">
         <div class="album-stack-back"></div>
         <div class="album-stack-mid"></div>
@@ -88,7 +85,6 @@
           {% if album.cover and album.cover.file %}
             <img src="{{ album.cover.file.url }}" alt="{{ album.title }}" loading="lazy">
           {% else %}
-            <!-- Fallback for empty albums -->
             <div style="width:100%; height:100%; background: #10241A; display:flex; align-items:center; justify-content:center;">
               <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--coop-gold); opacity: 0.5;">photo_library</span>
             </div>
@@ -129,7 +125,6 @@
         <span>Back to All Albums</span>
       </button>
       
-      <!-- ENTERPRISE FIX: Replaced inline styles with proper CSS classes -->
       <div class="album-header-text">
         <h3 id="openedAlbumTitle" class="album-header-title">
           Album View
@@ -142,7 +137,6 @@
     </div>
 
     <div class="masonry-grid" id="albumPhotosMasonryGrid">
-      <!-- Dynamically populated by JS based on opened album -->
     </div>
   </div>
 </section>
@@ -183,7 +177,7 @@
     <div class="lightbox-caption-text" id="lightboxCaptionText">Media Title Caption</div>
 
     <div class="lightbox-action-row">
-      <a href="#" id="lightboxBottomDownloadBtn" class="lightbox-download-cta" style="text-decoration: none; display: flex; align-items: center;">
+      <a href="#" id="lightboxBottomDownloadBtn" class="lightbox-download-cta" download style="text-decoration: none; display: flex; align-items: center;">
         <span class="material-symbols-outlined">download</span>
         <span id="bottomDownloadBtnText">Download</span>
       </a>
@@ -199,7 +193,6 @@
 
 {% block extra_js %}
 <script>
-  /* DYNAMIC DJANGO ALBUMS DATABASE (Rendered by Server) */
   const TARGET_ALBUM = "{{ target_album|default_if_none:''|escapejs }}";
   const ALBUMS_DATA = {
     {% for album in albums %}

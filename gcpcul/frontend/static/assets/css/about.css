@@ -116,7 +116,6 @@
     color: var(--text-main);
 }
 
-/* HISTORY TIMELINE */
 .history-timeline {
     display: flex;
     flex-direction: column;
@@ -415,7 +414,7 @@
     background: var(--bg-card);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
-    padding: 2.5rem;
+    padding: 2rem;
     box-shadow: var(--shadow-sm);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -427,26 +426,30 @@
 }
 
 .mission-card .icon-svg {
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     background: var(--primary-light);
     color: var(--heading-green);
     border-radius: 12px;
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mission-card h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
+    letter-spacing: -0.015em;
     color: var(--text-main);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .mission-card p {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
-    line-height: 1.75;
+    line-height: 1.7;
 }
 
 .organogram-wrapper {

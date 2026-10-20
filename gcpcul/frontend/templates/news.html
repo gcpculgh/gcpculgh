@@ -12,8 +12,8 @@
   <section class="spotlight-hero">
     {% if featured %}
     {% if featured.featured_image %}
-    <img src="{{ featured.featured_image.url }}" alt="Featured Image" class="spotlight-bg-img"
-      onerror="this.style.display='none';">
+    <img src="{{ featured.featured_image.url }}" alt="{{ featured.title }}" class="spotlight-bg-img"
+      fetchpriority="high" onerror="this.style.display='none';">
     {% endif %}
     <div class="spotlight-overlay"></div>
     <div class="container spotlight-content-wrap">
@@ -82,7 +82,7 @@
         <a href="{% url 'article_detail' article.slug %}" class="blog-card" data-category="{{ article.category }}">
           <div class="blog-thumb">
             {% if article.featured_image %}
-            <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" loading="lazy"
+            <img src="{{ article.featured_image.url }}" alt="{{ article.title }}" loading="lazy" decoding="async"
               onerror="this.style.display='none';">
             {% endif %}
           </div>
@@ -132,7 +132,6 @@
 
   {% else %}
 
-  <!-- DATABASE EMPTY STATE (No filter bar, just the message) -->
   <section class="blog-section">
     <div class="container">
       <div
@@ -182,7 +181,6 @@
         </div>
       </div>
       
-      <!-- REAL BACKEND WIRE-UP -->
       <form class="newsletter-form" method="POST" action="{% url 'newsletter_signup' %}">
         {% csrf_token %}
         <input type="email" name="email" class="newsletter-input" placeholder="Enter your email address..." required autocomplete="email">

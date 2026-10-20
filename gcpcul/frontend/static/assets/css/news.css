@@ -72,13 +72,7 @@
     filter: brightness(0.9);
 }
 
-.spotlight-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(16, 36, 26, 0.95) 0%, rgba(16, 36, 26, 0.85) 45%, rgba(16, 36, 26, 0.2) 100%);
-    backdrop-filter: blur(6px);
-    z-index: 2;
-}
+
 
 .spotlight-meta-top {
     display: flex;
@@ -96,16 +90,7 @@
     text-transform: uppercase;
 }
 
-.spotlight-hero {
-    position: relative;
-    background-color: #10241A;
-    color: #FFFFFF;
-    overflow: hidden;
-    border-bottom: 4px solid var(--coop-gold);
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-}
+
 
 .spotlight-content-wrap {
     position: relative;
@@ -152,7 +137,6 @@
     color: #94A3B8;
 }
 
-/* FILTER BAR */
 .filter-bar-wrapper {
     position: sticky;
     top: 4.85rem;
@@ -210,7 +194,6 @@
     box-shadow: 0 4px 12px rgba(10, 92, 54, 0.2);
 }
 
-/* BLOG GRID */
 .blog-section {
     padding: clamp(4rem, 6vw, 6rem) 0;
     background: var(--bg-page);
@@ -242,8 +225,44 @@
     box-shadow: var(--shadow-lg);
 }
 
+/* 1. Remove the full-screen 6px blur so the right side of the photo stays razor-sharp */
+.spotlight-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(16, 36, 26, 0.96) 0%, rgba(16, 36, 26, 0.82) 50%, rgba(16, 36, 26, 0.25) 100%);
+    z-index: 2;
+}
+
+/* 2. Editorial Hero Height (shows the filter bar peeking at the bottom of the screen) */
+.spotlight-hero {
+    position: relative;
+    background-color: #10241A;
+    color: #FFFFFF;
+    overflow: hidden;
+    border-bottom: 4px solid var(--coop-gold);
+    min-height: clamp(28rem, 58vh, 38rem);
+    display: flex;
+    align-items: center;
+}
+
+/* 3. Balanced Headline Scale (fits full titles without ugly ellipsis truncation) */
+.spotlight-title {
+    font-size: clamp(2rem, 3.6vw, 3.15rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.025em;
+    color: #FFFFFF;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 4. True 16:9 Responsive Aspect Ratio + Portrait Headroom Protection */
 .blog-thumb {
-    height: 14rem;
+    aspect-ratio: 16 / 9;
+    width: 100%;
     position: relative;
     overflow: hidden;
     background-color: var(--slate-800);
@@ -253,16 +272,18 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 25%; /* Protects faces from being decapitated in group/event photos */
     display: block;
     transition: transform 0.5s ease;
 }
+
 
 .blog-card:hover .blog-thumb img {
     transform: scale(1.05);
 }
 
 .blog-body {
-    padding: 2rem;
+    padding: 1.65rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -281,25 +302,10 @@
     color: var(--text-muted);
 }
 
-/* Locks the Hero Title to a maximum of 3 lines */
-.spotlight-title {
-    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.03em;
-    color: #FFFFFF;
 
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
-/* Locks the Blog Grid Titles to a maximum of 2 lines */
 .blog-card h3 {
-    font-size: 1.35rem;
+    font-size: 1.18rem;
     font-weight: 800;
     color: var(--text-main);
     line-height: 1.35;
@@ -313,7 +319,7 @@
 
 .blog-card p {
     color: var(--text-muted);
-    font-size: 1.02rem;
+    font-size: 0.94rem;
     line-height: 1.65;
     margin-bottom: 2rem;
     display: -webkit-box;
@@ -385,7 +391,6 @@
     margin-bottom: 0.5rem;
 }
 
-/* NEWSLETTER */
 .newsletter-section {
     padding: clamp(4.5rem, 6vw, 6.5rem) 0;
     background: var(--bg-card);
@@ -545,13 +550,13 @@
     }
 
     .spotlight-content-wrap {
-        padding-top: 14rem;
+        padding-top: 7rem;
         padding-bottom: 3rem;
     }
 
     .spotlight-overlay {
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.85) 45%, #10241A 80%);
-    }
+        background: linear-gradient(180deg, rgba(16, 36, 26, 0.25) 0%, rgba(16, 36, 26, 0.85) 45%, #10241A 85%);
+    }     
 
     .blog-footer {
         flex-direction: column;

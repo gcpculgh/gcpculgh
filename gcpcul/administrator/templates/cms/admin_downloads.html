@@ -1067,7 +1067,7 @@
         <tr data-cat="{{ doc.category }}" data-search="{{ doc.title|lower }}">
           <td>
             <div class="doc-row-title">
-              <div class="doc-row-icon"><span class="material-symbols-outlined">{{ doc.icon|default:"description" }}</span></div>
+              <div class="doc-row-icon"><span class="material-symbols-outlined">{{ doc.icon_name|default:"description" }}</span></div>
             <div>
             <strong>{{ doc.title }}</strong>
             {% if doc.description %}
@@ -1124,7 +1124,7 @@
     </table>
     <div class="table-footer" id="docTableFooter">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span>Showing {{ documents|length }} of {{ documents.paginator.count }} documents</span>
+        <span id="docCountText">Showing {{ documents|length }} of {{ documents.paginator.count }} documents</span>
         
         <!-- Pagination Controls -->
         <div style="display: flex; gap: 0.5rem;">
@@ -1553,7 +1553,8 @@
       if (show) visible++;
     });
 
-    document.getElementById('docTableFooter').textContent = `Showing ${visible} document(s)`;
+    const countEl = document.getElementById('docCountText');
+    if (countEl) countEl.textContent = `Showing ${visible} document(s) on this page`;
   }
 
   // ==========================================

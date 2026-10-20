@@ -30,19 +30,23 @@ let savingsHistory = 'yes';
 function updatePreQualStatus() {
     if (!preQualTitle || !preQualDesc || !preQualBadge) return;
 
+    const existingImg = preQualBadge.querySelector('img');
+    const avatarSrc = existingImg ? existingImg.src : '/static/assets/images/linda-landing.jpg';
+    const fallbackUrl = 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80';
+
     if (isHealthcare === 'yes' && savingsHistory === 'yes') {
         preQualBadge.style.color = '#34D399';
-        preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">verified</span><span>Verified Eligible Member</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+        preQualBadge.innerHTML = `<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">verified</span><span>Verified Eligible Member</span></span><img src="${avatarSrc}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src='${fallbackUrl}';">`;
         preQualTitle.textContent = 'GH¢ 100,000.00 Fast-Track Access';
         preQualDesc.textContent = 'You qualify to borrow up to 3x your savings plus share capital immediately without committee delay or external guarantors.';
     } else if (isHealthcare === 'yes' && savingsHistory === 'new') {
         preQualBadge.style.color = '#FBBF24';
-        preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">schedule</span><span>New Member Fast-Track</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+        preQualBadge.innerHTML = `<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">schedule</span><span>New Member Fast-Track</span></span><img src="${avatarSrc}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src='${fallbackUrl}';">`;
         preQualTitle.textContent = '90-Day Credit Acceleration Pathway';
         preQualDesc.textContent = 'Start saving GH¢100/month today. You unlock full 3x Fast-Track borrowing eligibility after your first 3 months of consistent savings.';
     } else {
         preQualBadge.style.color = '#38BDF8';
-        preQualBadge.innerHTML = '<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">hourglass_top</span><span>Pre-Qualification Review</span></span><img src="{% static 'assets / images / linda - landing.jpg' %}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src=\'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=160&q=80\';">';
+        preQualBadge.innerHTML = `<span class="prequal-status-pill"><span class="material-symbols-outlined" style="font-size:1.1rem;">hourglass_top</span><span>Pre-Qualification Review</span></span><img src="${avatarSrc}" alt="Smiling Pharmacist Member" class="prequal-avatar-thumb" onerror="this.src='${fallbackUrl}';">`;
         preQualTitle.textContent = 'Custom Institutional Assessment';
         preQualDesc.textContent = 'Non-pharmacist healthcare institutions and associated workers can qualify through committee review under CUA stabilization guidelines.';
     }
@@ -81,7 +85,6 @@ function syncPresetChips(value) {
     });
 }
 
-// Parses digits out of whatever the person typed (handles commas, GH¢, spaces)
 function parseSavingsValue(raw) {
     const digits = String(raw).replace(/[^0-9]/g, '');
     return digits ? parseInt(digits, 10) : 0;
@@ -97,8 +100,7 @@ function updateBorrowingPower(sourceValue, isTyping) {
     if (!savingsInput || !savingsSlider || !creditPowerFigure) return;
     const rawValue = parseSavingsValue(sourceValue);
 
-    // While typing, warn without silently rewriting what they typed underneath their cursor.
-    if (isTyping) {
+     if (isTyping) {
         if (rawValue > 0 && rawValue < 500) {
             setValidationMsg('This estimate starts at GH¢500 in savings — we\'ll use GH¢500 until you enter more.');
         } else {
@@ -107,6 +109,13 @@ function updateBorrowingPower(sourceValue, isTyping) {
     } else {
         setValidationMsg('');
     }
+
+    savingsSlider.value = savings;
+    const min = parseFloat(savingsSlider.min) || 500;
+    const max = parseFloat(savingsSlider.max) || 35000;
+    const pct = ((savings - min) / (max - min)) * 100;
+    savingsSlider.style.background = `linear-gradient(to right, var(--primary-green) ${pct}%, var(--border-color) ${pct}%)`;
+    syncPresetChips(savings);
 
     let savings = rawValue || 5000;
     savings = Math.max(500, Math.min(35000, savings));

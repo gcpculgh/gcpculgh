@@ -16,7 +16,6 @@ let currentCarouselIndex = 0;
 let isBatchMode = false;
 let selectedPhotoSet = new Set();
 
-/* SHARE */
 const lightboxShareBtn = document.getElementById('lightboxShareBtn');
 if (lightboxShareBtn) {
     lightboxShareBtn.addEventListener('click', async () => {
@@ -38,7 +37,6 @@ if (lightboxShareBtn) {
     });
 }
 
-/* ALBUM OPEN/CLOSE */
 function openAlbum(albumKey, updateUrl = true) {
     const data = ALBUMS_DATA[albumKey];
     if (!data) return;
@@ -105,7 +103,6 @@ window.addEventListener('popstate', () => {
     }
 });
 
-/* BATCH DOWNLOAD — routes through Cloudflare Worker */
 const toggleBatchBtn = document.getElementById('toggleBatchModeBtn');
 const batchBtnLabel = document.getElementById('batchBtnLabel');
 const batchActionBar = document.getElementById('batchActionBar');
@@ -147,7 +144,6 @@ function updateBatchBarStatus() {
 
 
 
-/* LIGHTBOX — single download also routes through Worker */
 const carouselModal = document.getElementById('carouselLightboxModal');
 const lightboxMainImg = document.getElementById('lightboxMainImg');
 const lightboxMainVideo = document.getElementById('lightboxMainVideo');
@@ -237,8 +233,9 @@ async function requestToken(keys) {
     return res.json();
 }
 
-async function downloadFromWorker(keys, filename, displayExt) {
-    const { token, timestamp } = await requestToken(keys);
+async function downloadFromWorker(keys, filename, displayExt, preFetchedAuth = null) {
+    const auth = preFetchedAuth || await requestToken(keys);
+    const { token, timestamp } = auth;
 
     const res = await fetch(WORKER_URL, {
         method: 'POST',
@@ -262,7 +259,6 @@ async function downloadFromWorker(keys, filename, displayExt) {
     setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
-/* BATCH */
 if (downloadBatchGroupBtn) {
     downloadBatchGroupBtn.addEventListener('click', async () => {
         if (selectedPhotoSet.size === 0) return;
@@ -276,8 +272,9 @@ if (downloadBatchGroupBtn) {
 
         try {
             btnText.textContent = 'Authenticating...';
+            const authData = await requestToken(keys);
             btnText.textContent = 'Building archive...';
-            await downloadFromWorker(keys, `${albumName}_selection`, '.zip');
+            await downloadFromWorker(keys, `${albumName}_selection`, '.zip', authData);
             showToast(`${keys.length} media downloaded!`, 'success');
             exitBatchMode();
         } catch (err) {
@@ -290,7 +287,6 @@ if (downloadBatchGroupBtn) {
     });
 }
 
-/* SINGLE (lightbox) */
 if (lightboxBottomDownloadBtn) {
     lightboxBottomDownloadBtn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -316,7 +312,6 @@ if (lightboxBottomDownloadBtn) {
     });
 }   
 
-/* FILTER */
 const filterBtns = document.querySelectorAll('#categoryFilterBar .filter-tab-btn');
 const albumCards = document.querySelectorAll('.album-card');
 const albumEmptyState = document.getElementById('albumEmptyState');
@@ -338,7 +333,6 @@ if (filterBtns) {
     });
 }
 
-/* INIT */
 function initGalleryScripts() {
     if (typeof TARGET_ALBUM !== 'undefined' && TARGET_ALBUM !== '') {
         if (ALBUMS_DATA[TARGET_ALBUM]) setTimeout(() => openAlbum(TARGET_ALBUM, false), 50);

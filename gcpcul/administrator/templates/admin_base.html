@@ -201,6 +201,83 @@
     .menu-toggle { display: flex; align-items: center; justify-content: center; }
     .topbar-user-name, .topbar-user-role { display: none; }
   }
+
+  /* ============ GLOBAL NAVIGATION & ACTION LOADER ============ */
+  .global-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary-green), var(--coop-gold, #F59E0B), var(--primary-green));
+    background-size: 200% 100%;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 1px 8px rgba(16, 185, 129, 0.45);
+    transition: width 0.35s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.2s ease;
+    animation: shimmerBar 1.5s linear infinite;
+  }
+
+  .global-progress-bar.active {
+    opacity: 1;
+    width: 82%;
+  }
+
+  @keyframes shimmerBar {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Floating pill for heavy POST actions (Save, Publish, Upload, Delete) */
+  .global-Working-pill {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 99998;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--ink, #10241A);
+    color: #fff;
+    padding: 0.7rem 1.15rem;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transform: translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  }
+
+  .global-Working-pill.active {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .global-Working-pill .material-symbols-outlined {
+    font-size: 1.15rem;
+    color: #10B981;
+    animation: globalSpin 0.9s linear infinite;
+  }
+
+  /* Button-level lock & spinner */
+  .btn-is-loading {
+    pointer-events: none !important;
+    opacity: 0.78 !important;
+    cursor: wait !important;
+  }
+
+  .btn-spinner-icon {
+    font-size: 1.05rem !important;
+    animation: globalSpin 0.9s linear infinite;
+  }
+
+  @keyframes globalSpin {
+    100% { transform: rotate(360deg); }
+  }
 </style>
 {% block extra_css %}{% endblock %}
 </head>
@@ -474,6 +551,118 @@
           lastActivity = Date.now();
         }
       }
+    });
+  })();
+</script>
+
+<!-- Global Top Progress Bar & Action Pill -->
+<div class="global-progress-bar" id="globalProgressBar"></div>
+<div class="global-Working-pill" id="globalWorkingPill" role="status" aria-live="polite">
+  <span class="material-symbols-outlined">progress_activity</span>
+  <span id="globalWorkingText">Processing request…</span>
+</div>
+
+<script>
+  (function () {
+    const progressBar = document.getElementById('globalProgressBar');
+    const workingPill = document.getElementById('globalWorkingPill');
+    const workingText = document.getElementById('globalWorkingText');
+    let trickleTimer = null;
+    let currentWidth = 0;
+
+    function startProgressBar() {
+      if (!progressBar) return;
+      clearInterval(trickleTimer);
+      currentWidth = 15;
+      progressBar.style.width = currentWidth + '%';
+      progressBar.classList.add('active');
+
+      // NProgress-style asymptotic trickle: slows down as it approaches 90%, never freezes at one number
+      trickleTimer = setInterval(() => {
+        if (currentWidth < 90) {
+          currentWidth += (90 - currentWidth) * 0.12;
+          progressBar.style.width = currentWidth.toFixed(1) + '%';
+        }
+      }, 250);
+    }
+
+    function completeProgressBar() {
+      if (!progressBar) return;
+      clearInterval(trickleTimer);
+      progressBar.style.width = '100%';
+    }
+
+    window.showGlobalLoader = function (btnElement, statusMessage) {
+      startProgressBar();
+
+      if (statusMessage && workingPill && workingText) {
+        workingText.textContent = statusMessage;
+        workingPill.classList.add('active');
+      }
+
+      if (btnElement && !btnElement.classList.contains('btn-is-loading')) {
+        btnElement.dataset.originalHtml = btnElement.innerHTML;
+        btnElement.classList.add('btn-is-loading');
+        btnElement.disabled = true;
+        const label = btnElement.textContent.trim();
+        btnElement.innerHTML = `<span class="material-symbols-outlined btn-spinner-icon">progress_activity</span> ${label ? 'Working…' : ''}`;
+      }
+    };
+
+    window.resetGlobalLoader = function () {
+      clearInterval(trickleTimer);
+      if (progressBar) {
+        progressBar.classList.remove('active');
+        progressBar.style.width = '0%';
+      }
+      if (workingPill) workingPill.classList.remove('active');
+
+      document.querySelectorAll('.btn-is-loading').forEach(btn => {
+        btn.classList.remove('btn-is-loading');
+        btn.disabled = false;
+        if (btn.dataset.originalHtml) {
+          btn.innerHTML = btn.dataset.originalHtml;
+        }
+      });
+    };
+
+    // 1. Standard internal navigation links
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+      if (
+        !href ||
+        href.startsWith('#') ||
+        href.startsWith('javascript:') ||
+        link.target === '_blank' ||
+        link.hasAttribute('download') ||
+        href.includes('/download/') || // Let browser's native download manager handle R2 streams
+        e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented
+      ) {
+        return;
+      }
+
+      startProgressBar();
+    });
+
+    // 2. Standard HTML <form> submissions (Delete buttons, Announcements, etc.)
+    document.addEventListener('submit', function (e) {
+      if (e.defaultPrevented) return;
+      const form = e.target;
+      if (!form.checkValidity()) return;
+
+      const submitter = e.submitter || form.querySelector('button[type="submit"]');
+      window.showGlobalLoader(submitter, 'Saving changes…');
+    });
+
+    // 3. Snap bar to 100% when the browser actually unloads for navigation
+    window.addEventListener('pagehide', completeProgressBar);
+
+    // 4. Reset state if restored from Back/Forward cache (bfcache)
+    window.addEventListener('pageshow', function () {
+      window.resetGlobalLoader();
     });
   })();
 </script>

@@ -37,7 +37,6 @@
 
 <div class="filter-bar-wrapper">
   <div class="container filter-container">
-    <!-- Server-Side Category Tabs -->
     <div class="filter-tabs" id="docFilterBar">
       <a href="?category=all{% if query %}&q={{ query }}{% endif %}" class="filter-tab-btn {% if current_category == 'all' %}active{% endif %}">All Documents<span class="tab-count">{{ counts.all }}</span></a>
       <a href="?category=form{% if query %}&q={{ query }}{% endif %}" class="filter-tab-btn {% if current_category == 'form' %}active{% endif %}">Application Forms<span class="tab-count">{{ counts.form }}</span></a>
@@ -46,10 +45,9 @@
       <a href="?category=legal{% if query %}&q={{ query }}{% endif %}" class="filter-tab-btn {% if current_category == 'legal' %}active{% endif %}">Policies & By-Laws<span class="tab-count">{{ counts.legal }}</span></a>
     </div>
 
-    <!-- Server-Side Search -->
     <form method="GET" action="{% url 'downloads' %}" class="vault-search-wrap">
       {% if current_category != 'all' %}
-      <input type="hidden" name="category" value="{{ current_category }}">
+        <input type="hidden" name="category" value="{{ current_category }}">
       {% endif %}
       <span class="vault-search-icon"><span class="material-symbols-outlined">search</span></span>
       <input type="search" name="q" value="{{ query }}" class="vault-search-input" placeholder="Search documents…" aria-label="Search documents">
@@ -104,7 +102,6 @@
 
     <div class="doc-grid">
       
-      <!-- Hardcoded Portal Teaser (Only shows in Reports) -->
       {% if current_category == 'all' or current_category == 'report' %}
       <div class="doc-card" data-category="report" style="position: relative;">
         <div style="position: absolute; top: -0.6rem; right: 1.25rem; background: #3B82F6; color: #FFFFFF; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em;">Portal Feature</div>
@@ -122,7 +119,6 @@
       </div>
       {% endif %}
 
-      <!-- The Single, Optimized Loop -->
       {% for doc in page_obj %}
       <div class="doc-card" data-category="{{ doc.category }}">
         <div class="doc-icon"><span class="icon-svg"><span class="material-symbols-outlined">{{ doc.icon_name|default:'description' }}</span></span></div>
@@ -162,7 +158,6 @@
 
     </div>
 
-    <!-- Public Pagination Controls -->
     {% if page_obj.paginator.num_pages > 1 %}
     <div style="margin-top: 3rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
       <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
@@ -170,10 +165,10 @@
       </span>
       <div style="display: flex; gap: 0.5rem;">
         {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}&category={{ current_category }}&q={{ query }}" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem;">Previous</a>
+          <a href="?page={{ page_obj.previous_page_number }}&category={{ current_category }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem;">Previous</a>
         {% endif %}
         {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}&category={{ current_category }}&q={{ query }}" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem;">Next</a>
+          <a href="?page={{ page_obj.next_page_number }}&category={{ current_category }}{% if query %}&q={{ query }}{% endif %}" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem;">Next</a>
         {% endif %}
       </div>
     </div>

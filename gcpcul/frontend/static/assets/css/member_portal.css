@@ -514,7 +514,6 @@ img {
     text-decoration: underline;
 }
 
-/* BUTTONS */
 .auth-button-stack {
     display: flex;
     flex-direction: column;
@@ -576,7 +575,6 @@ img {
     margin-bottom: 1rem;
 }
 
-/* COMING SOON STATE */
 .coming-soon-badge {
     display: inline-flex;
     align-items: center;
@@ -695,7 +693,6 @@ img {
     text-decoration: underline;
 }
 
-/* IN-FLOW BOTTOM FOOTER */
 .auth-footer-simple {
     width: 100%;
     display: flex;

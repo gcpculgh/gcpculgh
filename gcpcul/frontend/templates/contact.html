@@ -123,10 +123,6 @@
             <span>Off the <strong>Spintex Road</strong>, inside the Pharmaceutical Society of Ghana compound,
               Baatsonaa.</span>
           </li>
-          <!-- <li>
-            <span class="material-symbols-outlined">near_me</span>
-            <span>Directly opposite the <strong></strong>.</span>
-          </li> -->
           <li>
             <span class="material-symbols-outlined">directions_bus</span>
             <span>Any Spintex-bound trotro or taxi passing Baatsonaa junction will drop you within walking
@@ -204,9 +200,6 @@
 
 {% block extra_js %}
 <script>
-  // Live office-status pill. Office hours are Mon-Fri, 08:00-16:00 Ghana time
-  // (GMT+0, no DST). Computed from UTC rather than the visitor's local clock so
-  // a member browsing from abroad still sees the office's real status.
   (function () {
     const dot = document.getElementById('statusDot');
     const text = document.getElementById('statusText');
@@ -215,7 +208,7 @@
     const now = new Date();
     const ghanaHour = now.getUTCHours();
     const ghanaMinutes = now.getUTCMinutes();
-    const ghanaDay = now.getUTCDay(); // 0 = Sunday, 6 = Saturday
+    const ghanaDay = now.getUTCDay(); 
 
     const isWeekday = ghanaDay >= 1 && ghanaDay <= 5;
     const minutesNow = ghanaHour * 60 + ghanaMinutes;

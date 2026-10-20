@@ -258,32 +258,12 @@
     width: 100%;
 }
 
-.hero-title {
-    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
-    font-weight: 800;
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    margin-bottom: 1.1rem;
-}
 
 .hero-title span {
     color: var(--coop-gold);
 }
 
-.hero-desc {
-    font-size: clamp(1.05rem, 1.45vw, 1.2rem);
-    color: #F8FAFC;
-    max-width: 42rem;
-    margin-bottom: 2rem;
-    line-height: 1.7;
-}
 
-.hero-cta-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
 
 .filter-bar-wrapper {
     position: sticky;
@@ -448,7 +428,8 @@
 }
 
 .card-title {
-    font-size: 1.48rem;
+    font-size: 1.25rem;
+    letter-spacing: -0.015em;
     font-weight: 800;
     color: var(--text-main);
     margin-bottom: 0.75rem;
@@ -457,9 +438,9 @@
 
 .card-desc {
     color: var(--text-muted);
-    font-size: 1rem;
+    font-size: 0.94rem;
     margin-bottom: 1.75rem;
-    line-height: 1.75;
+    line-height: 1.65;
 }
 
 .snack-meta-bar {
@@ -938,8 +919,8 @@ table.rate-table tr:nth-child(even) td {
 .savings-amount-input {
     font-family: var(--font-mono);
     font-weight: 800;
-    font-size: 1.65rem;
-    padding: 1.1rem 1.3rem 1.1rem 3.9rem !important;
+    font-size: 1.35rem;
+    padding: 0.85rem 1.1rem 0.85rem 3.6rem !important;
     border-width: 2px !important;
 }
 
@@ -1343,4 +1324,3 @@ table.rate-table tr:nth-child(even) td {
     }
 }
 
-</style>

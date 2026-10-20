@@ -425,7 +425,6 @@ nav ul li a.active {
     border-color: var(--primary-green);
 }
 
-/* GLOBAL FOOTER */
 footer {
     background: #090D16;
     color: #94A3B8;
@@ -558,7 +557,6 @@ footer {
     opacity: 0.8;
 }
 
-/* DEVELOPMENT BANNER STYLES */
 .dev-banner {
     background-color: var(--gold-light);
     color: #855a15;
@@ -616,7 +614,6 @@ footer {
     opacity: 1;
 }
 
-/* MEDIA QUERIES FOR FOOTER/NAV */
 @media (max-width: 64rem) {
     nav ul {
         display: none;
@@ -694,7 +691,6 @@ table.sched-table td,
     font-family: var(--font-mono) !important;
 }
 
-/* --- TOAST NOTIFICATIONS --- */
 .toast-container {
     position: fixed;
     top: 2rem;

@@ -15,7 +15,6 @@
     </a>
     
     <div class="bio-grid">
-      <!-- Left Column: Edge-to-Edge Profile Card -->
       <aside class="bio-sidebar">
         <img class="bio-photo" src="{% static 'assets/images/team/' %}{{ member.image }}" alt="{{ member.name }}" onerror="this.src='{% static 'assets/images/placeholder-avatar.jpg' %}'">
         
@@ -29,14 +28,12 @@
           </div>
           
           <div class="bio-actions">
-            <!-- Dynamically shows Email only if provided in views.py -->
             {% if member.email %}
             <a href="mailto:{{ member.email }}" class="bio-action-btn primary">
               <span class="material-symbols-outlined">mail</span> Email
             </a>
             {% endif %}
             
-            <!-- Dynamically shows LinkedIn only if provided, using the official brand SVG -->
             {% if member.linkedin %}
             <a href="{{ member.linkedin }}" target="_blank" rel="noopener noreferrer" class="bio-action-btn secondary">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -49,11 +46,9 @@
         </div>
       </aside>
       
-      <!-- Right Column: Editorial Biography -->
       <main class="bio-content-area">
         <h2>Professional Biography</h2>
         <div class="bio-rich-text">
-          <!-- The 'linebreaks' filter parses Python text into HTML paragraphs automatically -->
           {{ member.bio|linebreaks }}
         </div>
       </main>
@@ -66,7 +61,6 @@
   <div class="container" style="max-width: 64rem;">
     <div class="related-header">
       <h3>Other members of the <span style="color: var(--primary-green);">{{ category }}</span></h3>
-      <!-- Pill Button with Material Icon -->
       <a href="{% url 'about' %}#committees" class="view-all-link">
         View Full Directory <span class="material-symbols-outlined" style="font-size: 1.1em;">arrow_forward</span>
       </a>

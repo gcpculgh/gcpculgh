@@ -608,11 +608,24 @@
     box-shadow: var(--shadow-sm);
   }
 
+  /* Match the live site's exact 16:9 card crop */
   .pv-card-thumb {
-    height: 9rem;
+    aspect-ratio: 16 / 9;
+    width: 100%;
     background-size: cover;
-    background-position: center;
+    background-position: center 25%;
     background-color: var(--bg-section-alt);
+  }
+
+  /* Constrain inline uploaded images inside the Editor and Live Preview */
+  .rte-body img,
+  .pv-prose img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.65rem;
+    margin: 1.25rem 0;
+    box-shadow: var(--shadow-sm);
   }
 
   .pv-card-body {
@@ -723,6 +736,167 @@
       min-width: 42rem;
     }
   }
+
+  /* --- Google Docs Style Cloud Sync UX --- */
+  .cloud-sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s ease;
+    margin-right: auto; 
+    margin-left: 1.5rem;
+  }
+  .cloud-sync-status.visible {
+    opacity: 1;
+  }
+  .cloud-sync-status .material-symbols-outlined {
+    font-size: 1.15rem;
+  }
+  
+  /* Smooth spinning animation for the save icon */
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .spin-icon { 
+    animation: spin 1s linear infinite; 
+    color: var(--primary-green);
+  }
+
+  /* --- Status Toggle Icons --- */
+  .status-toggle button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .status-toggle button .material-symbols-outlined {
+    font-size: 1.15rem;
+  }
+
+  /* --- Enterprise Unsaved Changes Modal --- */
+  .admin-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(16, 36, 26, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .admin-modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .admin-modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+    width: 100%;
+    max-width: 27rem;
+    padding: 1.6rem;
+    transform: translateY(10px) scale(0.97);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .admin-modal-backdrop.active .admin-modal-card {
+    transform: translateY(0) scale(1);
+  }
+
+  .admin-modal-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .admin-modal-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: rgba(245, 158, 11, 0.15);
+    color: #D97706;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-modal-icon .material-symbols-outlined {
+    font-size: 1.4rem;
+  }
+
+  .admin-modal-title {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 0.3rem;
+  }
+
+  .admin-modal-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .admin-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .btn-ghost-admin {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.84rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.55rem;
+    cursor: pointer;
+    margin-right: auto;
+  }
+
+  .btn-ghost-admin:hover {
+    color: var(--text-main);
+    background: var(--bg-section-alt);
+  }
+
+  .btn-danger-admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(225, 29, 72, 0.1);
+    color: #E11D48;
+    border: 1.5px solid rgba(225, 29, 72, 0.3);
+    font-weight: 700;
+    font-size: 0.84rem;
+    padding: 0.62rem 1rem;
+    border-radius: 0.55rem;
+    cursor: pointer;
+  }
+
+  .btn-danger-admin:hover {
+    background: #E11D48;
+    color: #fff;
+    border-color: #E11D48;
+  }
 </style>
 {% endblock %}
 
@@ -826,8 +1000,14 @@
       <span class="material-symbols-outlined">arrow_back</span>
       Back to Articles
     </button>
+    
+    <!-- NEW: The Visual Feedback Indicator -->
+    <div class="cloud-sync-status" id="cloudSyncStatus">
+      <span class="material-symbols-outlined" id="cloudSyncIcon">cloud_done</span>
+      <span id="cloudSyncText">Saved to cloud</span>
+    </div>
+
     <div class="editor-actions">
-      <!-- Standard submit triggers the JS saveArticle function -->
       <button type="button" class="btn-outline-admin" onclick="saveArticle('draft')">Save Draft</button>
       <button type="button" class="btn-primary-admin" onclick="saveArticle('published')">Publish Article</button>
     </div>
@@ -868,7 +1048,7 @@
           </div>
 
           <div class="field-group">
-            <label>Featured Image</label>
+            <label>Featured Image <span class="hint">(16:9 landscape recommended · 1600×900px)</span></label>
             <div class="image-drop" onclick="document.getElementById('fldImageFile').click()">
               <span class="material-symbols-outlined">add_photo_alternate</span>
               <span class="label">Click or drag an image here</span>
@@ -893,6 +1073,10 @@
               <button type="button" class="rte-btn" onclick="rteCmd('insertUnorderedList')" title="Bullet List"><span class="material-symbols-outlined">format_list_bulleted</span></button>
               <button type="button" class="rte-btn" onclick="rteInsertImage()" title="Insert Image"><span class="material-symbols-outlined">image</span></button>
             </div>
+            
+            <!-- NEW: Hidden file input for the inline editor -->
+            <input type="file" id="inlineImageInput" accept="image/*" style="display: none;" onchange="handleInlineImage(event)">
+            
             <div class="rte-body" id="fldBody" contenteditable="true" oninput="syncPreview()">
               {{ editing.body|safe }}
             </div>
@@ -902,8 +1086,12 @@
           <div class="field-group">
             <label>Status</label>
             <div class="status-toggle">
-              <button type="button" class="{% if not editing or editing.status == 'draft' %}selected{% endif %} draft" id="statusBtnDraft" onclick="setEditorStatus('draft')">Draft</button>
-              <button type="button" class="{% if editing.status == 'published' %}selected{% endif %}" id="statusBtnPublished" onclick="setEditorStatus('published')">Published</button>
+              <button type="button" class="{% if not editing or editing.status == 'draft' %}selected{% endif %} draft" id="statusBtnDraft" onclick="setEditorStatus('draft')">
+                <span class="material-symbols-outlined">edit_note</span> Draft
+              </button>
+              <button type="button" class="{% if editing.status == 'published' %}selected{% endif %}" id="statusBtnPublished" onclick="setEditorStatus('published')">
+                <span class="material-symbols-outlined">public</span> Published
+              </button>
             </div>
           </div>
 
@@ -952,6 +1140,37 @@
   </form> <!-- Correctly close the form AFTER the grid -->
 </div> <!-- End editorView -->
 
+<!-- ============ UNSAVED CHANGES MODAL ============ -->
+<div class="admin-modal-backdrop" id="unsavedModal" onclick="if(event.target === this) dismissUnsavedModal()">
+  <div class="admin-modal-card" role="dialog" aria-modal="true" aria-labelledby="unsavedModalTitle">
+    <div class="admin-modal-head">
+      <div class="admin-modal-icon">
+        <span class="material-symbols-outlined">edit_notifications</span>
+      </div>
+      <div>
+        <h3 class="admin-modal-title" id="unsavedModalTitle">Save this article before leaving?</h3>
+        <p class="admin-modal-desc">
+          You have an unfinished post in progress. You can save it as a draft to continue later on any device, or delete it permanently.
+        </p>
+      </div>
+    </div>
+
+    <div class="admin-modal-footer">
+      <button type="button" class="btn-ghost-admin" onclick="dismissUnsavedModal()">
+        Keep Editing
+      </button>
+      <button type="button" class="btn-danger-admin" onclick="discardAndExit()">
+        <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+        Delete Draft
+      </button>
+      <button type="button" class="btn-primary-admin" onclick="saveDraftAndExit()">
+        <span class="material-symbols-outlined" style="font-size:1rem;">cloud_done</span>
+        Save as Draft
+      </button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -961,11 +1180,64 @@
     document.getElementById('editorView').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // Track if this started as a brand-new article
+  const isNewArticleSession = {{ editing|yesno:"false,true" }};
+
   function closeEditor() {
+    const titleVal = document.getElementById('fldTitle').value.trim();
+    const bodyVal = document.getElementById('fldBody').innerText.trim();
+    const hasContent = titleVal.length > 0 || bodyVal.length > 0;
+
+    // Show the custom modal if there are unsaved edits OR if they started typing a new post
+    if (hasUnsavedChanges || (isNewArticleSession && hasContent)) {
+      document.getElementById('unsavedModal').classList.add('active');
+      return;
+    }
+
+    // Otherwise, exit cleanly back to the list
     document.getElementById('editorView').classList.remove('active');
     document.getElementById('listView').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  function dismissUnsavedModal() {
+    document.getElementById('unsavedModal').classList.remove('active');
+  }
+
+  function saveDraftAndExit() {
+    dismissUnsavedModal();
+    saveArticle('draft');
+  }
+
+  async function discardAndExit() {
+    hasUnsavedChanges = false;
+    dismissUnsavedModal();
+
+    // If this was a new post that auto-saved in the background, delete that temp draft row from the DB
+    if (isNewArticleSession && currentArticleId) {
+      try {
+        await fetch(`/administrator/news/delete/${currentArticleId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+        });
+      } catch (e) {
+        console.error('Cleanup error:', e);
+      }
+    }
+
+    // Reload cleanly back to the main News & Blog list
+    window.location.href = "{% url 'administrator:news_list' %}";
+  }
+
+  // Allow pressing Escape to dismiss the modal and keep editing
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      dismissUnsavedModal();
+    }
+  });
 
   function switchPreviewTab(tab) {
     document.getElementById('tabCard').classList.toggle('active', tab === 'card');
@@ -982,9 +1254,46 @@
     document.execCommand(cmd, false, val || null);
     syncPreview();
   }
+
   function rteInsertImage() {
-    const url = prompt('Image URL (or upload support coming soon):');
-    if (url) { rteCmd('insertImage', url); }
+    // Trigger the hidden file input instead of showing a prompt
+    document.getElementById('inlineImageInput').click();
+  }
+
+  async function handleInlineImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 1. Prepare the payload securely
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    // 2. UX Feedback (Change cursor to show loading)
+    document.body.style.cursor = 'wait';
+
+    try {
+      // 3. Send to our new Django backend endpoint
+      const response = await fetch("{% url 'administrator:upload_rte_image' %}", {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.url) {
+        // 4. Insert the clean Cloudflare CDN URL into the editor
+        rteCmd('insertImage', data.url);
+      } else {
+        alert('Upload failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      alert('A network error occurred during upload.');
+    } finally {
+      // 5. Cleanup
+      document.body.style.cursor = 'default';
+      e.target.value = ''; // Reset the file input
+    }
   }
 
   function handleImageUpload(e) {
@@ -1042,16 +1351,32 @@
     document.getElementById('statusBtnPublished').classList.toggle('selected', status === 'published');
   }
 
-  function saveArticle(status) {
-    // 1. Visually update the toggle
-    setEditorStatus(status);
+  async function saveArticle(status, btnEl) {
+    const form = document.getElementById('articleForm');
 
-    // 2. Set the hidden inputs for Django's Form
+    // 1. Validate required fields (Title, Author) BEFORE doing anything!
+    // If a field is blank, the browser highlights it and stops right here.
+    if (!form.reportValidity()) {
+      return;
+    }
+
+    // 2. Visually update the status toggle & hidden fields
+    setEditorStatus(status);
     document.getElementById('hiddenStatus').value = status;
     document.getElementById('hiddenBody').value = document.getElementById('fldBody').innerHTML;
 
-    // 3. Submit the traditional way
-    document.getElementById('articleForm').submit();
+    // 3. Lock the clicked button and start the loader immediately (BEFORE the async network call)
+    const label = status === 'published' ? 'Publishing article…' : 'Saving draft…';
+    if (window.showGlobalLoader) {
+      window.showGlobalLoader(btnEl, label);
+    }
+
+    // 4. Sync any pending cloud changes and disarm the beforeunload warning
+    await autoSaveToCloud();
+    hasUnsavedChanges = false;
+
+    // 5. Submit the validated form
+    form.submit();
   }
 
   // ---- List filtering ----
@@ -1075,6 +1400,126 @@
     });
     document.getElementById('tableFooterCount').textContent = `Showing ${visible} of 17 articles`;
   }
+
+  // ==========================================
+  // ENTERPRISE UX: Cloud Sync & Crash Recovery
+  // ==========================================
+
+  let hasUnsavedChanges = false;
+  let currentArticleId = "{{ editing.public_id|default:'' }}";
+
+  // 1. Flag when the user types anything
+  document.getElementById('articleForm').addEventListener('input', () => { hasUnsavedChanges = true; });
+  document.getElementById('fldBody').addEventListener('input', () => { hasUnsavedChanges = true; });
+
+  // 2. Warn if they try to close the tab while an upload is pending
+  window.addEventListener('beforeunload', function (e) {
+    if (hasUnsavedChanges) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // 3. The Cloud Sync Engine
+  // UI Elements for Sync Feedback
+    const syncUI = document.getElementById('cloudSyncStatus');
+    const syncIcon = document.getElementById('cloudSyncIcon');
+    const syncText = document.getElementById('cloudSyncText');
+    let syncFadeTimeout;
+
+    function setSyncStatus(state) {
+      clearTimeout(syncFadeTimeout);
+      syncUI.classList.add('visible');
+
+      if (state === 'saving') {
+        syncIcon.textContent = 'sync';
+        syncIcon.classList.add('spin-icon');
+        syncText.textContent = 'Saving...';
+      } else if (state === 'saved') {
+        syncIcon.textContent = 'cloud_done';
+        syncIcon.classList.remove('spin-icon');
+        syncText.textContent = 'Saved to cloud';
+        
+        // Fade out gracefully after 3 seconds so it's not distracting
+        syncFadeTimeout = setTimeout(() => {
+          if (!hasUnsavedChanges) syncUI.classList.remove('visible');
+        }, 3000);
+      } else if (state === 'error') {
+        syncIcon.textContent = 'cloud_off';
+        syncIcon.classList.remove('spin-icon');
+        syncText.textContent = 'Saved locally (Offline)';
+      }
+    }
+
+    // 3. The Upgraded Cloud Sync Engine
+    async function autoSaveToCloud() {
+      if (!hasUnsavedChanges) return;
+
+      // Trigger the "Saving..." spinning animation instantly
+      setSyncStatus('saving');
+
+      const payload = {
+        article_id: currentArticleId,
+        title: document.getElementById('fldTitle').value || 'Untitled Draft',
+        category: document.getElementById('fldCategory').value,
+        author: document.getElementById('fldAuthor').value,
+        excerpt: document.getElementById('fldExcerpt').value,
+        body: document.getElementById('fldBody').innerHTML
+      };
+
+      try {
+        const response = await fetch("{% url 'administrator:news_auto_save' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          hasUnsavedChanges = false;
+          
+          // Trigger the "Saved to cloud" checkmark
+          setSyncStatus('saved');
+          
+          if (!currentArticleId) {
+            currentArticleId = data.article_id;
+            const form = document.getElementById('articleForm');
+            form.action = form.action.replace('create/', `update/${currentArticleId}/`);
+          }
+        }
+      } catch (error) {
+        // If they lose internet connection, tell them they are offline
+        setSyncStatus('error');
+        console.error("Cloud sync temporarily lost connection. Will retry...");
+      }
+    }
+  // 4. Ping the database every 15 seconds silently
+  setInterval(autoSaveToCloud, 15000);
+
+  // 5. Instantly clear the warning when they intentionally click Publish
+  const originalSaveArticle = saveArticle;
+    saveArticle = async function(status) {
+      await autoSaveToCloud(); // Force one final sync
+      hasUnsavedChanges = false; 
+      originalSaveArticle(status); 
+  };
+
+  // Strip external inline font/color styles when pasting into the Rich Text Editor
+  document.getElementById('fldBody').addEventListener('paste', function (e) {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+    // Convert double line-breaks into clean paragraphs
+    const cleanHtml = text
+      .split(/\n\s*\n/)
+      .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+    document.execCommand('insertHTML', false, cleanHtml);
+    syncPreview();
+  });
 
   // Auto-open the editor if Django tells us we are editing an existing article
     // or if form validation failed and we need to show the errors.
