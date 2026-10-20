@@ -209,6 +209,15 @@
     border: 1px solid rgba(79, 70, 229, 0.35); 
   }
 
+  .pv-prose ul,
+  .pv-prose ol {
+    padding-left: 1.5rem;
+    margin: 0.75rem 0;
+  }
+  .pv-prose li {
+    margin-bottom: 0.4rem;
+  }
+
   .status-pill {
     display: inline-flex;
     align-items: center;
@@ -1189,13 +1198,11 @@
     const bodyVal = document.getElementById('fldBody').innerText.trim();
     const hasContent = titleVal.length > 0 || bodyVal.length > 0;
 
-    // Show the custom modal if there are unsaved edits OR if they started typing a new post
     if (hasUnsavedChanges || (isNewArticleSession && hasContent)) {
       document.getElementById('unsavedModal').classList.add('active');
       return;
     }
 
-    // Otherwise, exit cleanly back to the list
     document.getElementById('editorView').classList.remove('active');
     document.getElementById('listView').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1214,7 +1221,6 @@
     hasUnsavedChanges = false;
     dismissUnsavedModal();
 
-    // If this was a new post that auto-saved in the background, delete that temp draft row from the DB
     if (isNewArticleSession && currentArticleId) {
       try {
         await fetch(`/administrator/news/delete/${currentArticleId}/`, {
@@ -1228,11 +1234,9 @@
       }
     }
 
-    // Reload cleanly back to the main News & Blog list
     window.location.href = "{% url 'administrator:news_list' %}";
   }
 
-  // Allow pressing Escape to dismiss the modal and keep editing
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       dismissUnsavedModal();
@@ -1256,7 +1260,6 @@
   }
 
   function rteInsertImage() {
-    // Trigger the hidden file input instead of showing a prompt
     document.getElementById('inlineImageInput').click();
   }
 
@@ -1264,16 +1267,13 @@
     const file = e.target.files[0];
     if (!file) return;
 
-    // 1. Prepare the payload securely
     const formData = new FormData();
     formData.append('image', file);
     formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
 
-    // 2. UX Feedback (Change cursor to show loading)
     document.body.style.cursor = 'wait';
 
     try {
-      // 3. Send to our new Django backend endpoint
       const response = await fetch("{% url 'administrator:upload_rte_image' %}", {
         method: 'POST',
         body: formData
@@ -1282,7 +1282,6 @@
       const data = await response.json();
       
       if (response.ok && data.url) {
-        // 4. Insert the clean Cloudflare CDN URL into the editor
         rteCmd('insertImage', data.url);
       } else {
         alert('Upload failed: ' + (data.error || 'Unknown error'));
@@ -1290,9 +1289,8 @@
     } catch (error) {
       alert('A network error occurred during upload.');
     } finally {
-      // 5. Cleanup
       document.body.style.cursor = 'default';
-      e.target.value = ''; // Reset the file input
+      e.target.value = '';
     }
   }
 
@@ -1310,8 +1308,6 @@
     reader.readAsDataURL(file);
   }
 
-  // Auto read-time, calculated from the actual body word count — same
-  // convention ("X min read") used everywhere on the live site.
   function calcReadTime(text) {
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     return Math.max(1, Math.round(words / 200));
@@ -1351,35 +1347,23 @@
     document.getElementById('statusBtnPublished').classList.toggle('selected', status === 'published');
   }
 
-  async function saveArticle(status, btnEl) {
+  // STREAMLINED & ROBUST SAVE FUNCTION
+  function saveArticle(status) {
     const form = document.getElementById('articleForm');
 
-    // 1. Validate required fields (Title, Author) BEFORE doing anything!
-    // If a field is blank, the browser highlights it and stops right here.
+    // Validate required fields (Title, Author)
     if (!form.reportValidity()) {
       return;
     }
 
-    // 2. Visually update the status toggle & hidden fields
     setEditorStatus(status);
     document.getElementById('hiddenStatus').value = status;
     document.getElementById('hiddenBody').value = document.getElementById('fldBody').innerHTML;
 
-    // 3. Lock the clicked button and start the loader immediately (BEFORE the async network call)
-    const label = status === 'published' ? 'Publishing article…' : 'Saving draft…';
-    if (window.showGlobalLoader) {
-      window.showGlobalLoader(btnEl, label);
-    }
-
-    // 4. Sync any pending cloud changes and disarm the beforeunload warning
-    await autoSaveToCloud();
     hasUnsavedChanges = false;
-
-    // 5. Submit the validated form
     form.submit();
   }
 
-  // ---- List filtering ----
   let currentStatusFilter = 'all';
   function setStatusFilter(btn, status) {
     document.querySelectorAll('#statusChips .chip').forEach(c => c.classList.remove('active'));
@@ -1387,6 +1371,7 @@
     currentStatusFilter = status;
     filterArticles();
   }
+
   function filterArticles() {
     const query = document.getElementById('articleSearch').value.toLowerCase().trim();
     const rows = document.querySelectorAll('#articleTable tbody tr');
@@ -1398,21 +1383,15 @@
       row.style.display = show ? '' : 'none';
       if (show) visible++;
     });
-    document.getElementById('tableFooterCount').textContent = `Showing ${visible} of 17 articles`;
+    document.getElementById('tableFooterCount').textContent = `Showing ${visible} articles`;
   }
-
-  // ==========================================
-  // ENTERPRISE UX: Cloud Sync & Crash Recovery
-  // ==========================================
 
   let hasUnsavedChanges = false;
   let currentArticleId = "{{ editing.public_id|default:'' }}";
 
-  // 1. Flag when the user types anything
   document.getElementById('articleForm').addEventListener('input', () => { hasUnsavedChanges = true; });
   document.getElementById('fldBody').addEventListener('input', () => { hasUnsavedChanges = true; });
 
-  // 2. Warn if they try to close the tab while an upload is pending
   window.addEventListener('beforeunload', function (e) {
     if (hasUnsavedChanges) {
       e.preventDefault();
@@ -1420,99 +1399,79 @@
     }
   });
 
-  // 3. The Cloud Sync Engine
-  // UI Elements for Sync Feedback
-    const syncUI = document.getElementById('cloudSyncStatus');
-    const syncIcon = document.getElementById('cloudSyncIcon');
-    const syncText = document.getElementById('cloudSyncText');
-    let syncFadeTimeout;
+  const syncUI = document.getElementById('cloudSyncStatus');
+  const syncIcon = document.getElementById('cloudSyncIcon');
+  const syncText = document.getElementById('cloudSyncText');
+  let syncFadeTimeout;
 
-    function setSyncStatus(state) {
-      clearTimeout(syncFadeTimeout);
-      syncUI.classList.add('visible');
+  function setSyncStatus(state) {
+    clearTimeout(syncFadeTimeout);
+    syncUI.classList.add('visible');
 
-      if (state === 'saving') {
-        syncIcon.textContent = 'sync';
-        syncIcon.classList.add('spin-icon');
-        syncText.textContent = 'Saving...';
-      } else if (state === 'saved') {
-        syncIcon.textContent = 'cloud_done';
-        syncIcon.classList.remove('spin-icon');
-        syncText.textContent = 'Saved to cloud';
-        
-        // Fade out gracefully after 3 seconds so it's not distracting
-        syncFadeTimeout = setTimeout(() => {
-          if (!hasUnsavedChanges) syncUI.classList.remove('visible');
-        }, 3000);
-      } else if (state === 'error') {
-        syncIcon.textContent = 'cloud_off';
-        syncIcon.classList.remove('spin-icon');
-        syncText.textContent = 'Saved locally (Offline)';
-      }
+    if (state === 'saving') {
+      syncIcon.textContent = 'sync';
+      syncIcon.classList.add('spin-icon');
+      syncText.textContent = 'Saving...';
+    } else if (state === 'saved') {
+      syncIcon.textContent = 'cloud_done';
+      syncIcon.classList.remove('spin-icon');
+      syncText.textContent = 'Saved to cloud';
+      
+      syncFadeTimeout = setTimeout(() => {
+        if (!hasUnsavedChanges) syncUI.classList.remove('visible');
+      }, 3000);
+    } else if (state === 'error') {
+      syncIcon.textContent = 'cloud_off';
+      syncIcon.classList.remove('spin-icon');
+      syncText.textContent = 'Saved locally (Offline)';
     }
+  }
 
-    // 3. The Upgraded Cloud Sync Engine
-    async function autoSaveToCloud() {
-      if (!hasUnsavedChanges) return;
+  async function autoSaveToCloud() {
+    if (!hasUnsavedChanges) return;
+    setSyncStatus('saving');
 
-      // Trigger the "Saving..." spinning animation instantly
-      setSyncStatus('saving');
+    const payload = {
+      article_id: currentArticleId,
+      title: document.getElementById('fldTitle').value || 'Untitled Draft',
+      category: document.getElementById('fldCategory').value,
+      author: document.getElementById('fldAuthor').value,
+      excerpt: document.getElementById('fldExcerpt').value,
+      body: document.getElementById('fldBody').innerHTML
+    };
 
-      const payload = {
-        article_id: currentArticleId,
-        title: document.getElementById('fldTitle').value || 'Untitled Draft',
-        category: document.getElementById('fldCategory').value,
-        author: document.getElementById('fldAuthor').value,
-        excerpt: document.getElementById('fldExcerpt').value,
-        body: document.getElementById('fldBody').innerHTML
-      };
-
-      try {
-        const response = await fetch("{% url 'administrator:news_auto_save' %}", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-          },
-          body: JSON.stringify(payload)
-        });
+    try {
+      const response = await fetch("{% url 'administrator:news_auto_save' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        hasUnsavedChanges = false;
+        setSyncStatus('saved');
         
-        const data = await response.json();
-        
-        if (data.success) {
-          hasUnsavedChanges = false;
-          
-          // Trigger the "Saved to cloud" checkmark
-          setSyncStatus('saved');
-          
-          if (!currentArticleId) {
-            currentArticleId = data.article_id;
-            const form = document.getElementById('articleForm');
-            form.action = form.action.replace('create/', `update/${currentArticleId}/`);
-          }
+        if (!currentArticleId) {
+          currentArticleId = data.article_id;
+          const form = document.getElementById('articleForm');
+          form.action = form.action.replace('create/', `update/${currentArticleId}/`);
         }
-      } catch (error) {
-        // If they lose internet connection, tell them they are offline
-        setSyncStatus('error');
-        console.error("Cloud sync temporarily lost connection. Will retry...");
       }
+    } catch (error) {
+      setSyncStatus('error');
     }
-  // 4. Ping the database every 15 seconds silently
+  }
+
   setInterval(autoSaveToCloud, 15000);
 
-  // 5. Instantly clear the warning when they intentionally click Publish
-  const originalSaveArticle = saveArticle;
-    saveArticle = async function(status) {
-      await autoSaveToCloud(); // Force one final sync
-      hasUnsavedChanges = false; 
-      originalSaveArticle(status); 
-  };
-
-  // Strip external inline font/color styles when pasting into the Rich Text Editor
   document.getElementById('fldBody').addEventListener('paste', function (e) {
     e.preventDefault();
     const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-    // Convert double line-breaks into clean paragraphs
     const cleanHtml = text
       .split(/\n\s*\n/)
       .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
@@ -1521,8 +1480,6 @@
     syncPreview();
   });
 
-  // Auto-open the editor if Django tells us we are editing an existing article
-    // or if form validation failed and we need to show the errors.
   {% if open_editor %}
     openEditor();
   {% endif %}

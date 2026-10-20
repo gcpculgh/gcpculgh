@@ -250,8 +250,14 @@
 
 .reader-prose ul,
 .reader-prose ol {
-    margin: 0 0 1.85rem 0;
-    padding-left: 1.5rem;
+    padding-left: 1.75rem !important;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    list-style-position: outside;
+}
+.reader-prose li {
+    margin-bottom: 0.65rem;
+    line-height: 1.7;
 }
 
 .reader-prose ul {
@@ -262,10 +268,7 @@
     list-style-type: decimal;
 }
 
-.reader-prose li {
-    margin-bottom: 0.75rem;
-    padding-left: 0.35rem;
-}
+
 
 .reader-prose li::marker {
     color: var(--primary-green);
