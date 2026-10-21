@@ -326,7 +326,7 @@ header {
 }
 
 .logo-name {
-  font-size: 0.78rem;   
+  font-size: 0.85rem;   
   font-weight: 900;
   color: var(--logo-wordmark);
   line-height: 1.2;
@@ -335,14 +335,14 @@ header {
 
 @media (max-width: 64rem) {
   .logo-name {
-    font-size: 0.68rem;   
+    font-size: 0.75rem;   
     line-height: 1.3;
   }
 }
 
 @media (max-width: 48rem) {
   .logo-name {
-    font-size: 0.6rem;   
+    font-size: 0.75rem;   
   }
 }   
 
