@@ -1472,6 +1472,63 @@
     });
   }
 
+  // ── Placement card selection + mutual exclusion ──
+  const PLACEMENTS = {
+    featured_spotlight: document.querySelector('input[name="featured_spotlight"]'),
+    show_in_happenings: document.querySelector('input[name="show_in_happenings"]'),
+    show_in_insights:   document.querySelector('input[name="show_in_insights"]'),
+  };
+
+  // Rule: a spotlight article CANNOT also appear in Insights & Guidance
+  const MUTUALLY_EXCLUSIVE = [
+    ['featured_spotlight', 'show_in_insights'],
+  ];
+
+  function syncPlacementUI() {
+    Object.entries(PLACEMENTS).forEach(([name, input]) => {
+      const card = input.closest('.placement-card');
+      card.classList.toggle('selected', input.checked);
+      card.querySelector('.placement-card-inner').style.opacity = input.disabled ? '0.45' : '1';
+      card.querySelector('.placement-card-inner').style.pointerEvents = input.disabled ? 'none' : 'auto';
+    });
+  }
+
+  function enforceExclusion(checkedName) {
+    for (const [a, b] of MUTUALLY_EXCLUSIVE) {
+      if (PLACEMENTS[a].checked && a === checkedName) {
+        PLACEMENTS[b].checked = false;
+        PLACEMENTS[b].disabled = true;
+      } else if (PLACEMENTS[b].checked && b === checkedName) {
+        PLACEMENTS[a].checked = false;
+        PLACEMENTS[a].disabled = true;
+      }
+      // Re-enable when the checked one is unchecked
+      if (!PLACEMENTS[a].checked && !PLACEMENTS[b].checked) {
+        PLACEMENTS[a].disabled = false;
+        PLACEMENTS[b].disabled = false;
+      }
+      if (PLACEMENTS[a].checked) {
+        PLACEMENTS[b].disabled = true;
+      } else {
+        PLACEMENTS[b].disabled = false;
+      }
+      if (PLACEMENTS[b].checked) {
+        PLACEMENTS[a].disabled = true;
+      } else {
+        PLACEMENTS[a].disabled = false;
+      }
+    }
+    syncPlacementUI();
+  }
+
+  Object.values(PLACEMENTS).forEach(input => {
+    input.addEventListener('change', () => enforceExclusion(input.name));
+  });
+
+  // Initialize on load (handles the `{% if editing and editing.featured_spotlight %}checked{% endif %}` state)
+  syncPlacementUI();
+  enforceExclusion(null); // just sync disabled states without forcing a check   
+
   function setEditorStatus(status) {
     document.getElementById('statusBtnDraft').classList.toggle('selected', status === 'draft');
     document.getElementById('statusBtnPublished').classList.toggle('selected', status === 'published');
