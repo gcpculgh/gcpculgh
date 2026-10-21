@@ -654,30 +654,7 @@ footer {
     transition: opacity 0.2s;
 }
 
-/* ── Top utility strip ── */
-.top-bar {
-  background: var(--primary-green);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 0.4rem 0;
-}
 
-.top-bar-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.top-bar-name {
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .top-bar-contact {
   display: flex;
@@ -700,16 +677,38 @@ footer {
   margin: 0 0.25rem;
 }
 
+.top-bar {
+  background: var(--primary-green);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0.55rem 0;
+  line-height: 1.5;
+}   
+
+.top-bar-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-bar-name {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
 [data-theme="dark"] .top-bar {
   background: #064E3B;
 }
 
-/* Hide top bar on mobile */
 @media (max-width: 64rem) {
   .top-bar {
     display: none;
   }
-}   
+}    
 
 .dev-banner-close:hover {
     opacity: 1;
