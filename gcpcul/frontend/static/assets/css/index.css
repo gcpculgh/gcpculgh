@@ -39,7 +39,6 @@
     gap: 0.55rem;
 }
 
-
 .hero {
     background: linear-gradient(160deg, #063421 0%, var(--primary-green) 100%);
     color: #FFFFFF;
@@ -47,7 +46,6 @@
     overflow: hidden;
     padding: clamp(3.5rem, 7vw, 6rem) 0 clamp(5rem, 8vw, 7rem);
 }
-
 
 .hero-grid {
     display: grid;
@@ -120,10 +118,9 @@
     gap: 0.5rem;
 }
 
-.hero-microcopy .icon-svg svg {
-    width: 1rem;
-    height: 1rem;
-    fill: var(--gold-bright);
+.hero-microcopy .material-symbols-outlined {
+    font-size: 1.1rem;
+    color: var(--gold-bright);
 }
 
 .passbook {
@@ -246,39 +243,6 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     gap: 2rem;
-}
-
-.happening-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.happening-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-green);
-}
-
-.happening-img {
-    width: 100%;
-    height: 13rem;
-    object-fit: cover;
-    display: block;
-    background: var(--stack-back);
-}
-
-.happening-title {
-    padding: 1.4rem 1.6rem;
-    font-size: 1.02rem;
-    font-weight: 700;
-    color: var(--heading-green);
-    line-height: 1.4;
 }
 
 .trust-strip {
@@ -882,10 +846,9 @@
     border-color: var(--primary-green);
 }
 
-.tcarousel-arrow svg {
-    width: 1.1rem;
-    height: 1.1rem;
-    fill: var(--text-main);
+.tcarousel-arrow .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: var(--text-main);
 }
 
 .tcarousel-dots {
@@ -1079,38 +1042,6 @@
     display: block;
 }
 
-.store-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--text-main);
-    color: #FFFFFF;
-    padding: 0.85rem 1.6rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.store-btn svg {
-    width: 1.7rem;
-    height: 1.7rem;
-    flex-shrink: 0;
-}
-
-.store-btn-text span {
-    display: block;
-    font-size: 0.7rem;
-    color: #A9B3A9;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.store-btn-text strong {
-    display: block;
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #FFFFFF;
-}
-
 .trust-banner {
     background: #063421;
     color: #FFFFFF;
@@ -1203,7 +1134,6 @@
 }
 
 @media (max-width: 64rem) {
-
     .hero-grid,
     .qualify-grid,
     .banking-grid,
@@ -1244,6 +1174,4 @@
         border: none;
         border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
-
-
-}
+}   
