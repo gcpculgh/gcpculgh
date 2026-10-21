@@ -9,6 +9,8 @@
     --gold-light: #FBF2DE;
     --error: #DC2626;
 
+    --logo-wordmark: #063D22;
+
     --bg-page: #FAF7F0;
     --bg-card: #FFFFFF;
     --bg-section-alt: #EEF3EC;
@@ -48,6 +50,7 @@
     --navbar-bg: rgba(17, 24, 39, 0.96);
     --stack-back: #1E293B;
     --stack-mid: #172033;
+    --logo-wordmark: #34D399;
 }
 
 * {
@@ -248,13 +251,6 @@ header {
     gap: 1.5rem;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-shrink: 1;
-    min-width: 0;
-}
 
 .has-dropdown {
     position: relative;
@@ -301,11 +297,21 @@ header {
     flex-shrink: 0;
 }   
 
-.logo-text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;        
+  flex-shrink: 1;
+  min-width: 0;
 }
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  min-width: 0;
+  line-height: 1.2;       
+}   
 
 .logo-sub {
     font-size: 0.68rem;
@@ -319,9 +325,9 @@ header {
 .logo-name {
   font-size: 0.88rem;
   font-weight: 900;
-  color: var(--heading-green);
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  color: var(--logo-wordmark);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
 @media (max-width: 64rem) {
