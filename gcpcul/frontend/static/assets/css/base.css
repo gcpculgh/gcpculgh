@@ -654,6 +654,63 @@ footer {
     transition: opacity 0.2s;
 }
 
+/* ── Top utility strip ── */
+.top-bar {
+  background: var(--primary-green);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 0;
+}
+
+.top-bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.top-bar-name {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-bar-contact {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.top-bar-contact a {
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.2s;
+}
+
+.top-bar-contact a:hover {
+  color: #FFFFFF;
+}
+
+.top-bar-sep {
+  opacity: 0.3;
+  margin: 0 0.25rem;
+}
+
+[data-theme="dark"] .top-bar {
+  background: #064E3B;
+}
+
+/* Hide top bar on mobile */
+@media (max-width: 64rem) {
+  .top-bar {
+    display: none;
+  }
+}   
+
 .dev-banner-close:hover {
     opacity: 1;
 }
