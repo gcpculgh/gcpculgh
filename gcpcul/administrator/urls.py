@@ -33,8 +33,8 @@ urlpatterns = [
 
     path(f"{URL_PREFIX}/gallery/auto-save/", views.gallery_auto_save, name="gallery_auto_save"),
 
-    path('news/upload-image/', views.upload_rte_image, name='upload_rte_image'),
-    path('news/auto-save/', views.news_auto_save, name='news_auto_save'),
+    path(f"{URL_PREFIX}/news/upload-image/", views.upload_rte_image, name='upload_rte_image'),
+    path(f"{URL_PREFIX}/news/auto-save/", views.news_auto_save, name='news_auto_save'),   
 
     path(f"{URL_PREFIX}/gallery/media/<uuid:public_id>/delete/", views.gallery_media_delete, name="gallery_media_delete"),
     path(f"{URL_PREFIX}/login/", auth_views.LoginView.as_view(template_name="cms/admin_login.html", redirect_authenticated_user=True), name="admin_login"),

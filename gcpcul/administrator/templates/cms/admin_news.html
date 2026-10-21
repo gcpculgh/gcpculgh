@@ -1350,10 +1350,11 @@
   // STREAMLINED & ROBUST SAVE FUNCTION
   function saveArticle(status) {
     const form = document.getElementById('articleForm');
-
-    // Validate required fields (Title, Author)
     if (!form.reportValidity()) {
-      return;
+        // Make it obvious why it didn't submit
+        const firstInvalid = form.querySelector(':invalid');
+        if (firstInvalid) firstInvalid.focus();
+        return;
     }
 
     setEditorStatus(status);
