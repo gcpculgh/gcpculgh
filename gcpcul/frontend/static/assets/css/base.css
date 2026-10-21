@@ -307,14 +307,6 @@ header {
     min-width: 0;
 }
 
-.logo-name {
-    font-size: 1.25rem;
-    font-weight: 900;
-    color: var(--heading-green);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-}
-
 .logo-sub {
     font-size: 0.68rem;
     font-weight: 600;

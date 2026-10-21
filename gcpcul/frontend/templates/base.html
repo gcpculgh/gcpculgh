@@ -80,65 +80,57 @@
   {% endif %}
 
   <header>
-  <div class="top-bar">
-    <div class="container top-bar-inner">
-      <span class="top-bar-name">Ghana Co-operative Pharmacists'<br>Credit Union Limited</span>
-    </div>
-  </div>     
-
-  <!-- Main nav bar -->
-  <div class="container nav-container">
-    <a href="{% url 'home' %}" class="logo">
-      <img src="{% static 'assets/images/logo.jpg' %}"
-        alt="GCPCUL" class="official-logo-img">
-      <div class="logo-text">
-        <span class="logo-name">GCPCUL</span>
-        <span class="logo-sub">Pharmacists' Credit Union</span>
-      </div>
-    </a>
-    <nav>
-      {% with url_name=request.resolver_match.url_name %}
-      <ul>
-          <li><a href="{% url 'home' %}" class="{% if url_name == 'home' %}active{% endif %}">Home</a></li>
-          <li><a href="{% url 'about' %}" class="{% if url_name == 'about' or url_name == 'team_bio' %}active{% endif %}">About</a></li>
-          <li class="has-dropdown">
-              <a href="{% url 'products' %}" class="{% if url_name == 'products' or url_name == 'calculator' %}active{% endif %}">
-                  Products <span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">expand_more</span>
-              </a>
-              <div class="dropdown-menu">
-                  <a href="{% url 'products' %}">All Products</a>
-                  <a href="{% url 'calculator' %}">Loan Calculator</a>
-              </div>
-          </li>
-          <li><a href="{% url 'news' %}" class="{% if url_name == 'news' or url_name == 'article_detail' %}active{% endif %}">News & Blog</a></li>
-          <li><a href="{% url 'downloads' %}" class="{% if url_name == 'downloads' %}active{% endif %}">Resources</a></li>
-      </ul>
-      {% endwith %}
-    </nav>
-    <div class="nav-actions">
-      <a href="{% url 'member_portal' %}" class="btn btn-primary">
-          <span class="material-symbols-outlined" style="font-size:1.1rem;">lock</span>
-          Portal Login
+    <div class="container nav-container">
+      <a href="{% url 'home' %}" class="logo">
+        <img src="{% static 'assets/images/logo.jpg' %}"
+          alt="GCPCUL" class="official-logo-img">
+        <div class="logo-text">
+          <span class="logo-name">Ghana Co-operative Pharmacists'<br>Credit Union Limited</span>
+        </div>
       </a>
+      <nav>
+        {% with url_name=request.resolver_match.url_name %}
+        <ul>
+            <li><a href="{% url 'home' %}" class="{% if url_name == 'home' %}active{% endif %}">Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if url_name == 'about' or url_name == 'team_bio' %}active{% endif %}">About</a></li>
+            <li class="has-dropdown">
+                <a href="{% url 'products' %}" class="{% if url_name == 'products' or url_name == 'calculator' %}active{% endif %}">
+                    Products <span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">expand_more</span>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'products' %}">All Products</a>
+                    <a href="{% url 'calculator' %}">Loan Calculator</a>
+                </div>
+            </li>
+            <li><a href="{% url 'news' %}" class="{% if url_name == 'news' or url_name == 'article_detail' %}active{% endif %}">News & Blog</a></li>
+            <li><a href="{% url 'downloads' %}" class="{% if url_name == 'downloads' %}active{% endif %}">Resources</a></li>
+        </ul>
+        {% endwith %}
+      </nav>
+      <div class="nav-actions">
+        <a href="{% url 'member_portal' %}" class="btn btn-primary">
+            <span class="material-symbols-outlined" style="font-size:1.1rem;">lock</span>
+            Portal Login
+        </a>
+      </div>
+      <button class="menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <span class="icon-svg" style="font-size: 1.75rem;"><svg viewBox="0 0 24 24">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg></span>
+      </button>
     </div>
-    <button class="menu-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
-      <span class="icon-svg" style="font-size: 1.75rem;"><svg viewBox="0 0 24 24">
-          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-        </svg></span>
-    </button>
-  </div>
 
-  <div class="mobile-drawer" id="mobileDrawer">
-    <a href="{% url 'home' %}">Home</a>
-    <a href="{% url 'about' %}">About</a>
-    <a href="{% url 'products' %}">Products</a>
-    <a href="{% url 'calculator' %}">Loan Calculator</a>
-    <a href="{% url 'news' %}">News & Blog</a>
-    <a href="{% url 'downloads' %}">Resources</a>
-    <a href="{% url 'gallery' %}">Gallery</a>
-    <a href="{% url 'member_portal' %}" class="btn btn-primary" style="margin-top: 0.5rem; justify-content: center;">Portal Login</a>
-  </div>
-</header>   
+    <div class="mobile-drawer" id="mobileDrawer">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'about' %}">About</a>
+      <a href="{% url 'products' %}">Products</a>
+      <a href="{% url 'calculator' %}">Loan Calculator</a>
+      <a href="{% url 'news' %}">News & Blog</a>
+      <a href="{% url 'downloads' %}">Resources</a>
+      <a href="{% url 'gallery' %}">Gallery</a>
+      <a href="{% url 'member_portal' %}" class="btn btn-primary" style="margin-top: 0.5rem; justify-content: center;">Portal Login</a>
+    </div>
+  </header>    
 
   <main>
     {% block content %}{% endblock %}
