@@ -29,7 +29,8 @@ class NewsletterForm(forms.ModelForm):
 class NewsArticleForm(forms.ModelForm):
     class Meta:
         model = NewsArticle
-        fields = ["title", "category", "author", "featured_image", "excerpt", "body", "status"]
+        fields = ['title', 'slug', 'category', 'author', 'featured_image', 'excerpt', 'body', 'status',
+                  'featured_spotlight', 'show_in_happenings', 'show_in_insights']
         widgets = {
             # Populated by JS from the contenteditable body just before submit
             # (see fldBody's sync in admin_news.html) — never shown to the user.

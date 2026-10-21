@@ -99,16 +99,20 @@ His professional strength lies in combining account management, business develop
     ]
 }
 
-# Create your views here.
 def home(request):
+    published = NewsArticle.objects.filter(status='published')
+
+    featured = published.filter(featured_spotlight=True).order_by('-published_at').first()
+    happenings = published.filter(show_in_happenings=True).order_by('-published_at')[:3]
+    blogs = published.filter(show_in_insights=True).order_by('-published_at')[:3]
+
     context = {
-        # Grabs the 3 newest articles flagged for the top section
-        'happenings': NewsArticle.objects.filter(status='published').order_by('-published_at')[:3],
-        
-        # Grabs the 3 newest articles flagged for the bottom section
-        'blogs': NewsArticle.objects.filter(status='published', category='guide').order_by('-published_at')[:3],
+        'featured': featured,
+        'happenings': happenings,
+        'blogs': blogs,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'index.html', context)   
+
 
 def products(request):
     return render(request, 'products.html')

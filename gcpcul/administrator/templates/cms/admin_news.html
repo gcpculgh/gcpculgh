@@ -472,6 +472,91 @@
     cursor: pointer;
   }
 
+  /* ── Placement Cards ── */
+.placement-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.placement-card {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.placement-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.placement-card-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.7rem;
+  background: var(--bg-page);
+  transition: all 0.18s ease;
+}
+
+.placement-card:hover .placement-card-inner {
+  border-color: var(--primary-green);
+  background: var(--bg-card);
+}
+
+.placement-card.selected .placement-card-inner {
+  border-color: var(--primary-green);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(10, 92, 54, 0.08);
+}
+
+.placement-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.placement-icon .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+.placement-icon.icon-gold {
+  background: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+}
+
+.placement-icon.icon-indigo {
+  background: rgba(79, 70, 229, 0.1);
+  color: #4F46E5;
+}
+
+.placement-icon.icon-teal {
+  background: rgba(20, 184, 166, 0.1);
+  color: #0D9488;
+}
+
+.placement-text strong {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.placement-text p {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}   
+
   /* Rich text toolbar + body */
   .rte-toolbar {
     display: flex;
@@ -1041,20 +1126,65 @@
           </div>
 
           <div class="field-row">
-            <div class="field-group">
-              <label for="fldCategory">Category</label>
-              <select id="fldCategory" name="category" class="field-control" onchange="syncPreview()">
-                <option value="dividend" {% if editing.category == 'dividend' %}selected{% endif %}>Dividends</option>
-                <option value="guide" {% if editing.category == 'guide' %}selected{% endif %}>Financial Literacy</option>
-                <option value="security" {% if editing.category == 'security' %}selected{% endif %}>Security &amp; Portal</option>
-                <option value="news" {% if editing.category == 'news' %}selected{% endif %}>Union Governance</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label for="fldAuthor">Author / Committee</label>
-              <input type="text" id="fldAuthor" name="author" class="field-control" value="{{ editing.author|default:'' }}" required oninput="syncPreview()">
-            </div>
-          </div>
+  <div class="field-group">
+    <label for="fldCategory">Category</label>
+    <select id="fldCategory" name="category" class="field-control" onchange="syncPreview()">
+      <option value="dividend" {% if editing.category == 'dividend' %}selected{% endif %}>Dividends</option>
+      <option value="guide" {% if editing.category == 'guide' %}selected{% endif %}>Financial Literacy</option>
+      <option value="security" {% if editing.category == 'security' %}selected{% endif %}>Security &amp; Portal</option>
+      <option value="news" {% if editing.category == 'news' %}selected{% endif %}>Union Governance</option>
+    </select>
+  </div>
+  <div class="field-group">
+    <label for="fldAuthor">Author / Committee</label>
+    <input type="text" id="fldAuthor" name="author" class="field-control" value="{{ editing.author|default:'' }}" required oninput="syncPreview()">
+  </div>
+</div>
+
+<!-- ═══════════ HOMEPAGE PLACEMENT SELECTOR ═══════════ -->
+<div class="field-group">
+  <label>Homepage Placement <span class="hint">Pick where this article appears on the landing page</span></label>
+
+  <div class="placement-cards">
+
+    <!-- Featured Spotlight -->
+    <label class="placement-card {% if editing and editing.featured_spotlight %}selected{% endif %}">
+      <input type="checkbox" name="featured_spotlight" value="1" {% if editing and editing.featured_spotlight %}checked{% endif %}>
+      <div class="placement-card-inner">
+        <span class="placement-icon icon-gold"><span class="material-symbols-outlined">star</span></span>
+        <div class="placement-text">
+          <strong>Spotlight Hero</strong>
+          <p>Full-width banner at the top of the homepage. Only the most recent article with this flag shows — like a breaking-news banner.</p>
+        </div>
+      </div>
+    </label>
+
+    <!-- Recent Happenings -->
+    <label class="placement-card {% if editing and editing.show_in_happenings %}selected{% endif %}">
+      <input type="checkbox" name="show_in_happenings" value="1" {% if editing and editing.show_in_happenings %}checked{% endif %}>
+      <div class="placement-card-inner">
+        <span class="placement-icon icon-indigo"><span class="material-symbols-outlined">campaign</span></span>
+        <div class="placement-text">
+          <strong>Recent Happenings</strong>
+          <p>Short-form updates: AGM recaps, board decisions, community events. Best for time-sensitive governance news.</p>
+        </div>
+      </div>
+    </label>
+
+    <!-- Latest News & Financial Guidance -->
+    <label class="placement-card {% if editing and editing.show_in_insights %}selected{% endif %}">
+      <input type="checkbox" name="show_in_insights" value="1" {% if editing and editing.show_in_insights %}checked{% endif %}>
+      <div class="placement-card-inner">
+        <span class="placement-icon icon-teal"><span class="material-symbols-outlined">trending_up</span></span>
+        <div class="placement-text">
+          <strong>Insights &amp; Guidance</strong>
+          <p>Longer-form editorial: dividend explanations, financial literacy tips, security advisories. Evergreen content that stays relevant.</p>
+        </div>
+      </div>
+    </label>
+
+  </div>
+</div>   
 
           <div class="field-group">
             <label>Featured Image <span class="hint">(16:9 landscape recommended · 1600×900px)</span></label>

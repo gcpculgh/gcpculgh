@@ -42,6 +42,10 @@ class NewsArticle(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(blank=True, null=True)
 
+    featured_spotlight = models.BooleanField(default=False)
+    show_in_happenings = models.BooleanField(default=False)
+    show_in_insights = models.BooleanField(default=False)   
+
     class Meta:
         ordering = ["-created_at"]
 
