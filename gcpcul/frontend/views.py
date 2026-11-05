@@ -253,7 +253,7 @@ def news(request):
 
 def article_detail_view(request, slug):
     # Swap public_id for slug to pull the SEO-friendly URL
-    article = get_object_or_404(NewsArticle, slug=slug)
+    article = get_object_or_404(NewsArticle, slug=slug, status='published')   
     
     related = NewsArticle.objects.filter(
         status='published', 

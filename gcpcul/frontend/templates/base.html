@@ -85,7 +85,7 @@
         <img src="{% static 'assets/images/logo.jpg' %}"
           alt="GCPCUL" class="official-logo-img">
         <div class="logo-text">
-          <span class="logo-name">Ghana Co-operative Pharmacists'<br>Credit Union Limited (GCPULGH)</span>
+          <span class="logo-name">Ghana Co-operative Pharmacists'<br>Credit Union Limited (GCPCULGH)</span>
         </div>
       </a>
       <nav>
@@ -103,7 +103,16 @@
                 </div>
             </li>
             <li><a href="{% url 'news' %}" class="{% if url_name == 'news' or url_name == 'article_detail' %}active{% endif %}">News & Blog</a></li>
-            <li><a href="{% url 'downloads' %}" class="{% if url_name == 'downloads' %}active{% endif %}">Resources</a></li>
+
+            <li class="has-dropdown">
+                <a href="{% url 'downloads' %}" class="{% if url_name == 'downloads' or url_name == 'gallery' %}active{% endif %}">
+                    Resources <span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">expand_more</span>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{% url 'downloads' %}">Documents & Forms</a>
+                    <a href="{% url 'gallery' %}">Gallery</a>
+                </div>
+            </li>
         </ul>
         {% endwith %}
       </nav>

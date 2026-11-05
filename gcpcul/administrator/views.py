@@ -91,11 +91,25 @@ def announcement_delete(request, pk):
     return redirect("administrator:announcement_list")
 
 
-
 @staff_required
 def dashboard(request):
     published_count = NewsArticle.objects.filter(status="published").count()
     draft_count = NewsArticle.objects.filter(status="draft").count()
+
+    # ── Trend: items created in the last 7 days ──
+    seven_days_ago = timezone.now() - timezone.timedelta(days=7)
+
+    articles_this_week = NewsArticle.objects.filter(
+        status="published", created_at__gte=seven_days_ago
+    ).count()
+
+    documents_this_week = Document.objects.filter(
+        is_deleted=False, created_at__gte=seven_days_ago
+    ).exclude(document="").count()
+
+    albums_this_week = GalleryAlbum.objects.filter(
+        is_deleted=False, status="published", created_at__gte=seven_days_ago
+    ).count()
 
     # 1. DOCUMENT VAULT LOGIC (Ignoring archived files)
     active_docs = Document.objects.filter(is_deleted=False)
@@ -109,7 +123,7 @@ def dashboard(request):
     published_album_count = active_albums.filter(status='published').count()
     draft_album_count = active_albums.filter(status='draft').count()
     archived_album_count = GalleryAlbum.objects.filter(is_deleted=True).count()
-    
+
     active_media_count = GalleryMedia.objects.filter(is_deleted=False).count()
     stock_album_count = sum(1 for a in active_albums if a.uses_placeholder_media)
 
@@ -155,7 +169,6 @@ def dashboard(request):
             "author": "Admin", "timestamp": doc.created_at, "icon": "upload_file"
         })
 
-    # Bring Gallery Albums into the timeline
     for album in GalleryAlbum.objects.filter(is_deleted=False).order_by("-id")[:3]:
         ts = getattr(album, 'updated_at', getattr(album, 'created_at', timezone.now()))
         recent_activity.append({
@@ -163,27 +176,30 @@ def dashboard(request):
             "author": "Admin", "timestamp": ts, "icon": "photo_library"
         })
 
-    # Sort the combined list chronologically (newest first)
     recent_activity.sort(key=lambda x: x["timestamp"], reverse=True)
 
     context = {
         "published_count": published_count,
         "draft_count": draft_count,
-        
+
         "documents_uploaded": documents_uploaded,
         "documents_pending": documents_pending,
-        "archived_docs_count": archived_docs_count, 
-        
-        "published_album_count": published_album_count, 
-        "draft_album_count": draft_album_count,         
-        "archived_album_count": archived_album_count,   
-        "active_media_count": active_media_count,       
-        
+        "archived_docs_count": archived_docs_count,
+
+        "published_album_count": published_album_count,
+        "draft_album_count": draft_album_count,
+        "archived_album_count": archived_album_count,
+        "active_media_count": active_media_count,
+
+        "articles_this_week": articles_this_week,
+        "documents_this_week": documents_this_week,
+        "albums_this_week": albums_this_week,
+
         "attention_items": attention_items,
         "attention_count": len(attention_items),
-        "recent_activity": recent_activity[:5], 
+        "recent_activity": recent_activity[:5],
     }
-    return render(request, "cms/admin_dashboard.html", context)
+    return render(request, "cms/admin_dashboard.html", context)   
 
 
 # NEWS & BLOG
@@ -959,9 +975,9 @@ def custom_csrf_failure(request, reason=""):
 def upload_rte_image(request):
     """Asynchronous uploader for the Rich Text Editor."""
     file = request.FILES.get('image')
-    optimize_and_convert_to_webp(file, max_width=1200, max_height=1200, quality=80)
     if not file:
         return JsonResponse({'error': 'No file provided.'}, status=400)
+    optimized_file = optimize_and_convert_to_webp(file, max_width=1200, max_height=1200, quality=80)   
         
     try:
         # 1. Optimize and compress to WebP using your existing utility

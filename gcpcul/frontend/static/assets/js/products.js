@@ -83,12 +83,14 @@ function syncPresetChips(value) {
     presetChips.forEach(chip => {
         chip.classList.toggle('active', parseInt(chip.dataset.val, 10) === value);
     });
-}
+}   
 
 function parseSavingsValue(raw) {
-    const digits = String(raw).replace(/[^0-9]/g, '');
-    return digits ? parseInt(digits, 10) : 0;
-}
+    const cleaned = String(raw).replace(/,/g, '');
+    const val = parseFloat(cleaned);
+    if (isNaN(val)) return 0;
+    return Math.min(Math.round(val), 1000000);
+}     
 
 function setValidationMsg(text) {
     if (!validationMsg) return;
@@ -96,11 +98,12 @@ function setValidationMsg(text) {
     validationMsg.innerHTML = '<span class="material-symbols-outlined">error</span>' + text;
 }
 
+
 function updateBorrowingPower(sourceValue, isTyping) {
     if (!savingsInput || !savingsSlider || !creditPowerFigure) return;
     const rawValue = parseSavingsValue(sourceValue);
 
-     if (isTyping) {
+    if (isTyping) {
         if (rawValue > 0 && rawValue < 500) {
             setValidationMsg('This estimate starts at GH¢500 in savings — we\'ll use GH¢500 until you enter more.');
         } else {
@@ -110,24 +113,48 @@ function updateBorrowingPower(sourceValue, isTyping) {
         setValidationMsg('');
     }
 
-    savingsSlider.value = savings;
+    const displaySavings = rawValue || 5000;
+    const calcSavings = Math.max(500, Math.min(35000, displaySavings));
+
+    if (!isTyping) {
+        savingsInput.value = displaySavings.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    savingsSlider.value = calcSavings;
     const min = parseFloat(savingsSlider.min) || 500;
     const max = parseFloat(savingsSlider.max) || 35000;
-    const pct = ((savings - min) / (max - min)) * 100;
-    savingsSlider.style.background = `linear-gradient(to right, var(--primary-green) ${pct}%, var(--border-color) ${pct}%)`;
-    syncPresetChips(savings);
+    const pct = ((calcSavings - min) / (max - min)) * 100;
+    savingsSlider.style.background =
+        `linear-gradient(to right, var(--primary-green) ${pct}%, var(--border-color) ${pct}%)`;
 
-    let savings = rawValue || 5000;
-    savings = Math.max(500, Math.min(35000, savings));
-    if (!isTyping) {
-        savingsInput.value = savings.toLocaleString('en-US');
+    syncPresetChips(displaySavings);
+
+    let borrowingPower = calcSavings * 3;
+    const isMaxed = borrowingPower >= 100000;
+    if (isMaxed) borrowingPower = 100000;
+
+    creditPowerFigure.textContent = borrowingPower.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    const subtext = document.querySelector('.power-output-card .output-subtext');
+    const outputTag = document.querySelector('.power-output-card .output-tag');
+    if (subtext && outputTag) {
+        if (isMaxed) {
+            subtext.textContent = 'You\'ve reached the maximum individual risk ceiling. Additional savings won\'t increase your borrowing power.';
+            outputTag.innerHTML = '<span class="material-symbols-outlined" style="font-size:1rem;">verified</span><span>Maximum Entitlement Reached</span>';
+            outputTag.style.color = '#34D399';
+        } else {
+            subtext.textContent = 'Calculated at 3x savings multiplier. Personal & Emergency loans are capped at an individual risk ceiling of GH¢100,000.00.';
+            outputTag.innerHTML = '<span class="material-symbols-outlined" style="font-size:1rem;">bolt</span><span>Immediate Credit Entitlement</span>';
+            outputTag.style.color = '';  // reset to CSS default (var(--coop-gold))
+        }
     }
-    savingsSlider.value = savings;
-    syncPresetChips(savings);
-    let borrowingPower = savings * 3;
-    if (borrowingPower > 100000) borrowingPower = 100000;
-    creditPowerFigure.textContent = borrowingPower.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+}      
 
 if (savingsInput && savingsSlider) {
     savingsInput.addEventListener('input', () => updateBorrowingPower(savingsInput.value, true));

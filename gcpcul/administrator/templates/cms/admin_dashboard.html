@@ -285,9 +285,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: .85rem;
     flex-shrink: 0;
+    overflow: hidden;  
+  }
+
+  .activity-avatar .material-symbols-outlined {
+      font-size: 1.1rem;
+      font-weight: 400; 
   }
 
   .activity-body p {
@@ -306,11 +310,12 @@
   }
 
   .qa-grid {
+    grid-column: 1 / -1;  
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
     gap: 1.1rem;
     margin-top: 1.5rem;
-  }
+}   
 
   .qa-card {
     background: var(--bg-card);
@@ -353,6 +358,23 @@
     color: var(--text-muted);
   }
 
+  .kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+}
+
+.kpi-trend.trend-up {
+    color: var(--ok);
+}
+
+.kpi-trend.trend-flat {
+    color: var(--text-muted);
+}   
+
   @media (max-width: 62rem) {
     .dash-grid {
       grid-template-columns: 1fr;
@@ -386,6 +408,15 @@
       <div class="kpi-value">{{ published_count }}</div>
       <div class="kpi-label">Live Articles</div>
     </div>
+    <div class="kpi-trend {% if articles_this_week > 0 %}trend-up{% else %}trend-flat{% endif %}">
+      {% if articles_this_week > 0 %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">trending_up</span>
+      +{{ articles_this_week }} this week
+      {% else %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">remove</span>
+      No new this week
+      {% endif %}
+    </div>
     <div class="kpi-footer">
       <div class="kpi-stat">
         <div class="stat-dot warn"></div> {{ draft_count }} Drafts
@@ -402,6 +433,15 @@
     <div class="kpi-main">
       <div class="kpi-value">{{ documents_uploaded }}</div>
       <div class="kpi-label">Live Files</div>
+    </div>
+    <div class="kpi-trend {% if documents_this_week > 0 %}trend-up{% else %}trend-flat{% endif %}">
+      {% if documents_this_week > 0 %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">trending_up</span>
+      +{{ documents_this_week }} this week
+      {% else %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">remove</span>
+      No new this week
+      {% endif %}
     </div>
     <div class="kpi-footer">
       <div class="kpi-stat">
@@ -422,6 +462,15 @@
     <div class="kpi-main">
       <div class="kpi-value">{{ published_album_count }}</div>
       <div class="kpi-label">Live Albums</div>
+    </div>
+    <div class="kpi-trend {% if albums_this_week > 0 %}trend-up{% else %}trend-flat{% endif %}">
+      {% if albums_this_week > 0 %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">trending_up</span>
+      +{{ albums_this_week }} this week
+      {% else %}
+      <span class="material-symbols-outlined" style="font-size:1rem;">remove</span>
+      No new this week
+      {% endif %}
     </div>
     <div class="kpi-footer">
       <div class="kpi-stat">
@@ -444,8 +493,7 @@
       <h3>Action Center</h3>
     </div>
     <div class="kpi-main">
-      <div class="kpi-value" style="{% if attention_count > 0 %}color: var(--danger);{% endif %}">{{ attention_count }}
-      </div>
+      <div class="kpi-value" style="{% if attention_count > 0 %}color: var(--danger);{% endif %}">{{ attention_count }}</div>
       <div class="kpi-label" style="{% if attention_count > 0 %}color: var(--danger);{% endif %}">Open Tasks</div>
     </div>
     <div class="kpi-footer" style="{% if attention_count > 0 %}border-color: rgba(220, 38, 38, 0.2);{% endif %}">
@@ -455,7 +503,7 @@
     </div>
   </div>
 
-</div>
+</div>   
 
 <div class="dash-grid">
   <div class="panel">
@@ -493,13 +541,13 @@
     <div>
       {% for activity in recent_activity %}
       <div class="activity-item">
-        <div class="activity-avatar"><span class="material-symbols-outlined" style="font-size: 1.1rem;">{{ activity.icon
-            }}</span></div>
+        <div class="activity-avatar">
+          <span class="material-symbols-outlined">{{ activity.icon }}</span>
+        </div>   
 
         <div class="activity-body">
           {% if activity.type == 'article' %}
-          <p><strong>{{ activity.author|default:"Admin" }}</strong> {% if activity.status == 'published' %}published{%
-            else %}saved a draft of{% endif %} <strong>"{{ activity.title }}"</strong></p>
+          <p><strong>{{ activity.author|default:"Admin" }}</strong> {% if activity.status == 'published' %}published{%else %}saved a draft of{% endif %} <strong>"{{ activity.title }}"</strong></p>
           {% elif activity.type == 'document' %}
           <p><strong>Admin</strong> uploaded document <strong>"{{ activity.title }}"</strong></p>
           {% elif activity.type == 'album' %}

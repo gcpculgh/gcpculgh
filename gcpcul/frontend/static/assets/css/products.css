@@ -1071,6 +1071,10 @@ table.rate-table tr:nth-child(even) td {
     line-height: 1.35;
 }
 
+.power-output-card .output-tag {
+    transition: color 200ms ease-out;
+}   
+
 .output-amount {
     display: flex;
     align-items: baseline;
